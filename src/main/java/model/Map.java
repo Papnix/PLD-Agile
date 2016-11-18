@@ -12,17 +12,7 @@ public class Map {
 		waypoints = new ArrayList();
 		sections = new ArrayList();
 	}
-	
-	public void addWaypoint(Waypoint wp)
-	{
-		waypoints.add(wp);
-	}
-	
-	public void addSection(Section section)
-	{
-		sections.add(section);
-	}
-	
+
 	public void addMultipleWaypoint(List<Waypoint> wp)
 	{
 		waypoints.addAll(wp);
