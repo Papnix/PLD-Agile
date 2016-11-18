@@ -15,7 +15,7 @@ public class Map {
         sections = new ArrayList<ArrayList<Section>>();
     }
 
-    protected static Map getInstance() {
+    public static Map getInstance() {
         if (instance == null) instance = new Map();
         return instance;
     }
