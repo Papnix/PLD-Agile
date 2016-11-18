@@ -5,21 +5,21 @@ import java.util.Date;
 public class Delivery
 {
 	
-	private int associatedWaypointId;
+	private Waypoint associatedWaypoint;
 	private int duration;
 	private Date timeRangeStart;
 	private Date timeRangeEnd;
 	
-	public Delivery(int associatedWaypointId, int duration, Date timeRangeStart, Date timeRangeEnd) {
+	public Delivery(Waypoint associatedWaypoint, int duration, Date timeRangeStart, Date timeRangeEnd) {
 		super();
-		this.associatedWaypointId = associatedWaypointId;
+		this.associatedWaypoint = associatedWaypoint;
 		this.duration = duration;
 		this.timeRangeStart = timeRangeStart;
 		this.timeRangeEnd = timeRangeEnd;
 	}
 	
-	public int getAssociatedWaypointId() {
-		return associatedWaypointId;
+	public Waypoint getAssociatedWaypoint() {
+		return associatedWaypoint;
 	}
 
 	public int getDuration() {
