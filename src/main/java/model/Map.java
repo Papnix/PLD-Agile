@@ -2,17 +2,18 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class Map {
 
     private static Map instance = null;
 
-    private ArrayList<Waypoint> waypoints;
-    private ArrayList<ArrayList<Section>> sections;
+    private TreeMap<Integer, Waypoint> waypoints;
+    private TreeMap<Integer, TreeMap<Integer, Section>> sections;
 
     private Map() {
-        waypoints = new ArrayList<Waypoint>();
-        sections = new ArrayList<ArrayList<Section>>();
+        waypoints = new TreeMap<Integer, Waypoint>();
+        sections = new TreeMap<Integer, TreeMap<Integer, Section>>();
     }
 
     public static Map getInstance() {
@@ -21,13 +22,16 @@ public class Map {
     }
 
     public Map addWaypoint(Waypoint waypoint) {
-        waypoints.set(waypoint.getId(), waypoint);
+        waypoints.put(waypoint.getId(), waypoint);
 
         return this;
     }
 
     public Map addSection(Section section) {
-        sections.get(section.getOrigin().getId()).set(section.getDestination().getId(), section);
+        if (sections.get(section.getOrigin().getId()) == null) {
+            sections.put(section.getOrigin().getId(), new TreeMap<Integer, Section>());
+        }
+        sections.get(section.getOrigin().getId()).put(section.getDestination().getId(), section);
 
         return this;
     }
@@ -49,13 +53,17 @@ public class Map {
         return this;
     }
 
-    public ArrayList<Waypoint> getWaypoints() {
+    public TreeMap<Integer, Waypoint> getWaypoints() {
         return waypoints;
     }
 
     public Waypoint getWaypoint(int id) {
 
         return waypoints.get(id);
+    }
+
+    public TreeMap<Integer, TreeMap<Integer, Section>> getSections() {
+        return sections;
     }
 
     public Section getSection(int idOrigin, int idDestination) {

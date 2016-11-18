@@ -23,5 +23,9 @@ public class Waypoint
 	public int getyCoord() {
 		return yCoord;
 	}
+
+	public String toString() {
+		return "Waypoint { id=" + id + ", x=" + xCoord + ", y=" + yCoord + " }";
+	}
 	
 }

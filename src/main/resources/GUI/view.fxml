@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="670.0" prefWidth="1014.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <MenuBar>
+        <menus>
+          <Menu mnemonicParsing="false" text="Fichier">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Charger une carte" />
+            </items>
+            <items>
+              <MenuItem mnemonicParsing="false" text="Charger une demande de livraison" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Editer">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Aide">
+            <items>
+              <MenuItem mnemonicParsing="false" text="A propos" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <SplitPane dividerPositions="0.7" layoutX="200.0" layoutY="120.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+         <items>
+            <SplitPane dividerPositions="0.9" orientation="VERTICAL" prefHeight="398.0" prefWidth="475.0">
+               <items>
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" style="-fx-background-color: #95a5a6;">
+                     <children>
+                        <Button id="LoadDeliveryButton" graphicTextGap="0.0" mnemonicParsing="false" text="Charger carte">
+                           <font>
+                              <Font name="Arial" size="12.0" />
+                           </font>
+                        </Button>
+                     </children></AnchorPane>
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" style="-fx-background-color: #7f8c8d;" />
+               </items>
+            </SplitPane>
+            <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="600.0" prefHeight="600.0" style="-fx-background-color: #2c3e50;">
+               <children>
+                  <Button id="LoadDeliveryButton" graphicTextGap="0.0" mnemonicParsing="false" text="Charger demande de livraison">
+                     <font>
+                        <Font name="Arial" size="12.0" />
+                     </font>
+                  </Button>
+               </children></AnchorPane>
+         </items>
+      </SplitPane>
+   </children>
+</VBox>
