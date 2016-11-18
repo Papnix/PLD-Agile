@@ -31,9 +31,9 @@ public class XMLDeserializer {
      * @throws IOException
      * @throws XMLException
      */
-    public static void loadMap() throws ParserConfigurationException, SAXException, IOException, XMLException {
+    public static void loadMap(String path) throws ParserConfigurationException, SAXException, IOException, XMLException {
 
-        File xml = XMLReader.getInstance().open(true);
+        File xml = new File(path);
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = docBuilder.parse(xml);
         Element root = document.getDocumentElement();

@@ -45,4 +45,12 @@ public class Section
 	public Waypoint getDestination() {
 		return destination;
 	}
+
+	public String toString() {
+		return "Section { origin=" + origin.getId() +
+				", length=" + length +
+				", speed=" + speed +
+				", destination=" + destination.getId() +
+				", streetName=" + streetName + " }";
+	}
 }
