@@ -3,12 +3,15 @@ package test;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import controller.pathfinder.Dijkstra;
 import controller.xml.XMLDeserializer;
 import controller.xml.XMLException;
 import model.Calculator;
@@ -23,11 +26,11 @@ public class CalculatorTest {
   
   // permet d'evaluer la methode getSuccessor de l'algorithme de Dijkstra (premier pas vers le calcul de la tourné)
   @Test
-  public void evaluateGetSuccessor()
+  public void evaluateGetSuccessors()
   {
 	  try {	
 	  // ouverture de la map de test (créé a cette effet)
-		XMLDeserializer.loadMap("src/main/ressources/plan2x2.xml");
+		XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 	} catch (ParserConfigurationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -43,17 +46,25 @@ public class CalculatorTest {
 	}
 	  //recupere les successeurs du noeud d'id = 2, classé par id croissant.
 	  int [] result = {1,6,7}; 
-	  int [] successor = Dijkstra.getSuccessor(2);
-	  assertEquals(result, successor);
+	  int [] successors = Dijkstra.getSuccessors(2);
+	  Arrays.sort(successors);
+	  Arrays.sort(result);
+	  //assertEquals(result, successors);
+	  Assert.assertArrayEquals(result, successors);
 	  
 	//recupere les successeurs du noeud d'id = 1, classé par id croissant.
 	  int [] result1 = {2,6}; 
-	  successor = Dijkstra.getSuccessor(1);
-	  assertEquals(result1, successor);
+	  successors = Dijkstra.getSuccessors(1);
+	  Arrays.sort(successors);
+	  Arrays.sort(result1);
+	  //assertEquals(result1, successors);
+	  Assert.assertArrayEquals(result1, successors);
 	  
 	//recupere les successeurs du noeud d'id = 7, classé par id croissant.
-	  successor = Dijkstra.getSuccessor(7);
-	  assertEquals(result1, successor);
+	  successors = Dijkstra.getSuccessors(7);
+	  Arrays.sort(successors);
+	  //assertEquals(result1, successors);
+	  Assert.assertArrayEquals(result1, successors);
   }
   
 //permet d'evaluer la methode getSuccessor de l'algorithme de Dijkstra (premier pas vers le calcul de la tourné)
@@ -62,7 +73,7 @@ public class CalculatorTest {
  {
 	  try {	
 	  // ouverture de la map de test (créé a cette effet)
-		XMLDeserializer.loadMap("src/main/ressources/plan2x2.xml");
+		XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 		
 		/**
 		 * recuperation de la demande de livraison 

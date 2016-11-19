@@ -14,3 +14,4 @@
 <troncon destination="2" longueur="10257" nomRue="h2" origine="7" vitesse="38"/>
 <troncon destination="6" longueur="9082" nomRue="v1" origine="2" vitesse="29"/>
 <troncon destination="2" longueur="9082" nomRue="h1" origine="6" vitesse="26"/>
+</reseau>
