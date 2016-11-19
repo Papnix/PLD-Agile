@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<reseau>
+<noeud id="1" x="195" y="291"/>
+<noeud id="2" x="140" y="420"/>
+<noeud id="6" x="244" y="277"/>
+<noeud id="7" x="244" y="345"/>
+<troncon destination="2" longueur="11218" nomRue="v0" origine="1" vitesse="39"/>
+<troncon destination="6" longueur="4076" nomRue="h1" origine="1" vitesse="40"/>
+<troncon destination="1" longueur="11218" nomRue="v0" origine="2" vitesse="38"/>
+<troncon destination="7" longueur="10257" nomRue="h2" origine="2" vitesse="38"/>
+<troncon destination="1" longueur="4076" nomRue="h1" origine="6" vitesse="44"/>
+<troncon destination="7" longueur="5440" nomRue="v1" origine="6" vitesse="43"/>
+<troncon destination="6" longueur="5440" nomRue="v1" origine="7" vitesse="46"/>
+<troncon destination="2" longueur="10257" nomRue="h2" origine="7" vitesse="38"/>
+<troncon destination="6" longueur="9082" nomRue="v1" origine="2" vitesse="29"/>
+<troncon destination="2" longueur="9082" nomRue="h1" origine="6" vitesse="26"/>
