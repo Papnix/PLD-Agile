@@ -13,8 +13,8 @@ public class Dijkstra
 {	
 	
 	private static Map map;
-	private Set<Integer> settledNodes;
-    private Set<Integer> unSettledNodes;
+	private Set<Integer> processedWaypoints;
+    private Set<Integer> visitedWaypoints;
     private TreeMap<Integer, Integer> predecessors;
     private TreeMap<Integer, Integer> cost;
 	
@@ -27,41 +27,54 @@ public class Dijkstra
      * This method returns the path from the source to the selected target and
      * NULL if no path exists
      */
-    public LinkedList<Integer> getPath(Integer target) {
-            map = Map.getInstance();
+    public LinkedList<Integer> getPath(Integer target)
+    {
     		LinkedList<Integer> path = new LinkedList<Integer>();
             Integer step = target;
+            
             // check if a path exists
-            if (predecessors.get(step) == null) {
-                    return null;
+            if (predecessors.get(step) == null)
+            {
+            	return null;
             }
+            
             path.add(step);
-            while (predecessors.get(step) != null) {
-                    step = predecessors.get(step);
-                    path.add(step);
+            
+            while (predecessors.get(step) != null)
+            {
+                step = predecessors.get(step);
+                path.add(step);
             }
+            
             // Put it into the correct order
             Collections.reverse(path);
+            
             return path;
     }
     
     
-    public int getTargetPathCost(int target) {
+    public int getTargetPathCost(int target)
+    {
 		return cost.get(target);
 	}
 
-	public void execute(int source) {
-        settledNodes = new HashSet<Integer>();
-        unSettledNodes = new HashSet<Integer>();
+	public void execute(int source)
+	{
+        processedWaypoints = new HashSet<Integer>();
+        visitedWaypoints = new HashSet<Integer>();
         cost = new TreeMap<Integer, Integer>();
         predecessors = new TreeMap<Integer, Integer>();
+        
         cost.put(source, 0);
-        unSettledNodes.add(source);
-        while (unSettledNodes.size() > 0) {
-        		Integer node = getMinimum(unSettledNodes);
-                settledNodes.add(node);
-                unSettledNodes.remove(node);
-                findMinimalCost(node);
+        
+        visitedWaypoints.add(source);
+        
+        while (visitedWaypoints.size() > 0)
+        {
+    		Integer wp = getMinimum(visitedWaypoints);
+            processedWaypoints.add(wp);
+            visitedWaypoints.remove(wp);
+            findMinimalCost(wp);
         }
 }
     
@@ -69,6 +82,7 @@ public class Dijkstra
 	{
 		Object[] sections = map.getSections().get(idOrigin).values().toArray();
 		int[] successors = new int[sections.length];
+		
 		for (int i = 0; i < successors.length; i++)
 		{
 			successors[i] = ((Section)sections[i]).getDestination().getId();
@@ -77,47 +91,62 @@ public class Dijkstra
 		return successors;
 	}
 	
-	public static int calculateCost(int idOrigin, int idDestination)
+	public static double computeCost(int idOrigin, int idDestination)
 	{
-		Map map = Map.getInstance();
 		Section section = map.getSection(idOrigin, idDestination);
 		
-		return section.getLength()/section.getSpeed();
+		return ((double) section.getLength())/((double) section.getSpeed());
 	}
 	
-	private void findMinimalCost(int idOrigin) {
+	private void findMinimalCost(int idOrigin)
+	{
 		int[] successors = getSuccessors(idOrigin);
-	    for (int target : successors) {
-	        if (getShortestDistance(target) > getShortestDistance(idOrigin) + calculateCost(idOrigin, target)) {
-	        		cost.put(target, (int) (getShortestDistance(idOrigin) + calculateCost(idOrigin, target)));
-	                predecessors.put(target, idOrigin);
-	                unSettledNodes.add(target);
+		
+	    for (int target : successors)
+	    {
+	        if (getShortestDistance(target) > getShortestDistance(idOrigin) + computeCost(idOrigin, target))
+	        {
+        		cost.put(target, (int) (getShortestDistance(idOrigin) + computeCost(idOrigin, target)));
+                predecessors.put(target, idOrigin);
+                visitedWaypoints.add(target);
 	        }
 	    }
 	}
 	
 	// 
-	private int getMinimum(Set<Integer> vertexes) {
+	private int getMinimum(Set<Integer> waypoints)
+	{
 		Integer minimum = null;
-        for (Integer vertex : vertexes) {
-                if (minimum == null) {
-                        minimum = vertex;
-                } else {
-                        if (getShortestDistance(vertex) < getShortestDistance(minimum)) {
-                                minimum = vertex;
-                        }
+		
+        for (Integer w : waypoints)
+        {
+            if (minimum == null)
+            {
+                    minimum = w;
+            }
+            else
+            {
+                if (getShortestDistance(w) < getShortestDistance(minimum))
+                {
+                        minimum = w;
                 }
+            }
         }
         return minimum;
 }
 	
 	// trouve le plus petit cout allant au noeud idDestination dans le tableau de cout.
-	private Integer getShortestDistance(int idDestination) {
+	private Integer getShortestDistance(int idDestination)
+	{
         Integer d = cost.get(idDestination);
-        if (d == null) {
-                return Integer.MAX_VALUE;
-        } else {
-                return d;
+        
+        if (d == null)
+        {
+            return Integer.MAX_VALUE;
+        }
+        else
+        {
+            return d;
         }
 	}
 	

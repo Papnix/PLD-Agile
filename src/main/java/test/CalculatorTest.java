@@ -98,19 +98,19 @@ public class CalculatorTest {
 	  
 	  //Calcul et test cout de l'"arrete" s1-s2.
 	  costS1S2Estimated = 9082/29;
-	  Assert.assertEquals(costS1S2Estimated,Dijkstra.calculateCost(s1,s2));
+	  Assert.assertEquals(costS1S2Estimated,Dijkstra.computeCost(s1,s2));
 	  
 	//Calcul et test cout de l'"arrete" s2-s1.
 	  costS2S1Estimated = 9082/26;
-	  Assert.assertEquals(costS2S1Estimated,Dijkstra.calculateCost(s2,s1));
+	  Assert.assertEquals(costS2S1Estimated,Dijkstra.computeCost(s2,s1));
 	  
 	//Calcul et test cout de l'"arrete" s1-s3.
 	  costS1S3Estimated = 10257/38;
-	  Assert.assertEquals(costS1S3Estimated,Dijkstra.calculateCost(s1,s3));
+	  Assert.assertEquals(costS1S3Estimated,Dijkstra.computeCost(s1,s3));
 	  
 	//Calcul et test cout de l'"arrete" s2-s3.
 	  costS2S3Estimated = 5440/43;
-	  Assert.assertEquals(costS2S3Estimated,Dijkstra.calculateCost(s2,s3));
+	  Assert.assertEquals(costS2S3Estimated,Dijkstra.computeCost(s2,s3));
 	  
   }
   
