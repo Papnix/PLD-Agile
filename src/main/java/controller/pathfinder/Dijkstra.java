@@ -16,8 +16,12 @@ public class Dijkstra
 	private Set<Integer> settledNodes;
     private Set<Integer> unSettledNodes;
     private TreeMap<Integer, Integer> predecessors;
-    private TreeMap<Integer, Double> cost;
+    private TreeMap<Integer, Integer> cost;
 	
+    public Dijkstra()
+    {
+    	map = Map.getInstance();
+    }
     
     /*
      * This method returns the path from the source to the selected target and
@@ -42,12 +46,16 @@ public class Dijkstra
     }
     
     
-    public void execute(int source) {
+    public int getTargetPathCost(int target) {
+		return cost.get(target);
+	}
+
+	public void execute(int source) {
         settledNodes = new HashSet<Integer>();
         unSettledNodes = new HashSet<Integer>();
-        cost = new TreeMap<Integer, Double>();
+        cost = new TreeMap<Integer, Integer>();
         predecessors = new TreeMap<Integer, Integer>();
-        cost.put(source, 0.0);
+        cost.put(source, 0);
         unSettledNodes.add(source);
         while (unSettledNodes.size() > 0) {
         		Integer node = getMinimum(unSettledNodes);
@@ -69,7 +77,7 @@ public class Dijkstra
 		return successors;
 	}
 	
-	public static double calculateCost(int idOrigin, int idDestination)
+	public static int calculateCost(int idOrigin, int idDestination)
 	{
 		Map map = Map.getInstance();
 		Section section = map.getSection(idOrigin, idDestination);
@@ -81,7 +89,7 @@ public class Dijkstra
 		int[] successors = getSuccessors(idOrigin);
 	    for (int target : successors) {
 	        if (getShortestDistance(target) > getShortestDistance(idOrigin) + calculateCost(idOrigin, target)) {
-	        		cost.put(target, getShortestDistance(idOrigin) + calculateCost(idOrigin, target));
+	        		cost.put(target, (int) (getShortestDistance(idOrigin) + calculateCost(idOrigin, target)));
 	                predecessors.put(target, idOrigin);
 	                unSettledNodes.add(target);
 	        }
@@ -104,10 +112,10 @@ public class Dijkstra
 }
 	
 	// trouve le plus petit cout allant au noeud idDestination dans le tableau de cout.
-	private double getShortestDistance(int idDestination) {
-        Double d = cost.get(idDestination);
+	private Integer getShortestDistance(int idDestination) {
+        Integer d = cost.get(idDestination);
         if (d == null) {
-                return Double.MAX_VALUE;
+                return Integer.MAX_VALUE;
         } else {
                 return d;
         }
