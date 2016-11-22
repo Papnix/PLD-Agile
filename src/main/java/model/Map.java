@@ -69,4 +69,10 @@ public class Map {
     public Section getSection(int idOrigin, int idDestination) {
         return sections.get(idOrigin).get(idDestination);
     }
+
+    public Map clear() {
+        sections.clear();
+        waypoints.clear();
+        return this;
+    }
 }
