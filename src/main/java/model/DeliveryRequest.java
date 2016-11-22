@@ -47,5 +47,10 @@ public class DeliveryRequest {
 
         return this;
     }
-
+    
+    public void clear()
+    {
+    	warehouse = null;
+    	deliveryPointList.clear();
+    }
 }

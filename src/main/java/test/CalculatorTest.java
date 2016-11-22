@@ -142,69 +142,6 @@ public class CalculatorTest {
 	  Assert.assertTrue(result.equals(dj.getPath(target)));
 	  Assert.assertEquals(313, dj.getTargetPathCost(target));
  }
- /*
- @Test
- public void evaluatePathsFromWarehouse(){
-	 try {	
-		  // ouverture de la map de test (créé a cette effet)
-		  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan5x5.xml");
-	  } catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-	  }	
-	 
-	 Dijkstra dj = new Dijkstra();
-	 
-	 try {
-		XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml");
-	} catch (ParserConfigurationException | SAXException | IOException | XMLException | ParseException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	 
-	 DeliveryRequest req = DeliveryRequest.getInstance();
-	 
-	 RoundCalculator rc = new RoundCalculator(req);
-	 
-	 rc.computePathFromWarehouse();
-	 
-	 assertEquals(rc.getCost(21, 1), 1539);
-	 assertEquals(rc.getCost(21, 9), 2418);
-	 assertEquals(rc.getCost(21, 3), 1927);
-	 assertEquals(rc.getCost(21, 13), 1443);
- }
- 
- @Test
- public void evaluatePathsToWarehouse(){
-	 try {	
-		  // ouverture de la map de test (créé a cette effet)
-		  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan5x5.xml");
-	  } catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-	  }	
-	 
-	 Dijkstra dj = new Dijkstra();
-	 
-	 try {
-		XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml");
-	} catch (ParserConfigurationException | SAXException | IOException | XMLException | ParseException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	 
-	 DeliveryRequest req = DeliveryRequest.getInstance();
-	 
-	 RoundCalculator rc = new RoundCalculator(req);
-	 
-	 rc.computePathToWarehouse();
-	 
-	 assertEquals(rc.getCost(1, 21), 1426);
-	 assertEquals(rc.getCost(9, 21), 2314);
-	 assertEquals(rc.getCost(3, 21), 1822);
-	 assertEquals(rc.getCost(13, 21), 1305);
- }
- */
  
  @Test
  public void evaluatePaths(){
@@ -238,6 +175,29 @@ public class CalculatorTest {
 	 assertEquals(rc.getCost(21, 21), 0);
 	 
 	 assertEquals(rc.getCost(1, 3), 388);
+	 assertEquals(rc.getCost(1, 9), 879);
+	 assertEquals(rc.getCost(1, 13), 788);
+	 assertEquals(rc.getCost(1, 21), 1426);
+	 
+	 assertEquals(rc.getCost(3, 1), 396);
+	 assertEquals(rc.getCost(3, 9), 491);
+	 assertEquals(rc.getCost(3, 13), 931);
+	 assertEquals(rc.getCost(3, 21), 1822);
+	 
+	 assertEquals(rc.getCost(9, 1), 888);
+	 assertEquals(rc.getCost(9, 3), 492);
+	 assertEquals(rc.getCost(9, 13), 1423);
+	 assertEquals(rc.getCost(9, 21), 2314);
+	 
+	 assertEquals(rc.getCost(13, 1), 721);
+	 assertEquals(rc.getCost(13, 3), 881);
+	 assertEquals(rc.getCost(13, 9), 1372);
+	 assertEquals(rc.getCost(13, 21), 1305);
+	 
+	 assertEquals(rc.getCost(21, 1), 1539);
+	 assertEquals(rc.getCost(21, 3), 1927);
+	 assertEquals(rc.getCost(21, 9), 2418);
+	 assertEquals(rc.getCost(21, 13), 1443);
  }
  
 }
