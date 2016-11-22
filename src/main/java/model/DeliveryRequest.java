@@ -36,6 +36,10 @@ public class DeliveryRequest {
         return deliveryPointList;
     }
 
+    public Delivery getDeliveryPoint(int index) {
+        return deliveryPointList.get(index);
+    }
+
     public DeliveryRequest addDeliveryPoint(Delivery delivery) {
         this.deliveryPointList.add(delivery);
 
@@ -44,6 +48,12 @@ public class DeliveryRequest {
 
     public DeliveryRequest addDeliveryPointList(List<Delivery> deliveryPointList) {
         this.deliveryPointList.addAll(deliveryPointList);
+
+        return this;
+    }
+
+    public DeliveryRequest clear() {
+        this.deliveryPointList.clear();
 
         return this;
     }
