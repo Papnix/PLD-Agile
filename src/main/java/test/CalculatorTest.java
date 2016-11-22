@@ -4,7 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -31,22 +34,12 @@ public class CalculatorTest {
   public void evaluateGetSuccessors()
   {
 	  try {	
-	  // ouverture de la map de test (créé a cette effet)
-	  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
-	} catch (ParserConfigurationException e) {
+		  // ouverture de la map de test (créé a cette effet)
+		  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+	  } catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
-	} catch (SAXException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (XMLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	  
+	  }	  
 
 	  Dijkstra dj = new Dijkstra();
 	  
@@ -73,21 +66,11 @@ public class CalculatorTest {
   {
 	  try {	
 		  // ouverture de la map de test (créé a cette effet)
-	  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
-		} catch (ParserConfigurationException e) {
+		  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+	  } catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (XMLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	  
+	  }	  
 
 	  Dijkstra dj = new Dijkstra();
 	  //respectivemet sommet s1, s2, s3;
@@ -122,26 +105,18 @@ public class CalculatorTest {
  public void evaluateMinimalPath()
  {
 	  try {	
-	  // ouverture de la map de test (créé a cette effet)
-	  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+		  // ouverture de la map de test (créé a cette effet)
+		  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 		
 		/**
 		 * recuperation de la demande de livraison 
 		 */
 		
-	} catch (ParserConfigurationException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (SAXException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (XMLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	  } catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	  }
+	  
 	  int source = 1;
 	  int target = 7;
 	  Dijkstra dj = new Dijkstra();
@@ -163,6 +138,21 @@ public class CalculatorTest {
 	  
 	  Assert.assertTrue(result.equals(dj.getPath(target)));
 	  Assert.assertEquals(313, dj.getTargetPathCost(target));
+ }
+ 
+ @Test
+ public void evaluatePathsFromWarehouse(){
+	 try {	
+		  // ouverture de la map de test (créé a cette effet)
+		  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan5x5.xml");
+	  } catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	  }	
+	 
+	 Dijkstra dj = new Dijkstra();
+	 
+	 
  }
  
 }
