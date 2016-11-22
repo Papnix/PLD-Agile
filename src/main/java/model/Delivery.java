@@ -46,7 +46,8 @@ public class Delivery
 		this.timeRangeEnd = timeRangeEnd;
 	}
 
-	
-	
+	public String toString() {
+		return "Delivery : { waypoint:" + this.associatedWaypoint.getId() + ", duree:" + this.duration + " }";
+	}
 	
 }
