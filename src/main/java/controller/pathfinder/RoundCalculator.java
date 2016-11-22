@@ -1,7 +1,9 @@
 package controller.pathfinder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import model.Delivery;
 import model.DeliveryRequest;
@@ -14,11 +16,22 @@ public class RoundCalculator {
 	private int [][] costTab;
 	private Dijkstra dj;
 	
+	private List<Waypoint> waypoints;
+	
 	private HashMap<Integer, Integer> indexValues;
 	
 	public RoundCalculator(DeliveryRequest delReq){
 		this.delReq = delReq;
-		int size = delReq.getDeliveryPointList().size() + 1;
+		
+		waypoints = new ArrayList<Waypoint>();
+		
+		waypoints.add(delReq.getWarehouse().getAssociatedWaypoint());
+		
+		for (Delivery d : delReq.getDeliveryPointList()){
+			waypoints.add(d.getAssociatedWaypoint());
+		}
+		
+		int size = waypoints.size();
 		costTab = new int[size][size];
 		dj = new Dijkstra();
 		
@@ -26,12 +39,19 @@ public class RoundCalculator {
 		
 		int index = 0;
 		
+		/*
 		indexValues.put(delReq.getWarehouse().getAssociatedWaypoint().getId(), index);
 		
 		for (Delivery d : delReq.getDeliveryPointList()){
 			index++;
 			
 			indexValues.put(d.getAssociatedWaypoint().getId(), index);
+		}
+		*/
+		
+		for (Waypoint w : waypoints){
+			indexValues.put(w.getId(), index);
+			index++;
 		}
 	}
 	
@@ -64,9 +84,25 @@ public class RoundCalculator {
 		for(Delivery delivery : delReq.getDeliveryPointList()){
 			dj.execute(delivery.getAssociatedWaypoint().getId());
 			for(Delivery del:delReq.getDeliveryPointList()){
-				costTab[indexValues.get(delivery.getAssociatedWaypoint().getId())]
-					[indexValues.get(del.getAssociatedWaypoint().getId())] = 
-					dj.getTargetPathCost(del.getAssociatedWaypoint().getId());
+				if (del.getAssociatedWaypoint().getId() != delivery.getAssociatedWaypoint().getId()){
+					costTab[indexValues.get(delivery.getAssociatedWaypoint().getId())]
+							[indexValues.get(del.getAssociatedWaypoint().getId())] = 
+							dj.getTargetPathCost(del.getAssociatedWaypoint().getId());
+				}
+			}
+		}
+	}
+	
+	public void computePaths(){
+		for (Waypoint w1 : waypoints){
+			dj.execute(w1.getId());
+			for (Waypoint w2 : waypoints){
+				if (w1.getId() == w2.getId()){
+					costTab[indexValues.get(w1.getId())][indexValues.get(w2.getId())] = 0;
+				}
+				else{
+					costTab[indexValues.get(w1.getId())][indexValues.get(w2.getId())] = dj.getTargetPathCost(w2.getId());
+				}
 			}
 		}
 	}
@@ -95,4 +131,11 @@ public class RoundCalculator {
 		return round;
 	}
 	
+	public int getCost(int idOrigin, int idDestination){
+		return costTab[indexValues.get(idOrigin)][indexValues.get(idDestination)];
+	}
+	
+	public int[][] getCost(){
+		return costTab;
+	}
 }

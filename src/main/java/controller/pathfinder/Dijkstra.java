@@ -11,7 +11,7 @@ import model.Section;
 
 public class Dijkstra {
 
-	private static Map map;
+	private Map map;
 	private Set<Integer> processedWaypoints;
 	private Set<Integer> visitedWaypoints;
 	private TreeMap<Integer, Integer> predecessors;
@@ -69,7 +69,7 @@ public class Dijkstra {
 		}
 	}
 
-	public static int[] getSuccessors(int idOrigin) {
+	public int[] getSuccessors(int idOrigin) {
 		Object[] sections = map.getSections().get(idOrigin).values().toArray();
 		int[] successors = new int[sections.length];
 
@@ -80,7 +80,7 @@ public class Dijkstra {
 		return successors;
 	}
 
-	public static double computeCost(int idOrigin, int idDestination) {
+	public double computeCost(int idOrigin, int idDestination) {
 		Section section = map.getSection(idOrigin, idDestination);
 
 		return ((double) section.getLength()) / ((double) section.getSpeed());

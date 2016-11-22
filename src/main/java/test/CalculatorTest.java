@@ -3,6 +3,7 @@ package test;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -16,9 +17,11 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import controller.pathfinder.Dijkstra;
+import controller.pathfinder.RoundCalculator;
 import controller.xml.XMLDeserializer;
 import controller.xml.XMLException;
 import model.Calculator;
+import model.DeliveryRequest;
 
 public class CalculatorTest {
   @Test
@@ -45,18 +48,18 @@ public class CalculatorTest {
 	  
 	  //recupere les successeurs du noeud d'id = 2, classé par id croissant.
 	  int [] result = {1,6,7}; 
-	  int [] successors = Dijkstra.getSuccessors(2);
+	  int [] successors = dj.getSuccessors(2);
 	  Arrays.sort(successors);
 	  Assert.assertArrayEquals(result, successors);
 	  
 	//recupere les successeurs du noeud d'id = 1, classé par id croissant.
 	  int [] result1 = {2,6}; 
-	  successors = Dijkstra.getSuccessors(1);
+	  successors = dj.getSuccessors(1);
 	  Arrays.sort(successors);
 	  Assert.assertArrayEquals(result1, successors);
 	  
 	//recupere les successeurs du noeud d'id = 7, classé par id croissant.
-	  successors = Dijkstra.getSuccessors(7);
+	  successors = dj.getSuccessors(7);
 	  Arrays.sort(successors);
 	  Assert.assertArrayEquals(result1, successors);
   }
@@ -83,19 +86,19 @@ public class CalculatorTest {
 	  
 	  //Calcul et test cout de l'"arrete" s1-s2.
 	  costS1S2Estimated = 9082.0/29.0;
-	  Assert.assertEquals(costS1S2Estimated,Dijkstra.computeCost(s1,s2), 0.01);
+	  Assert.assertEquals(costS1S2Estimated,dj.computeCost(s1,s2), 0.01);
 	  
 	//Calcul et test cout de l'"arrete" s2-s1.
 	  costS2S1Estimated = 9082.0/26.0;
-	  Assert.assertEquals(costS2S1Estimated,Dijkstra.computeCost(s2,s1), 0.01);
+	  Assert.assertEquals(costS2S1Estimated,dj.computeCost(s2,s1), 0.01);
 	  
 	//Calcul et test cout de l'"arrete" s1-s3.
 	  costS1S3Estimated = 10257.0/38.0;
-	  Assert.assertEquals(costS1S3Estimated,Dijkstra.computeCost(s1,s3), 0.01);
+	  Assert.assertEquals(costS1S3Estimated,dj.computeCost(s1,s3), 0.01);
 	  
 	//Calcul et test cout de l'"arrete" s2-s3.
 	  costS2S3Estimated = 5440.0/43.0;
-	  Assert.assertEquals(costS2S3Estimated,Dijkstra.computeCost(s2,s3), 0.01);
+	  Assert.assertEquals(costS2S3Estimated,dj.computeCost(s2,s3), 0.01);
 	  
   }
   
@@ -139,7 +142,7 @@ public class CalculatorTest {
 	  Assert.assertTrue(result.equals(dj.getPath(target)));
 	  Assert.assertEquals(313, dj.getTargetPathCost(target));
  }
- 
+ /*
  @Test
  public void evaluatePathsFromWarehouse(){
 	 try {	
@@ -152,7 +155,89 @@ public class CalculatorTest {
 	 
 	 Dijkstra dj = new Dijkstra();
 	 
+	 try {
+		XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml");
+	} catch (ParserConfigurationException | SAXException | IOException | XMLException | ParseException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 	 
+	 DeliveryRequest req = DeliveryRequest.getInstance();
+	 
+	 RoundCalculator rc = new RoundCalculator(req);
+	 
+	 rc.computePathFromWarehouse();
+	 
+	 assertEquals(rc.getCost(21, 1), 1539);
+	 assertEquals(rc.getCost(21, 9), 2418);
+	 assertEquals(rc.getCost(21, 3), 1927);
+	 assertEquals(rc.getCost(21, 13), 1443);
+ }
+ 
+ @Test
+ public void evaluatePathsToWarehouse(){
+	 try {	
+		  // ouverture de la map de test (créé a cette effet)
+		  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan5x5.xml");
+	  } catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	  }	
+	 
+	 Dijkstra dj = new Dijkstra();
+	 
+	 try {
+		XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml");
+	} catch (ParserConfigurationException | SAXException | IOException | XMLException | ParseException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
+	 DeliveryRequest req = DeliveryRequest.getInstance();
+	 
+	 RoundCalculator rc = new RoundCalculator(req);
+	 
+	 rc.computePathToWarehouse();
+	 
+	 assertEquals(rc.getCost(1, 21), 1426);
+	 assertEquals(rc.getCost(9, 21), 2314);
+	 assertEquals(rc.getCost(3, 21), 1822);
+	 assertEquals(rc.getCost(13, 21), 1305);
+ }
+ */
+ 
+ @Test
+ public void evaluatePaths(){
+	 try {	
+		  // ouverture de la map de test (créé a cette effet)
+		  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan5x5.xml");
+	  } catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+	  }	
+	 
+	 Dijkstra dj = new Dijkstra();
+	 
+	 try {
+		XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml");
+	} catch (ParserConfigurationException | SAXException | IOException | XMLException | ParseException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 
+	 DeliveryRequest req = DeliveryRequest.getInstance();
+	 
+	 RoundCalculator rc = new RoundCalculator(req);
+	 
+	 rc.computePaths();
+	 
+	 assertEquals(rc.getCost(1, 1), 0);
+	 assertEquals(rc.getCost(3, 3), 0);
+	 assertEquals(rc.getCost(9, 9), 0);
+	 assertEquals(rc.getCost(13, 13), 0);
+	 assertEquals(rc.getCost(21, 21), 0);
+	 
+	 assertEquals(rc.getCost(1, 3), 388);
  }
  
 }

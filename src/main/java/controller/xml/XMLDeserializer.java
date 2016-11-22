@@ -92,7 +92,9 @@ public class XMLDeserializer {
     }
 
     private static void buildMapFromDOMXML(Element rootNode) throws XMLException, NumberFormatException {
-        NodeList waypointNodes = rootNode.getElementsByTagName(MAP_WAYPOINT_NODE_NAME);
+        Map.getInstance().clear();
+    	
+    	NodeList waypointNodes = rootNode.getElementsByTagName(MAP_WAYPOINT_NODE_NAME);
         for (int i = 0; i < waypointNodes.getLength(); i++) {
             Element node = (Element) waypointNodes.item(i);
             Waypoint waypoint = new Waypoint(
@@ -128,7 +130,7 @@ public class XMLDeserializer {
         Date startDate = startTime != null ? dateFormat.parse(startTime) : null;
 
         Warehouse warehouse = new Warehouse(
-                Integer.parseInt(warehouseElement.getAttribute(ADDRESS_NAME)),
+        		Map.getInstance().getWaypoint(Integer.parseInt(warehouseElement.getAttribute(ADDRESS_NAME))),
                 startDate
         );
         DeliveryRequest.getInstance().setWarehouse(warehouse);
