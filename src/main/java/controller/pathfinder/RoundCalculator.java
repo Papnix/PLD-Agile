@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections4.MapUtils;
 
 import model.Delivery;
 import model.DeliveryRequest;
@@ -76,12 +79,13 @@ public class RoundCalculator {
 		
 		int[] round = new int[size];
 		
+		Map<Integer, Integer> mapInversed = MapUtils.invertMap(indexValues);
 		for (int i = 0; i < size; i++){
-			round[i] = t.getMeilleureSolution(i);
+			round[i] = mapInversed.get(t.getMeilleureSolution(i));
 		}
+		
 		return round;
 	}
-	
 	public int getCost(int idOrigin, int idDestination){
 		return costTab[indexValues.get(idOrigin)][indexValues.get(idDestination)];
 	}
