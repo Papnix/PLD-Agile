@@ -79,7 +79,6 @@ public class RoundCalculator {
 		for (int i = 0; i < size; i++){
 			round[i] = t.getMeilleureSolution(i);
 		}
-		
 		return round;
 	}
 	
