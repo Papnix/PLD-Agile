@@ -25,13 +25,14 @@ public class CalculatorTest {
     assertEquals(6, sum);
   }
   
-  // permet d'evaluer la methode getSuccessor de l'algorithme de Dijkstra (premier pas vers le calcul de la tourné)
+  // permet d'evaluer la methode getSuccessor de l'algorithme de Dijkstra 
+  	//(premier pas vers le calcul de la tourné)
   @Test
   public void evaluateGetSuccessors()
   {
 	  try {	
 	  // ouverture de la map de test (créé a cette effet)
-		XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+	  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 	} catch (ParserConfigurationException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -72,7 +73,7 @@ public class CalculatorTest {
   {
 	  try {	
 		  // ouverture de la map de test (créé a cette effet)
-			XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+	  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -94,33 +95,35 @@ public class CalculatorTest {
 	  s1 = 2;
 	  s2 = 6;
 	  s3 = 7;
-	  int costS1S2Estimated, costS2S1Estimated, costS1S3Estimated, costS2S3Estimated;
+	  double costS1S2Estimated, costS2S1Estimated, costS1S3Estimated;
+	  double costS2S3Estimated;
 	  
 	  //Calcul et test cout de l'"arrete" s1-s2.
-	  costS1S2Estimated = 9082/29;
-	  Assert.assertEquals(costS1S2Estimated,Dijkstra.computeCost(s1,s2));
+	  costS1S2Estimated = 9082.0/29.0;
+	  Assert.assertEquals(costS1S2Estimated,Dijkstra.computeCost(s1,s2), 0.01);
 	  
 	//Calcul et test cout de l'"arrete" s2-s1.
-	  costS2S1Estimated = 9082/26;
-	  Assert.assertEquals(costS2S1Estimated,Dijkstra.computeCost(s2,s1));
+	  costS2S1Estimated = 9082.0/26.0;
+	  Assert.assertEquals(costS2S1Estimated,Dijkstra.computeCost(s2,s1), 0.01);
 	  
 	//Calcul et test cout de l'"arrete" s1-s3.
-	  costS1S3Estimated = 10257/38;
-	  Assert.assertEquals(costS1S3Estimated,Dijkstra.computeCost(s1,s3));
+	  costS1S3Estimated = 10257.0/38.0;
+	  Assert.assertEquals(costS1S3Estimated,Dijkstra.computeCost(s1,s3), 0.01);
 	  
 	//Calcul et test cout de l'"arrete" s2-s3.
-	  costS2S3Estimated = 5440/43;
-	  Assert.assertEquals(costS2S3Estimated,Dijkstra.computeCost(s2,s3));
+	  costS2S3Estimated = 5440.0/43.0;
+	  Assert.assertEquals(costS2S3Estimated,Dijkstra.computeCost(s2,s3), 0.01);
 	  
   }
   
-//permet d'evaluer la methode getSuccessor de l'algorithme de Dijkstra (premier pas vers le calcul de la tourné)
+//permet d'evaluer la methode getSuccessor de l'algorithme de Dijkstra 
+  	//(premier pas vers le calcul de la tourné)
  @Test
  public void evaluateMinimalPath()
  {
 	  try {	
 	  // ouverture de la map de test (créé a cette effet)
-		XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+	  XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 		
 		/**
 		 * recuperation de la demande de livraison 

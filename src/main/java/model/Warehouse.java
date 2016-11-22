@@ -4,11 +4,11 @@ import java.util.Date;
 
 public class Warehouse{
 
-	private int associatedWaypointId;
+	private Waypoint associatedWaypoint;
 	private Date startTime;
 	
-	public Warehouse(int associatedWaypointId, Date startTime) {
-		this.associatedWaypointId = associatedWaypointId;
+	public Warehouse(Waypoint associatedWaypoint, Date startTime) {
+		this.associatedWaypoint = associatedWaypoint;
 		this.startTime = startTime;
 	}
 
@@ -20,8 +20,8 @@ public class Warehouse{
 		this.startTime = startTime;
 	}
 
-	public int getAssociatedWaypointId() {
-		return associatedWaypointId;
+	public Waypoint getAssociatedWaypoint() {
+		return associatedWaypoint;
 	}
 	
 }
