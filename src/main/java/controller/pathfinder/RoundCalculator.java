@@ -20,6 +20,8 @@ public class RoundCalculator {
 	private int [][] costTab;
 	private Dijkstra dj;
 	
+	private HashMap<Integer, HashMap<Integer, List<Integer>>> paths;
+	
 	private List<Waypoint> waypoints;
 	
 	private HashMap<Integer, Integer> indexValues;
@@ -47,11 +49,15 @@ public class RoundCalculator {
 			indexValues.put(w.getId(), index);
 			index++;
 		}
+		
+		paths = new LinkedHashMap();
 	}
 	
 	public void computePaths(){
+		paths.clear();
 		for (Waypoint w1 : waypoints){
 			dj.execute(w1.getId());
+			
 			for (Waypoint w2 : waypoints){
 				if (w1.getId() == w2.getId()){
 					costTab[indexValues.get(w1.getId())][indexValues.get(w2.getId())] = 0;
@@ -59,6 +65,16 @@ public class RoundCalculator {
 				else{
 					costTab[indexValues.get(w1.getId())][indexValues.get(w2.getId())] = dj.getTargetPathCost(w2.getId());
 				}
+				
+				HashMap<Integer, List<Integer>> path = paths.get(w1.getId());
+				
+				if (path == null){
+					path = new LinkedHashMap<Integer, List<Integer>>();
+					paths.put(w1.getId(), path);
+					
+				}
+				
+				path.put(w2.getId(), dj.getPath(w2.getId()));
 			}
 		}
 	}
@@ -86,18 +102,26 @@ public class RoundCalculator {
 		for (int i = 0; i < size; i++){
 			round[i] = mapInversed.get(t.getMeilleureSolution(i));
 			
-			Section s;
+			List<Integer> path;
 			
 			if (i < size - 1)
 			{
-				s = map.getSection(round[i], t.getMeilleureSolution(i+1));
+				path = paths.get(round[i]).get(mapInversed.get(t.getMeilleureSolution(i+1)));
 			}
 			else
 			{
-				s = map.getSection(round[i], round[0]);
+				path = paths.get(round[i]).get(round[0]);
 			}
 			
-			s.setActive(true);
+			for (int j = 0; j < path.size(); j++){
+				Section s;
+				
+				if (j < path.size() - 1){
+					s = map.getSection(path.get(j), path.get(j+1));
+					
+					s.setActive(true);
+				}
+			}
 		}
 		
 		return round;
