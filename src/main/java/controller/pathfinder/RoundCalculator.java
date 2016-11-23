@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.MapUtils;
 
 import model.Delivery;
 import model.DeliveryRequest;
 import model.Waypoint;
+import model.Map;
+import model.Section;
 import tsp.TSP1;
 
 public class RoundCalculator {
@@ -77,11 +78,26 @@ public class RoundCalculator {
 		
 		t.chercheSolution(Integer.MAX_VALUE, size, costTab, duree);
 		
+		Map map = Map.getInstance();
+		
 		int[] round = new int[size];
 		
-		Map<Integer, Integer> mapInversed = MapUtils.invertMap(indexValues);
+		HashMap<Integer, Integer> mapInversed = (HashMap<Integer, Integer>)MapUtils.invertMap(indexValues);
 		for (int i = 0; i < size; i++){
 			round[i] = mapInversed.get(t.getMeilleureSolution(i));
+			
+			Section s;
+			
+			if (i < size - 1)
+			{
+				s = map.getSection(round[i], t.getMeilleureSolution(i+1));
+			}
+			else
+			{
+				s = map.getSection(round[i], round[0]);
+			}
+			
+			s.setActive(true);
 		}
 		
 		return round;

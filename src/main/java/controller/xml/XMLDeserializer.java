@@ -112,6 +112,7 @@ public class XMLDeserializer {
                     node.getAttribute(STREET_NAME),
                     Integer.parseInt(node.getAttribute(SPEED_NAME)),
                     Integer.parseInt(node.getAttribute(LENGTH_NAME)),
+                    false,
                     Map.getInstance().getWaypoint(Integer.parseInt(node.getAttribute(ORIGIN_NAME))),
                     Map.getInstance().getWaypoint(Integer.parseInt(node.getAttribute(DESTINATION_NAME)))
             );
