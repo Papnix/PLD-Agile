@@ -97,6 +97,8 @@ public class RoundCalculator {
 		Map map = Map.getInstance();
 
 		int[] round = new int[size];
+		
+		map.resetPath();
 
 		HashMap<Integer, Integer> mapInversed = (HashMap<Integer, Integer>) MapUtils.invertMap(indexValues);
 		for (int i = 0; i < size; i++) {
