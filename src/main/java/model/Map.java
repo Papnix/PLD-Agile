@@ -71,7 +71,7 @@ public class Map {
     }
     
     public List<Section> getAllSections() {
-    	List<Section> result = new ArrayList();
+    	List<Section> result = new ArrayList<Section>();
     	
     	for (Integer i : sections.keySet()) {
     		TreeMap<Integer, Section> sec = sections.get(i);
@@ -85,7 +85,7 @@ public class Map {
     }
     
     public List<Section> getActiveSections() {
-    	List<Section> result = new ArrayList();
+    	List<Section> result = new ArrayList<Section>();
     	
     	for (Integer i : sections.keySet()) {
     		TreeMap<Integer, Section> sec = sections.get(i);

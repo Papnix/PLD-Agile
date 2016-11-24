@@ -50,7 +50,7 @@ public class RoundCalculator {
 			index++;
 		}
 
-		paths = new LinkedHashMap();
+		paths = new LinkedHashMap<Integer, HashMap<Integer, List<Integer>>>();
 	}
 
 	public void computePaths() {

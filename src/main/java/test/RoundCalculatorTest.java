@@ -14,7 +14,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import controller.pathfinder.Dijkstra;
 import controller.pathfinder.RoundCalculator;
 import controller.xml.XMLDeserializer;
 import controller.xml.XMLException;
@@ -32,8 +31,6 @@ public class RoundCalculatorTest {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 		  }	
-		 
-		 Dijkstra dj = new Dijkstra();
 		 
 		 try {
 			XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml");
@@ -90,8 +87,6 @@ public class RoundCalculatorTest {
 				e.printStackTrace();
 		  }	
 		 
-		 Dijkstra dj = new Dijkstra();
-		 
 		 try {
 			XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml");
 		} catch (ParserConfigurationException | SAXException | IOException | XMLException | ParseException e) {
@@ -113,7 +108,7 @@ public class RoundCalculatorTest {
 		 
 		 List<Section> activeSections = map.getActiveSections();
 		 
-		 List<Section> expectedActive = new ArrayList();
+		 List<Section> expectedActive = new ArrayList<Section>();
 		 
 		 expectedActive.add(map.getSection(21, 16));
 		 expectedActive.add(map.getSection(16, 11));

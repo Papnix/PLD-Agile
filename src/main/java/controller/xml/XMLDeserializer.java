@@ -14,7 +14,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import model.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -93,8 +92,8 @@ public class XMLDeserializer {
 
     private static void buildMapFromDOMXML(Element rootNode) throws XMLException, NumberFormatException {
         Map.getInstance().clear();
-    	
-    	NodeList waypointNodes = rootNode.getElementsByTagName(MAP_WAYPOINT_NODE_NAME);
+
+        NodeList waypointNodes = rootNode.getElementsByTagName(MAP_WAYPOINT_NODE_NAME);
         for (int i = 0; i < waypointNodes.getLength(); i++) {
             Element node = (Element) waypointNodes.item(i);
             Waypoint waypoint = new Waypoint(
@@ -111,8 +110,7 @@ public class XMLDeserializer {
             Section section = new Section(
                     node.getAttribute(STREET_NAME),
                     Integer.parseInt(node.getAttribute(SPEED_NAME)),
-                    Integer.parseInt(node.getAttribute(LENGTH_NAME)),
-                    false,
+                    Integer.parseInt(node.getAttribute(LENGTH_NAME)),false,
                     Map.getInstance().getWaypoint(Integer.parseInt(node.getAttribute(ORIGIN_NAME))),
                     Map.getInstance().getWaypoint(Integer.parseInt(node.getAttribute(DESTINATION_NAME)))
             );
@@ -122,8 +120,8 @@ public class XMLDeserializer {
 
     private static void buildDeliveryRequestFromDOMXML(Element rootNode) throws XMLException, NumberFormatException, ParseException {
         DeliveryRequest.getInstance().clear();
-    	
-    	DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
 
         // Warehouse
         NodeList warehouseNodes = rootNode.getElementsByTagName(DELIVERY_WAREHOUSE_NODE_NAME);

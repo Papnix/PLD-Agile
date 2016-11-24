@@ -1,23 +1,15 @@
 package test;
 
-import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import controller.pathfinder.Dijkstra;
-import controller.pathfinder.RoundCalculator;
 import controller.xml.XMLDeserializer;
-import controller.xml.XMLException;
-import model.DeliveryRequest;
 
 public class DijkstraTest {
 	  // permet d'evaluer la methode getSuccessor de l'algorithme de Dijkstra 
