@@ -14,7 +14,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import model.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -111,7 +110,7 @@ public class XMLDeserializer {
             Section section = new Section(
                     node.getAttribute(STREET_NAME),
                     Integer.parseInt(node.getAttribute(SPEED_NAME)),
-                    Integer.parseInt(node.getAttribute(LENGTH_NAME)),
+                    Integer.parseInt(node.getAttribute(LENGTH_NAME)),false,
                     Map.getInstance().getWaypoint(Integer.parseInt(node.getAttribute(ORIGIN_NAME))),
                     Map.getInstance().getWaypoint(Integer.parseInt(node.getAttribute(DESTINATION_NAME)))
             );
@@ -132,7 +131,7 @@ public class XMLDeserializer {
         Date startDate = startTime != null ? dateFormat.parse(startTime) : null;
 
         Warehouse warehouse = new Warehouse(
-                Integer.parseInt(warehouseElement.getAttribute(ADDRESS_NAME)),
+        		Map.getInstance().getWaypoint(Integer.parseInt(warehouseElement.getAttribute(ADDRESS_NAME))),
                 startDate
         );
         DeliveryRequest.getInstance().setWarehouse(warehouse);

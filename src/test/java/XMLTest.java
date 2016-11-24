@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import controller.xml.XMLDeserializer;
 import model.DeliveryRequest;
@@ -28,7 +27,7 @@ public class XMLTest {
             e.printStackTrace();
         }
 
-        assertEquals(0, DeliveryRequest.getInstance().getWarehouse().getAssociatedWaypointId());
+        assertEquals(0, DeliveryRequest.getInstance().getWarehouse().getAssociatedWaypoint().getId());
         assertEquals(1, DeliveryRequest.getInstance().getDeliveryPoint(0).getAssociatedWaypoint().getId());
     }
 

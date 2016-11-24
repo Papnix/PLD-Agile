@@ -53,9 +53,9 @@ public class DeliveryRequest {
     }
 
     public DeliveryRequest clear() {
+		this.warehouse = null;
         this.deliveryPointList.clear();
 
         return this;
     }
-
 }
