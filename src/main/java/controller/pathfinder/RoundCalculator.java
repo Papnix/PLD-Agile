@@ -96,7 +96,7 @@ public class RoundCalculator {
 
 		Map map = Map.getInstance();
 
-		int[] round = new int[size];
+		int[] round = new int[size + 1];
 		
 		map.resetPath();
 
@@ -122,6 +122,8 @@ public class RoundCalculator {
 				}
 			}
 		}
+		
+		round[size] = round[0];
 
 		return round;
 	}

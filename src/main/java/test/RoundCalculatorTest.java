@@ -1,12 +1,16 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -15,6 +19,8 @@ import controller.pathfinder.RoundCalculator;
 import controller.xml.XMLDeserializer;
 import controller.xml.XMLException;
 import model.DeliveryRequest;
+import model.Map;
+import model.Section;
 
 public class RoundCalculatorTest {
 	@Test
@@ -99,9 +105,38 @@ public class RoundCalculatorTest {
 		 
 		 rc.computePaths();
 		 int [] tabRound = rc.computeRound();
-		 for(int i = 0; i < tabRound.length; i++){
-			 System.out.println(tabRound[i]);
-		 }
 		 
+		 int[] expectedRound = {21, 13, 3, 9, 1, 21};
+		 
+		 Assert.assertArrayEquals(tabRound, expectedRound);
+		 
+		 Map map = Map.getInstance();
+		 
+		 List<Section> activeSections = map.getActiveSections();
+		 
+		 List<Section> expectedActive = new ArrayList();
+		 
+		 expectedActive.add(map.getSection(21, 16));
+		 expectedActive.add(map.getSection(16, 11));
+		 expectedActive.add(map.getSection(11, 12));
+		 expectedActive.add(map.getSection(12, 13));
+		 expectedActive.add(map.getSection(13, 8));
+		 expectedActive.add(map.getSection(8, 7));
+		 expectedActive.add(map.getSection(7, 2));
+		 expectedActive.add(map.getSection(2, 3));
+		 expectedActive.add(map.getSection(3, 4));
+		 expectedActive.add(map.getSection(4, 9));
+		 expectedActive.add(map.getSection(9, 4));
+		 expectedActive.add(map.getSection(4, 3));
+		 expectedActive.add(map.getSection(3, 2));
+		 expectedActive.add(map.getSection(2, 1));
+		 expectedActive.add(map.getSection(1, 0));
+		 expectedActive.add(map.getSection(0, 5));
+		 expectedActive.add(map.getSection(5, 10));
+		 expectedActive.add(map.getSection(10, 11));
+		 expectedActive.add(map.getSection(11, 16));
+		 expectedActive.add(map.getSection(16, 21));
+		 
+		 assertTrue(activeSections.containsAll(expectedActive) && expectedActive.containsAll(activeSections));
 	}
 }
