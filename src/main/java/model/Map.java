@@ -70,6 +70,46 @@ public class Map {
         return sections.get(idOrigin).get(idDestination);
     }
     
+    public List<Section> getAllSections() {
+    	List<Section> result = new ArrayList();
+    	
+    	for (Integer i : sections.keySet()) {
+    		TreeMap<Integer, Section> sec = sections.get(i);
+    		
+    		for (Integer j : sec.keySet()) {
+    			result.add(sec.get(j));
+    		}
+    	}
+    	
+    	return result;
+    }
+    
+    public List<Section> getActiveSections() {
+    	List<Section> result = new ArrayList();
+    	
+    	for (Integer i : sections.keySet()) {
+    		TreeMap<Integer, Section> sec = sections.get(i);
+    		
+    		for (Integer j : sec.keySet()) {
+    			Section s = sec.get(j);
+    			
+    			if (s.isActive()) {
+    				result.add(s);
+    			}
+    		}
+    	}
+    	
+    	return result;
+    }
+    
+    public void resetPath() {
+    	List<Section> sec = getAllSections();
+    	
+    	for (Section s : sec) {
+    		s.setActive(false);
+    	}
+    }
+
     public Map clear() {
         sections.clear();
         waypoints.clear();
