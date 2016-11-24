@@ -1,12 +1,14 @@
 package test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Arrays;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -99,9 +101,10 @@ public class RoundCalculatorTest {
 		 
 		 rc.computePaths();
 		 int [] tabRound = rc.computeRound();
-		 for(int i = 0; i < tabRound.length; i++){
-			 System.out.println(tabRound[i]);
-		 }
+		 int [] expected1 = {21,13,3,9,1,21};
+		 int [] expected2 = {21,13,9,3,1,21};
+		 assertTrue((Arrays.equals(expected1, tabRound) | Arrays.equals(expected2, tabRound)));
+		 
 		 
 	}
 }

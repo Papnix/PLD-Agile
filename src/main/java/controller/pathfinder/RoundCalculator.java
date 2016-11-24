@@ -96,12 +96,11 @@ public class RoundCalculator {
 		
 		Map map = Map.getInstance();
 		
-		int[] round = new int[size];
+		int[] round = new int[size+1];
 		
 		HashMap<Integer, Integer> mapInversed = (HashMap<Integer, Integer>)MapUtils.invertMap(indexValues);
 		for (int i = 0; i < size; i++){
 			round[i] = mapInversed.get(t.getMeilleureSolution(i));
-			
 			List<Integer> path;
 			
 			if (i < size - 1)
@@ -123,9 +122,10 @@ public class RoundCalculator {
 				}
 			}
 		}
-		
+		round[size] = mapInversed.get(t.getMeilleureSolution(0));
 		return round;
 	}
+	
 	public int getCost(int idOrigin, int idDestination){
 		return costTab[indexValues.get(idOrigin)][indexValues.get(idDestination)];
 	}
