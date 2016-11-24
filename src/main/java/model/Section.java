@@ -41,7 +41,7 @@ public class Section
 		return length;
 	}
 	
-	public boolean getActive()
+	public boolean isActive()
 	{
 		return active;
 	}
