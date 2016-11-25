@@ -17,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import model.Checkpoint;
 import model.DeliveryRequest;
+import model.DeliveryTime;
 import model.Map;
 import model.Round;
 
@@ -100,9 +101,10 @@ public class MainWindowController implements Initializable{
     
     private void createDeliveriesList(Round round) {
     	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
-    	List<Checkpoint> deliveries = round.getRequest().getDeliveryPointList();
-    	for (Checkpoint c : deliveries) {
-    		deliveriesTexts.add(deliveryToText(c));
+
+    	List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
+    	for (DeliveryTime dt : deliveryTimes) {
+    		deliveriesTexts.add(deliveryToText(dt.getCheckpoint()));
     	}
     	deliveryList.setItems(deliveriesTexts);
 
