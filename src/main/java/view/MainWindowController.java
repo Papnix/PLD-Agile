@@ -42,6 +42,8 @@ public class MainWindowController implements Initializable{
     @FXML
     private AnchorPane deliveryPane;
     @FXML
+    private AnchorPane mapPane;
+    @FXML
     private Canvas canvasMap;
     @FXML
     private Canvas canvasRound;
@@ -81,6 +83,9 @@ public class MainWindowController implements Initializable{
         
         graphBuilder = new GraphBuilder();
         map = new Map();
+        
+        setupCanvas(canvasMap);
+        setupCanvas(canvasRound);
     }
     
     private void handleLoadDelivery() {
@@ -157,5 +162,12 @@ public class MainWindowController implements Initializable{
     		graphBuilder.drawMap(canvasMap, map);
     	}
     }
-
+    
+	private void setupCanvas(Canvas canvas) {
+	    	
+	    	canvas.widthProperty().bind(mapPane.widthProperty());
+	        canvas.heightProperty().bind(mapPane.heightProperty());
+	        canvas.widthProperty().addListener(evt -> graphBuilder.drawMap(canvas, map));
+	        canvas.heightProperty().addListener(evt -> graphBuilder.drawMap(canvas, map));
+	}
 }
