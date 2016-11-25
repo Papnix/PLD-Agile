@@ -20,6 +20,7 @@ import model.DeliveryRequest;
 import model.DeliveryTime;
 import model.Map;
 import model.Round;
+import model.Section;
 
 
 @SuppressWarnings("restriction")
@@ -111,8 +112,9 @@ public class MainWindowController implements Initializable{
     	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
 
     	List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
-    	for (DeliveryTime dt : deliveryTimes) {
-    		deliveriesTexts.add(deliveryToText(dt.getCheckpoint()));
+    	for (int i = 0; i < deliveryTimes.size() - 1; i++) {
+    		DeliveryTime dt = deliveryTimes.get(i);
+    		deliveriesTexts.add(deliveryToText(dt.getCheckpoint(), round.getPath(dt.getCheckpoint().getAssociatedWaypoint().getId(), deliveryTimes.get(i+1).getCheckpoint().getAssociatedWaypoint().getId())));
     	}
     	deliveryList.setItems(deliveriesTexts);
 
@@ -126,7 +128,10 @@ public class MainWindowController implements Initializable{
     	}
     }
     
-    private String deliveryToText(Checkpoint c) {
+    private String deliveryToText(Checkpoint c, List<Integer> path) {
+    	
+    	
+    	
     	String text = "Adresse : " + c.getAssociatedWaypoint().getId() + "\n";
     	
     	int hours = c.getDuration() / 3600;
@@ -141,6 +146,17 @@ public class MainWindowController implements Initializable{
     	}
     	duration += Integer.toString(minutes);
     	text += "Durée : " + duration;
+    	
+    	text += "\n   Parcours :\n";
+    	
+    	for (int i = 0; i < path.size(); i++) {
+    		
+    		if (i < path.size() - 1) {
+    			Section s = map.getSection(path.get(i), path.get(i+1));
+    			
+    			text += "      Prendre le tronçon : " + s.getStreetName() + " entre " + s.getOrigin().getId() + " et " + s.getDestination().getId() + "\n";
+    		}
+    	}
     	
     	return text;
     }

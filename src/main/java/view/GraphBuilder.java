@@ -100,8 +100,16 @@ public class GraphBuilder {
 	}
 	
 	private void drawRoundWaypoints(Round round, GraphicsContext graph) {
-		for (DeliveryTime dt : round.getArrivalTimes()) {
-			drawWaypoint(dt.getCheckpoint().getAssociatedWaypoint(), graph, Color.RED);
+		
+		List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
+		for (int i = 0; i < deliveryTimes.size(); i++) {
+			DeliveryTime dt = deliveryTimes.get(i);
+			
+			if (i == deliveryTimes.size() - 1) {
+				drawWaypoint(dt.getCheckpoint().getAssociatedWaypoint(), graph, Color.BLUE);
+			} else {
+				drawWaypoint(dt.getCheckpoint().getAssociatedWaypoint(), graph, Color.RED);
+			}
 		}
 	}
 	

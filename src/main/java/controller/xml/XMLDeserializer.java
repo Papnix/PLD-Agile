@@ -29,7 +29,7 @@ public class XMLDeserializer {
     private static final String X_NAME = "x";
     private static final String Y_NAME = "y";
 
-    private static final String STREET_NAME = "streetName";
+    private static final String STREET_NAME = "nomRue";
     private static final String ORIGIN_NAME = "origine";
     private static final String SPEED_NAME = "vitesse";
     private static final String LENGTH_NAME = "longueur";

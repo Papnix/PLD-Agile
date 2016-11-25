@@ -220,4 +220,8 @@ public class Round
 
 		return durations;
 	}
+	
+	public List<Integer> getPath(Integer idOrigin, Integer idDestination) {
+		return paths.get(idOrigin).get(idDestination);
+	}
 }
