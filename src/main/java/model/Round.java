@@ -1,16 +1,12 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.tuple.Pair;
-
 import controller.pathfinder.Dijkstra;
-import controller.pathfinder.RoundCalculator;
 import tsp.TSP1;
 
 public class Round
@@ -151,38 +147,30 @@ public class Round
 	public void computeRound(Map map) {
 		
 		computePaths(map);
-		int size = request.getDeliveryPointList().size() + 1;
-
-		// the visiting time of every waypoint is initialized
-		int[] duration = new int[size];
-
-		for (Checkpoint d : request.getDeliveryPointList()) {
-			duration[indexValues.get(d.getAssociatedWaypoint().getId())] = d.getDuration();
-		}
-
-		TSP1 t = new TSP1();
+		
+		int[] durations = initializeWaypointTime();
+		
+		int numberOfDelivery = request.getDeliveryPointList().size();
+				
+		TSP1 tspAlgorithm = new TSP1();
 
 		// The TSP algorithm is used to compute the best round
-		t.chercheSolution(Integer.MAX_VALUE, size, costTab, duration);
+		tspAlgorithm.chercheSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations);
 
-		int[] round = new int[size + 1 ]; // Return to the warehouse (+1)
+		int[] round = new int[numberOfDelivery + 1 ]; // Return to the warehouse (+1)
 		
-		HashMap<Integer, Integer> inversedMap = (HashMap<Integer, Integer>)
-				MapUtils.invertMap(indexValues);
+		HashMap<Integer, Integer> inversedMap = (HashMap<Integer, Integer>)	MapUtils.invertMap(indexValues);
 		
-		for (int i = 0; i < size; i++){
-			int checkpointId = inversedMap.get(t.getMeilleureSolution(i));
-			arrivalTime.add(new DeliveryTime(request.
-					getDeliveryPoint(checkpointId), null));
-			//round[i] = checkpointId;
+		for (int i = 0; i < numberOfDelivery; i++){
+			int checkpointId = inversedMap.get(tspAlgorithm.getMeilleureSolution(i));
+			arrivalTime.add(new DeliveryTime(request.getDeliveryPoint(checkpointId), null));
+			round[i] = checkpointId;
 			List<Integer> path;
 
-			if (i < size - 1) {
-				path = paths.get(request.getDeliveryPoint(checkpointId))
-						.get(inversedMap.get(t.getMeilleureSolution(i + 1)));
+			if (i < numberOfDelivery - 1) {
+				path = paths.get(request.getDeliveryPoint(checkpointId)).get(inversedMap.get(tspAlgorithm.getMeilleureSolution(i + 1)));
 			} else {
-				path = paths.get(request.getDeliveryPoint(checkpointId))
-						.get(round[0]);
+				path = paths.get(request.getDeliveryPoint(checkpointId)).get(round[0]);
 			}
 
 			for (int j = 0; j < path.size(); j++) {
@@ -194,9 +182,8 @@ public class Round
 				}
 			}
 		}
-		arrivalTime.add(new DeliveryTime(request.getDeliveryPoint(inversedMap
-				.get(t.getMeilleureSolution(0))), null));
-		//return round;
+		arrivalTime.add(new DeliveryTime(request.getDeliveryPoint(inversedMap.get(tspAlgorithm.getMeilleureSolution(0))), null));
+
 	}
 
 	/**
@@ -211,5 +198,20 @@ public class Round
 	public void addStep(Checkpoint step)
 	{
 		
+	}
+	
+	//---- Private methods -----------------------------------------------------------------------------------
+	
+	private int[] initializeWaypointTime() {
+		int size = request.getDeliveryPointList().size();
+
+		// the visiting time of every waypoint is initialized
+		int[] durations = new int[size];
+
+		for (Checkpoint d : request.getDeliveryPointList()) {
+			durations[indexValues.get(d.getAssociatedWaypoint().getId())] = d.getDuration();
+		}
+
+		return durations;
 	}
 }

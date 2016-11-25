@@ -42,7 +42,7 @@ public class Dijkstra {
 	 * Dijkstra Class constructor
 	 */
 	public Dijkstra(Map map) {
-		map = this.map;
+		this.map = map;
 	}
 
 	/**
@@ -105,6 +105,9 @@ public class Dijkstra {
 	 * @return All the direct successors of the specified origin
 	 */
 	public int[] getSuccessors(int idOrigin) {
+		
+		if(map == null) System.out.println("flute");
+		
 		Object[] sections = map.getSections().get(idOrigin).values().toArray();
 		int[] successors = new int[sections.length];
 

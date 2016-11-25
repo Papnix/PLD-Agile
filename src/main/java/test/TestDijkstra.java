@@ -22,7 +22,7 @@ import model.Map;
  *
  * This is a test class to validate the Dijkstra Algorithm.
  */
-public class DijkstraTest {
+public class TestDijkstra {
 	
 	/**
 	 * test method to evaluate all the successor of a node of a graph.
