@@ -1,6 +1,8 @@
 package view;
 
 import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.List;
 import java.util.TreeMap;
 
 import javafx.scene.canvas.Canvas;
@@ -50,7 +52,7 @@ public class GraphBuilder {
 		graph.strokeText(String.valueOf(waypoint.getId()), sourceX + OFFSET_ID, sourceY - OFFSET_ID);
 	}
 
-	private void drawSection(Section section, GraphicsContext graph) {
+	private void drawSection(Section section, GraphicsContext graph, Color color) {
 
 		double originX = section.getOrigin().getxCoord();
 		double originY = section.getOrigin().getyCoord();
@@ -58,7 +60,7 @@ public class GraphBuilder {
 		double destinationX = section.getDestination().getxCoord();
 		double destinationY = section.getDestination().getyCoord();
 		
-		graph.setStroke(PATH_COLOR);
+		graph.setStroke(color);
 		graph.strokeLine(originX, originY, destinationX, destinationY);
 	}
 
@@ -83,23 +85,32 @@ public class GraphBuilder {
 
 				Section section = sectionFromWaypoint.getValue();
 		
-				drawSection(section, graph);
+				drawSection(section, graph, PATH_COLOR);
 			}
 		}
 	}
 	
-	public void drawRound(Canvas canvas, Round round)
-	{
+	public void drawRound(Canvas canvas, Round round){
 		GraphicsContext graphContext = canvas.getGraphicsContext2D();
 
 		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
+		drawRoundSections(round, graphContext);
 		drawRoundWaypoints(round, graphContext);
 	}
 	
 	private void drawRoundWaypoints(Round round, GraphicsContext graph) {
 		for (DeliveryTime dt : round.getArrivalTimes()) {
 			drawWaypoint(dt.getCheckpoint().getAssociatedWaypoint(), graph, Color.RED);
+		}
+	}
+	
+	private void drawRoundSections(Round round, GraphicsContext graph) {
+		List<Section> route = round.getRoute();
+		
+		for (Section s : route)
+		{
+			drawSection(s, graph, Color.RED);
 		}
 	}
 }
