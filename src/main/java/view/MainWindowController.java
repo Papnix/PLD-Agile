@@ -43,6 +43,8 @@ public class MainWindowController implements Initializable{
     private AnchorPane deliveryPane;
     @FXML
     private Canvas canvasMap;
+    @FXML
+    private Canvas canvasRound;
 
     
     public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
@@ -96,6 +98,7 @@ public class MainWindowController implements Initializable{
     		round.computePaths(map);
     		round.computeRound(map);
         	createDeliveriesList(round);
+        	graphBuilder.drawRound(canvasRound, round);
     	}
     }
     
