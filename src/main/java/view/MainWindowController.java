@@ -106,7 +106,19 @@ public class MainWindowController implements Initializable{
     
     private String deliveryToText(Delivery d) {
     	String text = "Adresse : " + d.getAssociatedWaypoint().getId() + "\n";
-    	text += "Durée : " + d.getDuration();
+    	
+    	int hours = d.getDuration() / 3600;
+    	int minutes = (d.getDuration() % 3600) / 60;
+    	String duration = "";
+    	if (hours < 10) {
+    		duration = "0";
+    	}
+    	duration += Integer.toString(hours) + "h";
+    	if (minutes < 10) {
+    		duration += "0";
+    	}
+    	duration += Integer.toString(minutes);
+    	text += "Durée : " + duration;
     	
     	return text;
     }
