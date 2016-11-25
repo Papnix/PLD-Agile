@@ -9,27 +9,50 @@ import java.util.TreeMap;
 import model.Map;
 import model.Section;
 
+/**
+ * @author Alexandre BENTO
+ *
+ */
 public class Dijkstra {
 
+	/**
+	 * The current map instance.
+	 */
 	private Map map;
+	/**
+	 * Set of points that have been completely analyzed.
+	 */
 	private Set<Integer> processedWaypoints;
+	/**
+	 * Set of waypoints that have been visited.
+	 */
 	private Set<Integer> visitedWaypoints;
+	
+	/**
+	 * Treemap of predecessor Waypoint for each Waypoint of the map
+	 */
 	private TreeMap<Integer, Integer> predecessors;
+	
+	/**
+	 * Treemap of the cost of section between the waypoint.
+	 */
 	private TreeMap<Integer, Integer> cost;
 
-	public Dijkstra() {
-		map = Map.getInstance();
+	/**
+	 * Dijkstra Class constructor
+	 */
+	public Dijkstra(Map map) {
+		this.map = map;
 	}
 
-	/*
-	 * This method returns the path from the source to the selected target and
-	 * NULL if no path exists
+	/**
+	 * @param target the desired destination
+	 * @return The ids if all the waypoints forming the path from the current source to the target. Returns null if no path exists.
 	 */
 	public LinkedList<Integer> getPath(Integer target) {
 		LinkedList<Integer> path = new LinkedList<Integer>();
 		Integer step = target;
 
-		// check if a path exists
 		if (predecessors.get(step) == null) {
 			return null;
 		}
@@ -41,16 +64,24 @@ public class Dijkstra {
 			path.add(step);
 		}
 
-		// Put it into the correct order
+		// The path has to be reversed to be in the correct order
 		Collections.reverse(path);
 
 		return path;
 	}
 
+	/**
+	 * @param target the desired destination
+	 * @return The cost of the shortest path from the current source to the target. Returns null if no path exists.
+	 */
 	public int getTargetPathCost(int target) {
 		return cost.get(target);
 	}
 
+	/**
+	 * This method computes all the paths from the specified source to any reachable waypoint.
+	 * @param source the origin from which the paths should be determined
+	 */
 	public void execute(int source) {
 		processedWaypoints = new HashSet<Integer>();
 		visitedWaypoints = new HashSet<Integer>();
@@ -69,7 +100,14 @@ public class Dijkstra {
 		}
 	}
 
+	/**
+	 * @param idOrigin the id of the specified origin
+	 * @return All the direct successors of the specified origin
+	 */
 	public int[] getSuccessors(int idOrigin) {
+		
+		if(map == null) System.out.println("flute");
+		
 		Object[] sections = map.getSections().get(idOrigin).values().toArray();
 		int[] successors = new int[sections.length];
 
@@ -80,12 +118,20 @@ public class Dijkstra {
 		return successors;
 	}
 
+	/**
+	 * @param idOrigin the id of the specified origin
+	 * @param idDestination the id of the desired destination
+	 * @return The cost of the shortest path from the origin to the destination
+	 */
 	public double computeCost(int idOrigin, int idDestination) {
 		Section section = map.getSection(idOrigin, idDestination);
 
 		return ((double) section.getLength()) / ((double) section.getSpeed());
 	}
 
+	/**
+	 * @param idOrigin
+	 */
 	private void findMinimalCost(int idOrigin) {
 		int[] successors = getSuccessors(idOrigin);
 
@@ -100,7 +146,10 @@ public class Dijkstra {
 		}
 	}
 
-	//
+	/**
+	 * @param waypoints
+	 * @return the 
+	 */
 	private int getMinimum(Set<Integer> waypoints) {
 		Integer minimum = null;
 
@@ -115,9 +164,11 @@ public class Dijkstra {
 		}
 		return minimum;
 	}
-
-	// trouve le plus petit cout allant au noeud idDestination dans le tableau
-	// de cout.
+	
+	/**
+	 * @param idDestination the id of the desired destination.
+	 * @return The cost of the shortest path from the source to the destination
+	 */
 	private Integer getShortestDistance(int idDestination) {
 		Integer d = cost.get(idDestination);
 

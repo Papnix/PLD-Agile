@@ -15,7 +15,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import model.Delivery;
+import model.Checkpoint;
 import model.DeliveryRequest;
 
 
@@ -88,9 +88,9 @@ public class MainWindowController implements Initializable{
     
     private void createDeliveriesList() {
     	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
-    	List<Delivery> deliveries = DeliveryRequest.getInstance().getDeliveryPointList();
-    	for (Delivery d : deliveries) {
-    		deliveriesTexts.add(deliveryToText(d));
+    	List<Checkpoint> deliveries = DeliveryRequest.getInstance().getDeliveryPointList();
+    	for (Checkpoint c : deliveries) {
+    		deliveriesTexts.add(deliveryToText(c));
     	}
     	deliveryList.setItems(deliveriesTexts);
 
@@ -104,11 +104,11 @@ public class MainWindowController implements Initializable{
     	}
     }
     
-    private String deliveryToText(Delivery d) {
-    	String text = "Adresse : " + d.getAssociatedWaypoint().getId() + "\n";
+    private String deliveryToText(Checkpoint c) {
+    	String text = "Adresse : " + c.getAssociatedWaypoint().getId() + "\n";
     	
-    	int hours = d.getDuration() / 3600;
-    	int minutes = (d.getDuration() % 3600) / 60;
+    	int hours = c.getDuration() / 3600;
+    	int minutes = (c.getDuration() % 3600) / 60;
     	String duration = "";
     	if (hours < 10) {
     		duration = "0";
