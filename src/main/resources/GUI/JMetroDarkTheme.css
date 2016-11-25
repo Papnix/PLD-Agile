@@ -653,3 +653,43 @@
 	-fx-background-color: #c0392b;
 }
 
+/*******************************************************************************
+ *                                                                             *
+ * TableView                                                                   *
+ *                                                                             *
+ ******************************************************************************/
+
+.list-view {
+    -fx-background-color: #4a4a4a, -fx-control-inner-background;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0) , 8, 0.0 , 0 , 0 );
+    -fx-border-color: #e2e2e2;
+}
+
+.list-view .list-cell{
+    -fx-background-color: #4a4a4a;
+    -fx-text-fill: white;
+}
+.list-view .list-cell:even{
+	-fx-background-color: #515151;
+}
+
+.list-view .list-cell:filled:hover{
+    -fx-background-color: #dedede;
+    -fx-text-fill: #1d1d1d;
+}
+
+.list-view .list-cell:filled:selected{
+    -fx-background-color: #55c4fe;
+    -fx-text-fill: #1d1d1d;
+}
+
+.list-view .list-cell:filled:selected:hover {
+    -fx-background-color: #6dcdff;
+}
+
+.list-view .list-cell:filled:pressed, .combo-box-popup .list-view .list-cell:filled:selected:pressed
+{
+    -fx-background-color: #d3d3d3;
+    -fx-text-fill: #1d1d1d;
+}
+

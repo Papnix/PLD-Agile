@@ -20,6 +20,9 @@ import model.DeliveryRequest;
 
 
 public class MainWindowController implements Initializable{
+	private final static double HEIGHT_COMPUTE_ROUND_BUTTON = 50;
+	
+	private Button computeRoundButton;
 	private ListView<String> deliveryList;
 	private GraphBuilder graphBuilder;
 	
@@ -64,7 +67,8 @@ public class MainWindowController implements Initializable{
         assert deliveryPane != null : "fx:id=\"deliveryPane\" was not injected: check your FXML file 'view.fxml'.";
         
         assert canvasMap != null : "fx:id=\"canvasMap\" was not injected: check your FXML file 'view.fxml'.";
-        
+
+    	computeRoundButton = new Button("Calculer tournée");
         deliveryList = new ListView<String>();
         graphBuilder = new GraphBuilder();
     }
@@ -81,6 +85,11 @@ public class MainWindowController implements Initializable{
 			}
     		
         	loadDeliveryButton.setVisible(false);
+        	AnchorPane.setTopAnchor(computeRoundButton, 0d);
+        	AnchorPane.setBottomAnchor(computeRoundButton, deliveryPane.getHeight() - HEIGHT_COMPUTE_ROUND_BUTTON);
+        	AnchorPane.setRightAnchor(computeRoundButton, 0d);
+        	AnchorPane.setLeftAnchor(computeRoundButton, 0d);
+        	deliveryPane.getChildren().add(computeRoundButton);
         	createDeliveriesList();
     	}
     }
@@ -93,7 +102,7 @@ public class MainWindowController implements Initializable{
     	}
     	deliveryList.setItems(deliveriesTexts);
 
-    	AnchorPane.setTopAnchor(deliveryList, 0d);
+    	AnchorPane.setTopAnchor(deliveryList, HEIGHT_COMPUTE_ROUND_BUTTON);
     	AnchorPane.setBottomAnchor(deliveryList, 0d);
     	AnchorPane.setRightAnchor(deliveryList, 0d);
     	AnchorPane.setLeftAnchor(deliveryList, 0d);
