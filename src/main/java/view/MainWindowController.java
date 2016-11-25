@@ -17,12 +17,17 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import model.Checkpoint;
 import model.DeliveryRequest;
+import model.Map;
 
 
+@SuppressWarnings("restriction")
 public class MainWindowController implements Initializable{
 	private boolean firstDeliveryLoad;
+	private DeliveryRequest deliveryRequest;
 	private ListView<String> deliveryList;
+	
 	private GraphBuilder graphBuilder;
+	private Map map;
 	
     @FXML
     private MenuItem menuLoadDelivery;
@@ -67,8 +72,11 @@ public class MainWindowController implements Initializable{
         assert canvasMap != null : "fx:id=\"canvasMap\" was not injected: check your FXML file 'view.fxml'.";
 
         firstDeliveryLoad = true;
+        deliveryRequest = new DeliveryRequest();
         deliveryList = new ListView<String>();
+        
         graphBuilder = new GraphBuilder();
+        map = new Map();
     }
     
     private void handleLoadDelivery() {
@@ -77,7 +85,7 @@ public class MainWindowController implements Initializable{
     	
     	if(deliveryRequestFile != null) {
     		try {
-    			XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
+    			XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map, deliveryRequest);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -88,7 +96,7 @@ public class MainWindowController implements Initializable{
     
     private void createDeliveriesList() {
     	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
-    	List<Checkpoint> deliveries = DeliveryRequest.getInstance().getDeliveryPointList();
+    	List<Checkpoint> deliveries = deliveryRequest.getDeliveryPointList();
     	for (Checkpoint c : deliveries) {
     		deliveriesTexts.add(deliveryToText(c));
     	}
@@ -129,7 +137,7 @@ public class MainWindowController implements Initializable{
     	
     	if(mapFile != null){
     		try {
-				XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
+				XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString(), map);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -137,7 +145,7 @@ public class MainWindowController implements Initializable{
     		menuLoadDelivery.setDisable(false);
     		loadDeliveryButton.setDisable(false);
     		loadDeliveryButton.setText("Charger demande de livraisons");
-    		graphBuilder.drawMap(canvasMap);
+    		graphBuilder.drawMap(canvasMap, map);
     	}
     }
 

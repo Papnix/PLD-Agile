@@ -10,6 +10,7 @@ import model.Map;
 import model.Section;
 import model.Waypoint;
 
+@SuppressWarnings("restriction")
 public class GraphBuilder {
 	private final static Color WAYPOINT_STROKE_COLOR = new Color(0,0,0, 1);
 	private final static Color WAYPOINT_FILL_COLOR = new Color(41f / 255f, 128f / 255f, 185f / 255f, 1);
@@ -17,10 +18,10 @@ public class GraphBuilder {
 	// private final static Color CHOSEN_PATH_COLOR = new Color(0,255,0,255);
 	private final static int WAYPOINT_SIZE = 5;
 
-	public void drawMap(Canvas canvas) {
+	public void drawMap(Canvas canvas, Map map) {
 		GraphicsContext graphContext = canvas.getGraphicsContext2D();
-		getSectionsMapAndDraw(graphContext);
-		getWaypointsMapAndDraw(graphContext);
+		getSectionsMapAndDraw(graphContext, map);
+		getWaypointsMapAndDraw(graphContext, map);
 	}
 
 	private void drawWaypoint(double positionX, double positionY, GraphicsContext graph) {
@@ -39,8 +40,8 @@ public class GraphBuilder {
 		graph.strokeLine(originX, originY, destinationX, destinationY);
 	}
 
-	private void getWaypointsMapAndDraw(GraphicsContext graph) {
-		for (Entry<Integer, Waypoint> entry : Map.getInstance().getWaypoints().entrySet()) {
+	private void getWaypointsMapAndDraw(GraphicsContext graph, Map map) {
+		for (Entry<Integer, Waypoint> entry : map.getWaypoints().entrySet()) {
 			Waypoint waypoint = entry.getValue();
 			double positionX = waypoint.getxCoord();
 			double positionY = waypoint.getyCoord();
@@ -48,8 +49,8 @@ public class GraphBuilder {
 		}
 	}
 
-	private void getSectionsMapAndDraw(GraphicsContext graph) {
-		for (Entry<Integer, TreeMap<Integer, Section>> source : Map.getInstance().getSections().entrySet()) {
+	private void getSectionsMapAndDraw(GraphicsContext graph, Map map) {
+		for (Entry<Integer, TreeMap<Integer, Section>> source : map.getSections().entrySet()) {
 			// On récupère le point source
 			TreeMap<Integer, Section> waypoint = source.getValue();
 
