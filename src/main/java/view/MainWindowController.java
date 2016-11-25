@@ -18,6 +18,7 @@ import javafx.stage.FileChooser;
 import model.Checkpoint;
 import model.DeliveryRequest;
 import model.Map;
+import model.Round;
 
 
 @SuppressWarnings("restriction")
@@ -89,14 +90,17 @@ public class MainWindowController implements Initializable{
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-    		
-        	createDeliveriesList();
+
+        	Round round = new Round(deliveryRequest);
+    		round.computePaths(map);
+    		round.computeRound(map);
+        	createDeliveriesList(round);
     	}
     }
     
-    private void createDeliveriesList() {
+    private void createDeliveriesList(Round round) {
     	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
-    	List<Checkpoint> deliveries = deliveryRequest.getDeliveryPointList();
+    	List<Checkpoint> deliveries = round.getRequest().getDeliveryPointList();
     	for (Checkpoint c : deliveries) {
     		deliveriesTexts.add(deliveryToText(c));
     	}
