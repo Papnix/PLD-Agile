@@ -27,20 +27,22 @@ public class Dijkstra {
 	 * Set of waypoints that have been visited.
 	 */
 	private Set<Integer> visitedWaypoints;
+	
 	/**
-	 * 
+	 * Treemap of predecessor Waypoint for each Waypoint of the map
 	 */
 	private TreeMap<Integer, Integer> predecessors;
+	
 	/**
-	 * 
+	 * Treemap of the cost of section between the waypoint.
 	 */
 	private TreeMap<Integer, Integer> cost;
 
 	/**
-	 * 
+	 * Dijkstra Class constructor
 	 */
-	public Dijkstra() {
-		map = Map.getInstance();
+	public Dijkstra(Map map) {
+		map = this.map;
 	}
 
 	/**
@@ -100,7 +102,7 @@ public class Dijkstra {
 
 	/**
 	 * @param idOrigin the id of the specified origin
-	 * @return Tll the direct successors of the specified origin
+	 * @return All the direct successors of the specified origin
 	 */
 	public int[] getSuccessors(int idOrigin) {
 		Object[] sections = map.getSections().get(idOrigin).values().toArray();
@@ -143,7 +145,7 @@ public class Dijkstra {
 
 	/**
 	 * @param waypoints
-	 * @return
+	 * @return the 
 	 */
 	private int getMinimum(Set<Integer> waypoints) {
 		Integer minimum = null;

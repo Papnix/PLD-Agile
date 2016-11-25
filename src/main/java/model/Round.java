@@ -1,8 +1,17 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
+import controller.pathfinder.Dijkstra;
+import controller.pathfinder.RoundCalculator;
+import tsp.TSP1;
 
 public class Round
 {
@@ -12,7 +21,26 @@ public class Round
 	
 	private List<Section> route;
 	private DeliveryRequest request;
-	private HashMap<Delivery, Date> visitTime;
+	private List<DeliveryTime> arrivalTime;
+	
+	/**
+	 * This array contains the cost of the shortest path from cp1 to cp2 (costTab[cp1][cp2]).
+	 */
+	private int[][] costTab;
+	/**
+	 * The Dijkstra instance that will compute the paths.
+	 */
+	private Dijkstra dj;
+	/**
+	 * This hashmap contains all the computed paths (represented by lists of waypoint ids). To get the path from cp1 to
+	 * cp2, use paths.get(cp1).get(cp2) (cp1 and cp2 have to be waypoint ids).
+	 */
+	private HashMap<Integer, HashMap<Integer, List<Integer>>> paths;
+
+	/**
+	 * This hashmap is used to bind a waypoint id to a unique array index.
+	 */
+	private HashMap<Integer, Integer> indexValues;
 		
 	//--------------------------------------------------- Methods ------------------------------------------------------
 	
@@ -21,6 +49,9 @@ public class Round
 	public Round(DeliveryRequest request) {
 		super();
 		this.request = request;
+		arrivalTime = new ArrayList<DeliveryTime>();
+		route = new ArrayList<Section>();
+		buildIndex();
 	}
 
 			//------------------------------------------- Getters ------------------------------------------------------
@@ -37,8 +68,8 @@ public class Round
 		return request;
 	}
 
-	public HashMap<Delivery, Date> getVisitTime() {
-		return visitTime;
+	public List<DeliveryTime> getArrivalTimes() {
+		return arrivalTime;
 	}
 	
 			//------------------------------------------- Setters ------------------------------------------------------
@@ -52,13 +83,132 @@ public class Round
 	}
 	
 			//---------------------------------------- Other methods ---------------------------------------------------
-	
-	public void addStep(Delivery step)
-	{
+
+	/**
+	 * @param delReq the delivery request that has to be analyzed
+	 */
+	public void buildIndex() {
+
+		// initializing the cost array
+		int size = request.getDeliveryPointList().size();
+		costTab = new int[size][size];
 		
+		// assigning indices to every waypoint
+		indexValues = new LinkedHashMap<Integer, Integer>();
+
+		for (int index = 0; index < size; ++index) {
+			indexValues.put(request.getDeliveryPoint(index).getId(), index);
+		}
+
+		paths = new LinkedHashMap<Integer, HashMap<Integer, List<Integer>>>();
+	}
+
+	/**
+	 * This method compute the paths from any waypoint (in the delivery request) to any other.
+	 */
+	public void computePaths(Map map) {
+		dj = new Dijkstra(map);
+		paths.clear();
+		
+		// selecting an origin waypoint
+		for (Checkpoint checkpoint1 : request.getDeliveryPointList()) {
+			
+			// compute all paths from the origin
+			dj.execute(checkpoint1.getId());
+			
+			// selecting a destination
+			for (Checkpoint checkpoint2 : request.getDeliveryPointList()) {
+				
+				// if the origin and the destination are equal, the cost of the path is 0.
+				// else, the path is replaced with the result from Dijkstra.
+				if (checkpoint1.getId() == checkpoint2.getId()) {
+					costTab[indexValues.get(checkpoint1.getId())][indexValues.get(checkpoint2.getId())] = 0;
+				} else {
+					costTab[indexValues.get(checkpoint1.getId())][indexValues.get(checkpoint2.getId())] = dj
+							.getTargetPathCost(checkpoint2.getId());
+				}
+
+				HashMap<Integer, List<Integer>> path = paths.get(checkpoint1.getId());
+				
+				// if no path has been determined for cp1, the structure containing all its paths is created.
+				if (path == null) {
+					path = new LinkedHashMap<Integer, List<Integer>>();
+					paths.put(checkpoint1.getId(), path);
+
+				}
+				
+				// the path is inserted in the structure
+				path.put(checkpoint2.getId(), dj.getPath(checkpoint2.getId()));
+			}
+		}
+	}
+
+	/**
+	 * This method computes the best possible round. Method computePaths must be called before.
+	 * @return The ids of the waypoints in the best round, in the right order (the warehouse is both at the beginning
+	 * and the end of the round.
+	 */
+	public void computeRound(Map map) {
+		
+		computePaths(map);
+		int size = request.getDeliveryPointList().size() + 1;
+
+		// the visiting time of every waypoint is initialized
+		int[] duration = new int[size];
+
+		for (Checkpoint d : request.getDeliveryPointList()) {
+			duration[indexValues.get(d.getAssociatedWaypoint().getId())] = d.getDuration();
+		}
+
+		TSP1 t = new TSP1();
+
+		// The TSP algorithm is used to compute the best round
+		t.chercheSolution(Integer.MAX_VALUE, size, costTab, duration);
+
+		int[] round = new int[size + 1 ]; // Return to the warehouse (+1)
+		
+		HashMap<Integer, Integer> inversedMap = (HashMap<Integer, Integer>)
+				MapUtils.invertMap(indexValues);
+		
+		for (int i = 0; i < size; i++){
+			int checkpointId = inversedMap.get(t.getMeilleureSolution(i));
+			arrivalTime.add(new DeliveryTime(request.
+					getDeliveryPoint(checkpointId), null));
+			//round[i] = checkpointId;
+			List<Integer> path;
+
+			if (i < size - 1) {
+				path = paths.get(request.getDeliveryPoint(checkpointId))
+						.get(inversedMap.get(t.getMeilleureSolution(i + 1)));
+			} else {
+				path = paths.get(request.getDeliveryPoint(checkpointId))
+						.get(round[0]);
+			}
+
+			for (int j = 0; j < path.size(); j++) {
+				Section section;
+
+				if (j < path.size() - 1) {
+					section = map.getSection(path.get(j), path.get(j + 1));
+					route.add(section);
+				}
+			}
+		}
+		arrivalTime.add(new DeliveryTime(request.getDeliveryPoint(inversedMap
+				.get(t.getMeilleureSolution(0))), null));
+		//return round;
+	}
+
+	/**
+	 * @param idOrigin the id of the origin
+	 * @param idDestination the id of the destination
+	 * @return The cost of the shortests path from the origin to the destination.
+	 */
+	public int getCost(int idOrigin, int idDestination) {
+		return costTab[indexValues.get(idOrigin)][indexValues.get(idDestination)];
 	}
 	
-	public void computeRoute()
+	public void addStep(Checkpoint step)
 	{
 		
 	}
