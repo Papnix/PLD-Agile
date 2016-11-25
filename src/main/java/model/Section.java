@@ -8,6 +8,8 @@ public class Section
 	private int speed;
 	private int length;
 	
+	private boolean active;
+	
 	private Waypoint origin;
 	private Waypoint destination;
 	
@@ -15,11 +17,12 @@ public class Section
 	
 			//----------------------------------------- Constructors ---------------------------------------------------
 	
-	public Section(String streetName, int speed, int length, Waypoint origin, Waypoint destination) {
+	public Section(String streetName, int speed, int length, boolean active, Waypoint origin, Waypoint destination) {
 		super();
 		this.streetName = streetName;
 		this.speed = speed;
 		this.length = length;
+		this.active = active;
 		this.origin = origin;
 		this.destination = destination;
 	}
@@ -38,12 +41,22 @@ public class Section
 		return length;
 	}
 	
+	public boolean isActive()
+	{
+		return active;
+	}
+	
 	public Waypoint getOrigin() {
 		return origin;
 	}
 	
 	public Waypoint getDestination() {
 		return destination;
+	}
+	
+	public void setActive(boolean active)
+	{
+		this.active = active;
 	}
 
 	public String toString() {

@@ -14,7 +14,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import model.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -92,6 +91,8 @@ public class XMLDeserializer {
     }
 
     private static void buildMapFromDOMXML(Element rootNode) throws XMLException, NumberFormatException {
+        Map.getInstance().clear();
+
         NodeList waypointNodes = rootNode.getElementsByTagName(MAP_WAYPOINT_NODE_NAME);
         for (int i = 0; i < waypointNodes.getLength(); i++) {
             Element node = (Element) waypointNodes.item(i);
@@ -109,7 +110,7 @@ public class XMLDeserializer {
             Section section = new Section(
                     node.getAttribute(STREET_NAME),
                     Integer.parseInt(node.getAttribute(SPEED_NAME)),
-                    Integer.parseInt(node.getAttribute(LENGTH_NAME)),
+                    Integer.parseInt(node.getAttribute(LENGTH_NAME)),false,
                     Map.getInstance().getWaypoint(Integer.parseInt(node.getAttribute(ORIGIN_NAME))),
                     Map.getInstance().getWaypoint(Integer.parseInt(node.getAttribute(DESTINATION_NAME)))
             );
@@ -118,6 +119,8 @@ public class XMLDeserializer {
     }
 
     private static void buildDeliveryRequestFromDOMXML(Element rootNode) throws XMLException, NumberFormatException, ParseException {
+        DeliveryRequest.getInstance().clear();
+
         DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
 
         // Warehouse
@@ -128,7 +131,7 @@ public class XMLDeserializer {
         Date startDate = startTime != null ? dateFormat.parse(startTime) : null;
 
         Warehouse warehouse = new Warehouse(
-                Integer.parseInt(warehouseElement.getAttribute(ADDRESS_NAME)),
+        		Map.getInstance().getWaypoint(Integer.parseInt(warehouseElement.getAttribute(ADDRESS_NAME))),
                 startDate
         );
         DeliveryRequest.getInstance().setWarehouse(warehouse);
