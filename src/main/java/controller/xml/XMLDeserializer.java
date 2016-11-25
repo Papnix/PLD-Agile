@@ -76,7 +76,8 @@ public class XMLDeserializer {
      * @throws IOException
      * @throws XMLException
      */
-    public static void loadDeliveryRequest(String path) throws ParserConfigurationException, SAXException, IOException, XMLException, ParseException {
+    public static void loadDeliveryRequest(String path) throws ParserConfigurationException, SAXException,
+			IOException, XMLException, ParseException {
 
         File xml = new File(path);
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
