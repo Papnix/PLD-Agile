@@ -120,8 +120,7 @@ public class Round
 				if (checkpoint1.getId() == checkpoint2.getId()) {
 					costTab[indexValues.get(checkpoint1.getId())][indexValues.get(checkpoint2.getId())] = 0;
 				} else {
-					costTab[indexValues.get(checkpoint1.getId())][indexValues.get(checkpoint2.getId())] = dj
-							.getTargetPathCost(checkpoint2.getId());
+					costTab[indexValues.get(checkpoint1.getId())][indexValues.get(checkpoint2.getId())] = dj.getTargetPathCost(checkpoint2.getId());
 				}
 
 				HashMap<Integer, List<Integer>> path = paths.get(checkpoint1.getId());
@@ -156,21 +155,27 @@ public class Round
 
 		// The TSP algorithm is used to compute the best round
 		tspAlgorithm.chercheSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations);
-
-		int[] round = new int[numberOfDelivery + 1 ]; // Return to the warehouse (+1)
 		
-		HashMap<Integer, Integer> inversedMap = (HashMap<Integer, Integer>)	MapUtils.invertMap(indexValues);
+		
+		HashMap<Integer, Integer> inversedMap = (HashMap<Integer, Integer>) MapUtils.invertMap(indexValues);
 		
 		for (int i = 0; i < numberOfDelivery; i++){
-			int checkpointId = inversedMap.get(tspAlgorithm.getMeilleureSolution(i));
-			arrivalTime.add(new DeliveryTime(request.getDeliveryPoint(checkpointId), null));
-			round[i] = checkpointId;
+			
+			int checkpointIndex = tspAlgorithm.getMeilleureSolution(i);
+			arrivalTime.add(new DeliveryTime(request.getDeliveryPoint(checkpointIndex), null));
+
+			
 			List<Integer> path;
 
+			Checkpoint checkpoint = request.getDeliveryPoint(checkpointIndex);
+			
 			if (i < numberOfDelivery - 1) {
-				path = paths.get(request.getDeliveryPoint(checkpointId)).get(inversedMap.get(tspAlgorithm.getMeilleureSolution(i + 1)));
+				
+				int nextCheckpointIndex = tspAlgorithm.getMeilleureSolution(i + 1);
+				path = paths.get(checkpoint.getId()).get(inversedMap.get(nextCheckpointIndex));
+				
 			} else {
-				path = paths.get(request.getDeliveryPoint(checkpointId)).get(round[0]);
+				path = paths.get(checkpoint.getId()).get(inversedMap.get(0));
 			}
 
 			for (int j = 0; j < path.size(); j++) {
@@ -182,7 +187,8 @@ public class Round
 				}
 			}
 		}
-		arrivalTime.add(new DeliveryTime(request.getDeliveryPoint(inversedMap.get(tspAlgorithm.getMeilleureSolution(0))), null));
+		
+		arrivalTime.add(new DeliveryTime(request.getDeliveryPoint(0), null));
 
 	}
 
@@ -200,7 +206,7 @@ public class Round
 		
 	}
 	
-	//---- Private methods -----------------------------------------------------------------------------------
+	//---- Private methods -----------------------------------------------------------------------------------	
 	
 	private int[] initializeWaypointTime() {
 		int size = request.getDeliveryPointList().size();
