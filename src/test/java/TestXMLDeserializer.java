@@ -1,5 +1,3 @@
-package test;
-
 import java.util.Map.Entry;
 
 import org.junit.Test;
@@ -12,9 +10,6 @@ import model.Section;
 import model.Waypoint;
 
 public class TestXMLDeserializer {
-
-	
-
 
 	@Test
 	public void testLoadMap() {
@@ -57,5 +52,4 @@ public class TestXMLDeserializer {
 			System.out.println(point.toString());
 		}		
 	}
-	
 }
