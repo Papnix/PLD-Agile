@@ -17,6 +17,14 @@ public class DeliveryTime implements Cloneable {
 		this.waitingTime = waitingTime;
 	}
 
+	public DeliveryTime(DeliveryTime deliveryTime) {
+		super();
+		this.checkpoint = deliveryTime.checkpoint;
+		this.arrivalTime = new Date(deliveryTime.arrivalTime.getTime());
+		this.departureTime = new Date(deliveryTime.departureTime.getTime());
+		this.waitingTime = deliveryTime.waitingTime;
+	}
+
 	public Date getArrivalTime() {
 		return this.arrivalTime;
 	}
@@ -50,11 +58,11 @@ public class DeliveryTime implements Cloneable {
 	public DeliveryTime clone() {
 		DeliveryTime dt = null;
 		try {
-			// On récupère l'instance à renvoyer par l'appel de la 
-			// méthode super.clone()
+			// On rï¿½cupï¿½re l'instance ï¿½ renvoyer par l'appel de la 
+			// mï¿½thode super.clone()
 			dt = (DeliveryTime) super.clone();
 		} catch(CloneNotSupportedException cnse) {
-			// Ne devrait jamais arriver car nous implémentons 
+			// Ne devrait jamais arriver car nous implï¿½mentons 
 			// l'interface Cloneable
 			cnse.printStackTrace(System.err);
 		}

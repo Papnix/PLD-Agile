@@ -104,7 +104,7 @@ public class MainWindowController implements Initializable {
 			try {
 				newMap = XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
 			} catch (XMLException e) {
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spï¿½cifiï¿½ ne soit pas une carte valide.");
 
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException e) {
@@ -133,7 +133,7 @@ public class MainWindowController implements Initializable {
 	 */
 	private void handleLoadDelivery() {
 
-    	// Demande à l'utilisateur de sélectionner un fichier à charger
+    	// Demande ï¿½ l'utilisateur de sï¿½lectionner un fichier ï¿½ charger
     	File deliveryRequestFile = getFileFromExplorer();
 
 		if (deliveryRequestFile != null) {
@@ -143,7 +143,7 @@ public class MainWindowController implements Initializable {
 						.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
 			} catch (XMLException e) {
 
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
+				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spï¿½cifiï¿½ ne soit pas une"
 						+ " demande de livraison valide.");
 				
 				return;
@@ -156,27 +156,27 @@ public class MainWindowController implements Initializable {
 			if (newDeliveryRequest != null) {
 				deliveryRequest = newDeliveryRequest;
 				try {
-					// Calcul de la tournée
+					// Calcul de la tournï¿½e
 					round = new Round(deliveryRequest);
 					round.computePaths(map);
 					round.computeRound(map);
 				} catch (NullPointerException e) {
 					displayWarningMessageBox(
-							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+							"La demande de livraison ne peut pas ï¿½tre traitï¿½e, elle ne semble pas correspondre ï¿½ la carte actuelle.");
 					return;
 				}
 
 				// Ecriture de la feuille de route
 				Roadmap.writeRoadmap(round, map);
 
-				// Crée la ListView à droite si c'est le premier chargement de
+				// Crï¿½e la ListView ï¿½ droite si c'est le premier chargement de
 				// demande de livraisons
 				if (firstDeliveryLoad) {
 					deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
 					firstDeliveryLoad = false;
 				}
 
-				// Met à jour l'interface graphique
+				// Met ï¿½ jour l'interface graphique
 				deliveriesListView.createDeliveriesList(round, map);
 				loadDeliveryButton.setVisible(false);
 				mapDisplayer.setRound(round);
@@ -189,7 +189,7 @@ public class MainWindowController implements Initializable {
 	 * Remove the round from the list view and clear it's display.
 	 */
 	private void clearPreviousRound() {
-		// On enlève la tournée affichée
+		// On enlï¿½ve la tournï¿½e affichï¿½e
 		round = null;
 		if (firstDeliveryLoad == false) {
 			deliveriesListView.clear();
