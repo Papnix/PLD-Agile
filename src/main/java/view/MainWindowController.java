@@ -2,34 +2,26 @@ package view;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import controller.xml.XMLDeserializer;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Popup;
-import model.Checkpoint;
 import model.DeliveryRequest;
-import model.DeliveryTime;
 import model.Map;
 import model.Round;
-import model.Section;
 
 
 public class MainWindowController implements Initializable{
 	private boolean firstDeliveryLoad;
+	private DeliveriesListView deliveriesListView;
 	private DeliveryRequest deliveryRequest;
-	private ListView<String> deliveryList;
 	
 	private GraphBuilder graphBuilder;
 	private Map map;
@@ -79,22 +71,21 @@ public class MainWindowController implements Initializable{
         assert deliveryPane != null : "fx:id=\"deliveryPane\" was not injected: check your FXML file 'view.fxml'.";
         
         assert canvasMap != null : "fx:id=\"canvasMap\" was not injected: check your FXML file 'view.fxml'.";
-
-        firstDeliveryLoad = true;
-        deliveryList = new ListView<String>();
         
+        firstDeliveryLoad = true;
         graphBuilder = new GraphBuilder();
         
         setupCanvasMap(canvasMap);
-        
-        
     }
     
     private void handleLoadDelivery() {
+    	// Demande à l'utilisateur de sélectionner un fichier à charger
     	FileChooser filechooser = new FileChooser();
     	File deliveryRequestFile = filechooser.showOpenDialog(null);
         deliveryRequest = new DeliveryRequest();
+        
     	if(deliveryRequestFile != null) {
+    		// Vérifie qu'il s'agit bien d'un fichier de demande de livraisons
     		try {
     			XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map, deliveryRequest);
 			} catch (Exception e) {
@@ -102,70 +93,29 @@ public class MainWindowController implements Initializable{
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("Rapport d'erreur");
 				alert.setHeaderText("Erreur chargement demande de livraison");
-				alert.setContentText("Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraison");
+				alert.setContentText("Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraisons");
 
 				alert.showAndWait();
 				return;
 			}
 
+    		// Calcul de la tournée
         	Round round = new Round(deliveryRequest);
     		round.computePaths(map);
     		round.computeRound(map);
-        	createDeliveriesList(round);
+    		
+    		// Crée la ListView à droite si c'est le premier chargement de demande de livraisons
+    		if (firstDeliveryLoad) {
+    			deliveriesListView = new DeliveriesListView(deliveryPane);
+    			firstDeliveryLoad = false;
+    		}
+    		
+    		// Met à jour l'interface graphique
+        	deliveriesListView.createDeliveriesList(round, map);
+        	loadDeliveryButton.setVisible(false);
         	graphBuilder.drawRound(canvasRound, round);
         	setupCanvasRound(canvasRound, round);
     	}
-    }
-    
-    private void createDeliveriesList(Round round) {
-    	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
-
-    	List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
-    	for (int i = 0; i < deliveryTimes.size() - 1; i++) {
-    		DeliveryTime dt = deliveryTimes.get(i);
-    		deliveriesTexts.add(deliveryToText(dt.getCheckpoint(), round.getPath(dt.getCheckpoint().getAssociatedWaypoint().getId(), deliveryTimes.get(i+1).getCheckpoint().getAssociatedWaypoint().getId())));
-    	}
-    	deliveryList.setItems(deliveriesTexts);
-
-    	if (firstDeliveryLoad) {
-	    	AnchorPane.setTopAnchor(deliveryList, 0d);
-	    	AnchorPane.setBottomAnchor(deliveryList, 0d);
-	    	AnchorPane.setRightAnchor(deliveryList, 0d);
-	    	AnchorPane.setLeftAnchor(deliveryList, 0d);
-	    	deliveryPane.getChildren().add(deliveryList);
-			firstDeliveryLoad = false;
-    	}
-    }
-    
-    private String deliveryToText(Checkpoint c, List<Integer> path) {
-    	   	
-    	String text = "Adresse : " + c.getAssociatedWaypoint().getId() + "\n";
-    	
-    	int hours = c.getDuration() / 3600;
-    	int minutes = (c.getDuration() % 3600) / 60;
-    	String duration = "";
-    	if (hours < 10) {
-    		duration = "0";
-    	}
-    	duration += Integer.toString(hours) + "h";
-    	if (minutes < 10) {
-    		duration += "0";
-    	}
-    	duration += Integer.toString(minutes);
-    	text += "Durée : " + duration;
-    	
-    	text += "\n   Parcours :\n";
-    	
-    	for (int i = 0; i < path.size(); i++) {
-    		
-    		if (i < path.size() - 1) {
-    			Section s = map.getSection(path.get(i), path.get(i+1));
-    			
-    			text += "      Prendre le tronçon : " + s.getStreetName() + " entre " + s.getOrigin().getId() + " et " + s.getDestination().getId() + "\n";
-    		}
-    	}
-    	
-    	return text;
     }
 
     private void handleLoadMap() {
