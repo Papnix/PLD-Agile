@@ -6,19 +6,12 @@ import java.util.TreeMap;
 
 public class Map {
 
-    private static Map instance = null;
-
     private TreeMap<Integer, Waypoint> waypoints;
     private TreeMap<Integer, TreeMap<Integer, Section>> sections;
 
-    private Map() {
-        waypoints = new TreeMap<Integer, Waypoint>();
+    public Map(){
+    	waypoints = new TreeMap<Integer, Waypoint>();
         sections = new TreeMap<Integer, TreeMap<Integer, Section>>();
-    }
-
-    public static Map getInstance() {
-        if (instance == null) instance = new Map();
-        return instance;
     }
 
     public Map addWaypoint(Waypoint waypoint) {
@@ -36,21 +29,18 @@ public class Map {
         return this;
     }
 
-    public Map addMultipleWaypoint(ArrayList<Waypoint> waypoints) {
+    public void addMultipleWaypoint(ArrayList<Waypoint> waypoints) {
 
         for (Waypoint waypoint : waypoints) {
             addWaypoint(waypoint);
         }
 
-        return this;
     }
 
-    public Map addMultipleSection(ArrayList<Section> sections) {
+    public void addMultipleSection(ArrayList<Section> sections) {
         for (Section section : sections) {
             addSection(section);
         }
-
-        return this;
     }
 
     public TreeMap<Integer, Waypoint> getWaypoints() {

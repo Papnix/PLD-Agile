@@ -5,55 +5,37 @@ import java.util.List;
 
 public class DeliveryRequest {
 
-    private Warehouse warehouse;
-    private ArrayList<Delivery> deliveryPointList;
-
-    private static DeliveryRequest instance = null;
-
-    public static DeliveryRequest getInstance() {
-        if (instance == null) instance = new DeliveryRequest();
-        return instance;
-    }
+    private ArrayList<Checkpoint> deliveryPointList;
 
     public DeliveryRequest() {
-        this.deliveryPointList = new ArrayList<Delivery>();
+        this.deliveryPointList = new ArrayList<Checkpoint>();
     }
 
-    public DeliveryRequest(Warehouse warehouse, ArrayList<Delivery> deliveryPointList) {
-        this.warehouse = warehouse;
+    public DeliveryRequest(ArrayList<Checkpoint> deliveryPointList) {
         this.deliveryPointList = deliveryPointList;
     }
 
-    public Warehouse getWarehouse() {
-        return warehouse;
-    }
-
-    public void setWarehouse(Warehouse warehouse) {
-        this.warehouse = warehouse;
-    }
-
-    public List<Delivery> getDeliveryPointList() {
+    public List<Checkpoint> getDeliveryPointList() {
         return deliveryPointList;
     }
 
-    public Delivery getDeliveryPoint(int index) {
+    public Checkpoint getDeliveryPoint(int index) {
         return deliveryPointList.get(index);
     }
 
-    public DeliveryRequest addDeliveryPoint(Delivery delivery) {
+    public DeliveryRequest addCheckpoint(Checkpoint delivery) {
         this.deliveryPointList.add(delivery);
 
         return this;
     }
 
-    public DeliveryRequest addDeliveryPointList(List<Delivery> deliveryPointList) {
+    public DeliveryRequest addDeliveryPointList(List<Checkpoint> deliveryPointList) {
         this.deliveryPointList.addAll(deliveryPointList);
 
         return this;
     }
 
     public DeliveryRequest clear() {
-		this.warehouse = null;
         this.deliveryPointList.clear();
 
         return this;
