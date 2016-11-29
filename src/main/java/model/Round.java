@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.apache.commons.collections4.MapUtils;
+//import org.apache.commons.collections4.MapUtils;
 import controller.pathfinder.Dijkstra;
-import tsp.TSP1;
+import controller.tsp.TSP1;
 
 public class Round
 {
@@ -151,17 +151,22 @@ public class Round
 		int[] durations = initializeWaypointTime();
 		Date currentTime = request.getDeliveryPoint(0).getTimeRangeStart();
 		
-		int numberOfDelivery = request.getDeliveryPointList().size();
+		int numberOfDelivery = request.getDeliveryPointList().size() + 1;
 				
 		TSP1 tspAlgorithm = new TSP1();
 
 		// The TSP algorithm is used to compute the best round
-		tspAlgorithm.chercheSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations);
+		tspAlgorithm.chercheSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations, request.getDeliveryPointList());
+		
+		int checkpointIndex;
+		int nextCheckpointIndex;
 		
 		for (int i = 0; i < numberOfDelivery; i++){
 			
-			int checkpointIndex = tspAlgorithm.getMeilleureSolution(i);
-			int nextCheckpointIndex = tspAlgorithm.getMeilleureSolution(i + 1);
+			Checkpoint checkpoint = tspAlgorithm.getMeilleureSolution(i);
+			Checkpoint nextCheckpoint = tspAlgorithm.getMeilleureSolution((i + 1)%numberOfDelivery);
+			checkpointIndex = indexValues.get(checkpoint.getId());
+			nextCheckpointIndex = indexValues.get(nextCheckpoint.getId());
 			
 			int cost = durations[nextCheckpointIndex] + costTab[checkpointIndex][nextCheckpointIndex]; 
 			long tmp = currentTime.getTime() + new Date(cost).getTime();
@@ -186,11 +191,16 @@ public class Round
 			}else{
 				roundTimeOrder.add(new DeliveryTime(request.getDeliveryPoint(checkpointIndex%numberOfDelivery), arrivalTime));
 			}*/
-			roundTimeOrder.add(new DeliveryTime(request.getDeliveryPoint(checkpointIndex%numberOfDelivery), arrivalTime));
+			roundTimeOrder.add(new DeliveryTime(checkpoint, arrivalTime));
+			currentTime = arrivalTime;
 		}
-
+		
+		/*int cost = costTab[indexValues.get(tspAlgorithm.getMeilleureSolution(numberOfDelivery-1).getId())][indexValues.get(tspAlgorithm.getMeilleureSolution(0).getId())]; 
+		long tmp = currentTime.getTime() + new Date(cost).getTime();
+		Date arrivalTime = new Date(tmp);
+		roundTimeOrder.add(new DeliveryTime(request.getDeliveryPoint(0), arrivalTime));*/
 		//roundTimeOrder.add(new DeliveryTime(request.getDeliveryPoint(0), null));
-
+		setIntermediateSections(map);
 	}
 
 	/**
@@ -210,31 +220,18 @@ public class Round
 	//---- Private methods -----------------------------------------------------------------------------------	
 	
 	private void setIntermediateSections(Map map){
-		
-		int numberOfDelivery = request.getDeliveryPointList().size();
-		List<Integer> path;
-		
-		HashMap<Integer, Integer> inversedMap = (HashMap<Integer, Integer>) MapUtils.invertMap(indexValues);
-		
-		for(int i = 0; i< roundTimeOrder.size(); i++){
-			Checkpoint checkpoint = roundTimeOrder.get(i).getCheckpoint();//request.getDeliveryPoint(checkpointIndex);
-			if (i < numberOfDelivery - 1) {
-				
-				Checkpoint nextCheckpoint = roundTimeOrder.get(i+1).getCheckpoint();
-				path = paths.get(checkpoint.getId()).get(inversedMap.get(nextCheckpoint.getId()));
-				
-			} else {
-				path = paths.get(checkpoint.getId()).get(inversedMap.get(0));
-			}
+		for(int i = 0; i< roundTimeOrder.size() - 1; i++){
+			Checkpoint checkpoint = roundTimeOrder.get(i).getCheckpoint();
+			Checkpoint nextCheckpoint = roundTimeOrder.get((i+1)%roundTimeOrder.size()).getCheckpoint();
+			saveSection(map, paths.get(checkpoint.getId()).get(nextCheckpoint.getId()));
+		}
+	}
 	
-			for (int j = 0; j < path.size(); j++) {
-				Section section;
-	
-				if (j < path.size() - 1) {
-					section = map.getSection(path.get(j), path.get(j + 1));
-					route.add(section);
-				}
-			}
+	private void saveSection(Map map, List<Integer> path){
+		for (int j = 0; j < path.size()-1; j++) {
+			Section section;
+			section = map.getSection(path.get(j), path.get((j + 1)));
+			route.add(section);
 		}
 	}
 	

@@ -8,14 +8,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import model.Checkpoint;
-import tsp.TSP;
 
-public abstract class TSPv2 implements TSP {
+public abstract class TemplateTSP implements TSP {
 
-	private Integer[] meilleureSolution;
+	private Checkpoint[] meilleureSolution;
 	private int coutMeilleureSolution = 0;
 	private Boolean tempsLimiteAtteint;
-	private List<Checkpoint> checkpointList;
 	private HashMap<Integer, Integer> indexValues;
 	
 	public Boolean getTempsLimiteAtteint(){
@@ -25,16 +23,15 @@ public abstract class TSPv2 implements TSP {
 	public void chercheSolution(int tpsLimite, int nbSommets, int[][] cout, int[] duree, List<Checkpoint> checkpointList){
 		tempsLimiteAtteint = false;
 		coutMeilleureSolution = Integer.MAX_VALUE;
-		meilleureSolution = new Integer[nbSommets];
-		this.checkpointList = checkpointList;
+		meilleureSolution = new Checkpoint[nbSommets];
 		buildIndex(checkpointList);
 		List<Checkpoint> nonVus = checkpointList;
 		ArrayList<Checkpoint> vus = new ArrayList<Checkpoint>(checkpointList.size());
 		vus.add(checkpointList.get(0)); // le premier sommet visite est 0
-		branchAndBound(checkpointList.get(0), nonVus, vus, 0, cout, duree, System.currentTimeMillis(), tpsLimite);
+		branchAndBound(checkpointList.get(0), nonVus, vus, 0, cout, duree, checkpointList.get(0).getTimeRangeStart().getTime(), tpsLimite);
 	}
 	
-	public Integer getMeilleureSolution(int i){
+	public Checkpoint getMeilleureSolution(int i){
 		if ((meilleureSolution == null) || (i<0) || (i>=meilleureSolution.length))
 			return null;
 		return meilleureSolution[i];
@@ -86,19 +83,19 @@ public abstract class TSPv2 implements TSP {
 	 * @param tpsLimite : limite de temps pour la resolution
 	 */	
 	 void branchAndBound(Checkpoint sommetcrt, List<Checkpoint> nonVus, ArrayList<Checkpoint> vus, int coutVus, int[][] cout, int[] duree, long tpsDebut, int tpsLimite){
-		 if (System.currentTimeMillis() - tpsDebut > tpsLimite){
+		 /*if (System.currentTimeMillis() - tpsDebut > tpsLimite){
 			 tempsLimiteAtteint = true;
 			 return;
-		 }
+		 }*/
 		 
-		Date arrivalDate = new Date(coutVus + tpsDebut);
+		Date arrivalDate = new Date(coutVus*1000 + tpsDebut);
 	    if (nonVus.size() == 0){ // tous les sommets ont ete visites
 	    	coutVus += cout[indexValues.get(sommetcrt.getId())][0];
 	    	if (coutVus < coutMeilleureSolution){ // on a trouve une solution meilleure que meilleureSolution
 	    		vus.toArray(meilleureSolution);
 	    		coutMeilleureSolution = coutVus;
 	    	}
-	    } else if (arrivalDate.getTime() > sommetcrt.getTimeRangeStart().getTime() && arrivalDate.getTime() < sommetcrt.getTimeRangeEnd().getTime() && coutVus + bound(sommetcrt, nonVus, cout, duree) < coutMeilleureSolution){
+	    } else if (validTimeRange(sommetcrt, arrivalDate) && coutVus + bound(sommetcrt, nonVus, cout, duree) < coutMeilleureSolution){
 	        Iterator<Checkpoint> it = iterator(sommetcrt, nonVus, cout, duree);
 	        while (it.hasNext()){
 	        	Checkpoint prochainSommet = it.next();
@@ -109,6 +106,18 @@ public abstract class TSPv2 implements TSP {
 	        	nonVus.add(prochainSommet);
 	        }	    
 	    }
+	}
+	 
+	private boolean validTimeRange(Checkpoint sommetcrt, Date arrivalDate){
+		/* check if there is a time range to arrive at the checkpoint
+		 * 	if yes, check the arrival Date is in the range 
+		 * 	else return true
+		 */
+		if(sommetcrt.getTimeRangeStart() != null && sommetcrt.getTimeRangeEnd() != null){
+			return (arrivalDate.getTime() > sommetcrt.getTimeRangeStart().getTime() && arrivalDate.getTime() < sommetcrt.getTimeRangeEnd().getTime());
+		}else{
+			return true;
+		}
 	}
 
 }

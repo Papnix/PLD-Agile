@@ -130,7 +130,7 @@ public class XMLDeserializer {
         		map.getWaypoint(Integer.parseInt(warehouseElement.getAttribute(ADDRESS_NAME))),
                 0,
                 startDate,
-                new Date()
+                null
         );
         request.addCheckpoint(warehouse);
 
