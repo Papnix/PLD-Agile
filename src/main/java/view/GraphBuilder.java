@@ -29,6 +29,7 @@ public class GraphBuilder {
 
 		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
+		
 		getSectionsMapAndDraw(graphContext, map);
 		getWaypointsMapAndDraw(graphContext, map);
 

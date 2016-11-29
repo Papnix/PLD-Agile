@@ -23,7 +23,6 @@ import model.Round;
 import model.Section;
 
 
-@SuppressWarnings("restriction")
 public class MainWindowController implements Initializable{
 	private boolean firstDeliveryLoad;
 	private DeliveryRequest deliveryRequest;
@@ -85,8 +84,9 @@ public class MainWindowController implements Initializable{
         graphBuilder = new GraphBuilder();
         map = new Map();
         
-        setupCanvas(canvasMap);
-        setupCanvas(canvasRound);
+        setupCanvasMap(canvasMap);
+        
+        
     }
     
     private void handleLoadDelivery() {
@@ -105,6 +105,7 @@ public class MainWindowController implements Initializable{
     		round.computeRound(map);
         	createDeliveriesList(round);
         	graphBuilder.drawRound(canvasRound, round);
+        	setupCanvasRound(canvasRound, round);
     	}
     }
     
@@ -129,9 +130,7 @@ public class MainWindowController implements Initializable{
     }
     
     private String deliveryToText(Checkpoint c, List<Integer> path) {
-    	
-    	
-    	
+    	   	
     	String text = "Adresse : " + c.getAssociatedWaypoint().getId() + "\n";
     	
     	int hours = c.getDuration() / 3600;
@@ -165,12 +164,15 @@ public class MainWindowController implements Initializable{
     	FileChooser filechooser = new FileChooser();
     	File mapFile = filechooser.showOpenDialog(null);
     	
+    	map.clear();
+    	
     	if(mapFile != null){
     		try {
 				XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString(), map);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+    	
     		loadMapButton.setVisible(false);
     		menuLoadDelivery.setDisable(false);
     		loadDeliveryButton.setDisable(false);
@@ -179,11 +181,19 @@ public class MainWindowController implements Initializable{
     	}
     }
     
-	private void setupCanvas(Canvas canvas) {
+	private void setupCanvasMap(Canvas canvas) {
 	    	
 	    	canvas.widthProperty().bind(mapPane.widthProperty());
 	        canvas.heightProperty().bind(mapPane.heightProperty());
 	        canvas.widthProperty().addListener(evt -> graphBuilder.drawMap(canvas, map));
 	        canvas.heightProperty().addListener(evt -> graphBuilder.drawMap(canvas, map));
+	}
+	
+	private void setupCanvasRound(Canvas canvas, Round round) {
+    	
+    	canvas.widthProperty().bind(mapPane.widthProperty());
+        canvas.heightProperty().bind(mapPane.heightProperty());
+        canvas.widthProperty().addListener(evt -> graphBuilder.drawRound(canvas, round));
+        canvas.heightProperty().addListener(evt -> graphBuilder.drawRound(canvas, round));
 	}
 }
