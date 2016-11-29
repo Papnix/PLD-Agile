@@ -10,11 +10,14 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import model.Checkpoint;
 import model.DeliveryRequest;
 import model.DeliveryTime;
@@ -78,11 +81,9 @@ public class MainWindowController implements Initializable{
         assert canvasMap != null : "fx:id=\"canvasMap\" was not injected: check your FXML file 'view.fxml'.";
 
         firstDeliveryLoad = true;
-        deliveryRequest = new DeliveryRequest();
         deliveryList = new ListView<String>();
         
         graphBuilder = new GraphBuilder();
-        map = new Map();
         
         setupCanvasMap(canvasMap);
         
@@ -92,12 +93,19 @@ public class MainWindowController implements Initializable{
     private void handleLoadDelivery() {
     	FileChooser filechooser = new FileChooser();
     	File deliveryRequestFile = filechooser.showOpenDialog(null);
-    	
+        deliveryRequest = new DeliveryRequest();
     	if(deliveryRequestFile != null) {
     		try {
     			XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map, deliveryRequest);
 			} catch (Exception e) {
 				e.printStackTrace();
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Rapport d'erreur");
+				alert.setHeaderText("Erreur chargement demande de livraison");
+				alert.setContentText("Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraison");
+
+				alert.showAndWait();
+				return;
 			}
 
         	Round round = new Round(deliveryRequest);
@@ -164,13 +172,20 @@ public class MainWindowController implements Initializable{
     	FileChooser filechooser = new FileChooser();
     	File mapFile = filechooser.showOpenDialog(null);
     	
-    	map.clear();
-    	
+        map = new Map();
+
     	if(mapFile != null){
     		try {
 				XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString(), map);
 			} catch (Exception e) {
 				e.printStackTrace();
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Rapport d'erreur");
+				alert.setHeaderText("Erreur chargement carte");
+				alert.setContentText("Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte");
+
+				alert.showAndWait();
+				return;
 			}
     	
     		loadMapButton.setVisible(false);
