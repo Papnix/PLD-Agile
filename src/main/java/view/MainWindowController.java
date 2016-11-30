@@ -1,10 +1,18 @@
 package view;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import controller.xml.XMLDeserializer;
+import controller.xml.XMLException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -100,11 +108,16 @@ public class MainWindowController implements Initializable {
 		if (deliveryRequestFile != null) {
 			try {
 				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
-			} catch (Exception e) {
-				e.printStackTrace();
+			}
+			catch (XMLException e) {
 				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraison valide.");
 				return;
 			}
+			catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
+				e.printStackTrace();
+				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
+				return;
+			}			
 
 			if (newDeliveryRequest != null) {
 				deliveryRequest = newDeliveryRequest;
@@ -113,8 +126,7 @@ public class MainWindowController implements Initializable {
 					round.computePaths(map);
 					round.computeRound(map);
 				}
-				catch(Exception e) {
-					e.printStackTrace();
+				catch(NullPointerException e) {
 					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
 				}
 				createDeliveriesList(round);
@@ -186,9 +198,14 @@ public class MainWindowController implements Initializable {
 		if (mapFile != null) {
 			try {
 				newMap = XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
-			} catch (Exception e) {
-				e.printStackTrace();
+			} 
+			catch (XMLException e) {
 				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+				return;
+			}
+			catch (IOException | SAXException | ParserConfigurationException e) {
+				e.printStackTrace();
+				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
 				return;
 			}
 
