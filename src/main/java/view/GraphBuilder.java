@@ -21,17 +21,33 @@ public class GraphBuilder {
 	private final static double OFFSET_ID = 10;
 
 	public void drawMap(Canvas canvas, Map map) {
-
-		GraphicsContext graphContext = canvas.getGraphicsContext2D();
-
-		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
+		GraphicsContext graphContext = canvas.getGraphicsContext2D();
+		
+		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
 		getSectionsMapAndDraw(graphContext, map);
 		getWaypointsMapAndDraw(graphContext, map);
 
 	}
+	
+	public void drawRound(Canvas canvas, Round round){
+		
+		GraphicsContext graphContext = canvas.getGraphicsContext2D();
 
+		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		
+		drawRoundSections(round, graphContext);
+		drawRoundWaypoints(round, graphContext);
+	}
+	
+	public void clearCanvas(Canvas canvas) {
+		GraphicsContext graphContext = canvas.getGraphicsContext2D();
+		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+	}
+
+	//-- PRIVATE ---------------------------------------------------------------------------------
+	
 	private void drawWaypoint(Waypoint waypoint, GraphicsContext graph, Color color) {
 
 		double sourceX = waypoint.getxCoord();
@@ -88,15 +104,7 @@ public class GraphBuilder {
 		}
 	}
 	
-	public void drawRound(Canvas canvas, Round round){
-		GraphicsContext graphContext = canvas.getGraphicsContext2D();
-
-		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
-		drawRoundSections(round, graphContext);
-		drawRoundWaypoints(round, graphContext);
-	}
-	
 	private void drawRoundWaypoints(Round round, GraphicsContext graph) {
 		
 		List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
