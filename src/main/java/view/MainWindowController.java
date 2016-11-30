@@ -32,6 +32,9 @@ import model.Map;
 import model.Round;
 import model.Section;
 
+/**
+ * MainWindowController : the main window of the application
+ */
 public class MainWindowController implements Initializable {
 	private boolean firstDeliveryLoad;
 	private DeliveryRequest deliveryRequest;
@@ -59,6 +62,9 @@ public class MainWindowController implements Initializable {
 	@FXML
 	private Canvas canvasRound;
 
+	/**
+	 * Constructor of the main window, initialize links with fxml file for GUI components.
+	 */
 	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 		assert menuLoadMap != null : "fx:id=\"menuLoadMap\" was not injected: check your FXML file 'view.fxml'.";
 		menuLoadMap.setOnAction((event) -> {
@@ -99,6 +105,9 @@ public class MainWindowController implements Initializable {
 		setupMapPaintAndResize();
 	}
 
+	/**
+	 * Load a delivery request from an xml source chosen by the user in an explorer
+	 */
 	private void handleLoadDelivery() {
 
 		File deliveryRequestFile = getFileFromExplorer();
@@ -128,6 +137,8 @@ public class MainWindowController implements Initializable {
 				}
 				catch(NullPointerException e) {
 					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+					return;
+					
 				}
 				createDeliveriesList(round);
 				reDrawMapAndRound();
@@ -135,6 +146,11 @@ public class MainWindowController implements Initializable {
 		}
 	}
 
+	/**
+	 * Create the list of delivery from a round
+	 * @param round
+	 * 		the round with delivery point to display
+	 */
 	private void createDeliveriesList(Round round) {
 		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
 
@@ -157,12 +173,21 @@ public class MainWindowController implements Initializable {
 		}
 	}
 
-	private String deliveryToText(Checkpoint c, List<Integer> path) {
+	/**
+	 * Prepare texts to display about a delivery point
+	 * @param checkpoint
+	 * 		the point to deliver
+	 * @param path
+	 * 		the road map to get to the checkpoint from the previous
+	 * @return
+	 * 		return a string to display
+	 */
+	private String deliveryToText(Checkpoint checkpoint, List<Integer> path) {
 
-		String text = "Adresse : " + c.getAssociatedWaypoint().getId() + "\n";
+		String text = "Adresse : " + checkpoint.getAssociatedWaypoint().getId() + "\n";
 
-		int hours = c.getDuration() / 3600;
-		int minutes = (c.getDuration() % 3600) / 60;
+		int hours = checkpoint.getDuration() / 3600;
+		int minutes = (checkpoint.getDuration() % 3600) / 60;
 		String duration = "";
 		if (hours < 10) {
 			duration = "0";
@@ -189,6 +214,9 @@ public class MainWindowController implements Initializable {
 		return text;
 	}
 
+	/**
+	 * 	Load a map from an xml source chosen by the user in an explorer.
+	 */
 	private void handleLoadMap() {
 
 		File mapFile = getFileFromExplorer();
@@ -221,6 +249,9 @@ public class MainWindowController implements Initializable {
 		}
 	}
 	
+	/**
+	 *	Remove the round from the list view and clear it's display.
+	 */
 	private void clearPreviousRound()
 	{
 		// On enlève la tournée affichée
@@ -233,6 +264,9 @@ public class MainWindowController implements Initializable {
 		
 	}
 
+	/**
+	 * Stretch canvas to the panel size
+	 */
 	private void setupCanvas() {
 
 		canvasMap.widthProperty().bind(mapPane.widthProperty());
@@ -242,6 +276,9 @@ public class MainWindowController implements Initializable {
 		canvasRound.heightProperty().bind(mapPane.heightProperty());
 	}
 
+	/**
+	 * Setup the repaint of the map and round when the panel size change.
+	 */
 	private void setupMapPaintAndResize() {
 
 		mapPane.widthProperty().addListener((event) -> {
@@ -253,6 +290,9 @@ public class MainWindowController implements Initializable {
 		});
 	}
 
+	/**
+	 * Draw the map and the round(if there is one) on the differents canvas.
+	 */
 	private void reDrawMapAndRound() {
 
 		if (map != null) {
@@ -264,6 +304,9 @@ public class MainWindowController implements Initializable {
 		}
 	}
 
+	/**
+	 *	Open an explorer to select a file and return it.
+	 **/
 	private File getFileFromExplorer() {
 
 		FileChooser explorer = new FileChooser();
@@ -272,9 +315,7 @@ public class MainWindowController implements Initializable {
 		if (lastFolderExplored != null) {
 			try {
 				explorer.setInitialDirectory(new File(lastFolderExplored));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			} catch (Exception e) {}
 		}
 
 		File file = explorer.showOpenDialog(null);
@@ -285,9 +326,9 @@ public class MainWindowController implements Initializable {
 	}
 	
 	/**
-	 * Display a dialog to display some informations to users
+	 * Display a dialog to display some informations to users.
 	 * @param message
-	 * 			message to display
+	 * 			message to display.
 	 **/
 	private static void displayWarningMessageBox(String message) {
 		Alert alert = new Alert(AlertType.ERROR);
