@@ -25,7 +25,11 @@ public abstract class TemplateTSP implements TSP {
 		coutMeilleureSolution = Integer.MAX_VALUE;
 		meilleureSolution = new Checkpoint[nbSommets];
 		buildIndex(checkpointList);
-		List<Checkpoint> nonVus = checkpointList;
+		List<Checkpoint> nonVus = new ArrayList<Checkpoint>();
+		for(Checkpoint checkpoint:checkpointList){
+			nonVus.add(checkpoint);
+		}
+		nonVus.remove(0);
 		ArrayList<Checkpoint> vus = new ArrayList<Checkpoint>(checkpointList.size());
 		vus.add(checkpointList.get(0)); // le premier sommet visite est 0
 		branchAndBound(checkpointList.get(0), nonVus, vus, 0, cout, duree, checkpointList.get(0).getTimeRangeStart().getTime(), tpsLimite);
@@ -73,7 +77,7 @@ public abstract class TemplateTSP implements TSP {
 	
 	/**
 	 * Methode definissant le patron (template) d'une resolution par separation et evaluation (branch and bound) du TSP
-	 * @param sommetcrt le dernier sommet visite
+	 * @param sommetCrt le dernier sommet visite
 	 * @param nonVus la liste des sommets qui n'ont pas encore ete visites
 	 * @param vus la liste des sommets visites (y compris sommetCrt)
 	 * @param coutVus la somme des couts des arcs du chemin passant par tous les sommets de vus + la somme des duree des sommets de vus
@@ -82,7 +86,7 @@ public abstract class TemplateTSP implements TSP {
 	 * @param tpsDebut : moment ou la resolution a commence
 	 * @param tpsLimite : limite de temps pour la resolution
 	 */	
-	 void branchAndBound(Checkpoint sommetcrt, List<Checkpoint> nonVus, ArrayList<Checkpoint> vus, int coutVus, int[][] cout, int[] duree, long tpsDebut, int tpsLimite){
+	 void branchAndBound(Checkpoint sommetCrt, List<Checkpoint> nonVus, ArrayList<Checkpoint> vus, int coutVus, int[][] cout, int[] duree, long tpsDebut, int tpsLimite){
 		 /*if (System.currentTimeMillis() - tpsDebut > tpsLimite){
 			 tempsLimiteAtteint = true;
 			 return;
@@ -90,18 +94,18 @@ public abstract class TemplateTSP implements TSP {
 		 
 		Date arrivalDate = new Date(coutVus*1000 + tpsDebut);
 	    if (nonVus.size() == 0){ // tous les sommets ont ete visites
-	    	coutVus += cout[indexValues.get(sommetcrt.getId())][0];
+	    	coutVus += cout[indexValues.get(sommetCrt.getId())][0];
 	    	if (coutVus < coutMeilleureSolution){ // on a trouve une solution meilleure que meilleureSolution
 	    		vus.toArray(meilleureSolution);
 	    		coutMeilleureSolution = coutVus;
 	    	}
-	    } else if (validTimeRange(sommetcrt, arrivalDate) && coutVus + bound(sommetcrt, nonVus, cout, duree) < coutMeilleureSolution){
-	        Iterator<Checkpoint> it = iterator(sommetcrt, nonVus, cout, duree);
+	    } else if (validTimeRange(sommetCrt, arrivalDate) && coutVus + bound(sommetCrt, nonVus, cout, duree) < coutMeilleureSolution){
+	        Iterator<Checkpoint> it = iterator(sommetCrt, nonVus, cout, duree);
 	        while (it.hasNext()){
 	        	Checkpoint prochainSommet = it.next();
 	        	vus.add(prochainSommet);
 	        	nonVus.remove(prochainSommet);
-	        	branchAndBound(prochainSommet, nonVus, vus, coutVus + cout[indexValues.get(sommetcrt.getId())][indexValues.get(prochainSommet.getId())] + duree[indexValues.get(prochainSommet.getId())], cout, duree, tpsDebut, tpsLimite);
+	        	branchAndBound(prochainSommet, nonVus, vus, coutVus + cout[indexValues.get(sommetCrt.getId())][indexValues.get(prochainSommet.getId())] + duree[indexValues.get(prochainSommet.getId())], cout, duree, tpsDebut, tpsLimite);
 	        	vus.remove(prochainSommet);
 	        	nonVus.add(prochainSommet);
 	        }	    
@@ -113,11 +117,11 @@ public abstract class TemplateTSP implements TSP {
 		 * 	if yes, check the arrival Date is in the range 
 		 * 	else return true
 		 */
-		if(sommetcrt.getTimeRangeStart() != null && sommetcrt.getTimeRangeEnd() != null){
-			return (arrivalDate.getTime() > sommetcrt.getTimeRangeStart().getTime() && arrivalDate.getTime() < sommetcrt.getTimeRangeEnd().getTime());
-		}else{
+		//if(sommetcrt.getTimeRangeStart() != null && sommetcrt.getTimeRangeEnd() != null){
+		//	return (arrivalDate.getTime() > sommetcrt.getTimeRangeStart().getTime() && arrivalDate.getTime() < sommetcrt.getTimeRangeEnd().getTime());
+		//}else{
 			return true;
-		}
+		//}
 	}
 
 }

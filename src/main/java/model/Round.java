@@ -151,7 +151,7 @@ public class Round
 		int[] durations = initializeWaypointTime();
 		Date currentTime = request.getDeliveryPoint(0).getTimeRangeStart();
 		
-		int numberOfDelivery = request.getDeliveryPointList().size() + 1;
+		int numberOfDelivery = request.getDeliveryPointList().size();
 				
 		TSP1 tspAlgorithm = new TSP1();
 
@@ -161,9 +161,9 @@ public class Round
 		int checkpointIndex;
 		int nextCheckpointIndex;
 		
-		for (int i = 0; i < numberOfDelivery; i++){
+		for (int i = 0; i < numberOfDelivery+1; i++){
 			
-			Checkpoint checkpoint = tspAlgorithm.getMeilleureSolution(i);
+			Checkpoint checkpoint = tspAlgorithm.getMeilleureSolution(i%numberOfDelivery);
 			Checkpoint nextCheckpoint = tspAlgorithm.getMeilleureSolution((i + 1)%numberOfDelivery);
 			checkpointIndex = indexValues.get(checkpoint.getId());
 			nextCheckpointIndex = indexValues.get(nextCheckpoint.getId());

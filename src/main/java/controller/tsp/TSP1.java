@@ -9,7 +9,7 @@ import model.Checkpoint;
 
 public class TSP1 extends TemplateTSP{
 	
-	private HashMap<Integer, Integer> indexValues;
+	//private HashMap<Integer, Integer> indexValues;
 
 	protected int bound(Checkpoint sommetCourant, List<Checkpoint> nonVus, int[][] cout, int[] duree) {
 		return 0;
