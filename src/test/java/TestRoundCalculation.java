@@ -1,5 +1,3 @@
-package test;
-
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -41,10 +39,9 @@ public class TestRoundCalculation {
 		DeliveryRequest request = new DeliveryRequest();
 		try {
 			// ouverture de la map de test (créé a cette effet)
-			XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan5x5.xml", map);
-			XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml", map, request);
+			map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan5x5.xml");
+			request = XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml", map);
 		} catch (ParserConfigurationException | SAXException | IOException | XMLException | ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -95,8 +92,8 @@ public class TestRoundCalculation {
 
 		try {
 			// ouverture de la map de test (créé a cette effet)
-			XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan5x5.xml", map);
-			XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml", map, request);
+			map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan5x5.xml");
+			request = XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons5x5-4.xml", map);
 		} catch (ParserConfigurationException | SAXException | IOException | XMLException | ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

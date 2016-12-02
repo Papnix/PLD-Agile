@@ -1,5 +1,3 @@
-package test;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -23,7 +21,6 @@ import model.Map;
  * This is a test class to validate the Dijkstra Algorithm.
  */
 public class TestDijkstra {
-	
 	/**
 	 * test method to evaluate all the successor of a node of a graph.
 	 * @throws XMLException 
@@ -33,7 +30,6 @@ public class TestDijkstra {
 	 */
 	@Test
 	public void evaluateGetSuccessors() throws ParserConfigurationException, SAXException, IOException, XMLException {
-		
 		Map map = Controller.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 
 		Dijkstra dj = new Dijkstra(map);
@@ -64,10 +60,9 @@ public class TestDijkstra {
 	public void evaluateCost() {
 		Map map = new Map();
 		try {
-	// ouverture de la map de test (créé a cette effet)
-	XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml", map);
+			// ouverture de la map de test (créé a cette effet)
+			map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -95,7 +90,6 @@ public class TestDijkstra {
 		// Calcul et test cout de l'"arrete" s2-s3.
 		costS2S3Estimated = 5440.0 / 43.0;
 		Assert.assertEquals(costS2S3Estimated, dj.computeCost(s2, s3), 0.01);
-
 	}
 
 	/**
@@ -107,7 +101,7 @@ public class TestDijkstra {
 		Map map = new Map();
 		try {
 			// ouverture de la map de test (créé a cette effet)
-			XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml", map);
+			map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
