@@ -14,6 +14,8 @@ public class Round
 {
 	//-------------------------------------------------- Attributes ----------------------------------------------------
 	
+	private final int MILLIS_TO_SEC = 1000;
+	
 	private int duration;
 	
 	private List<Section> route;
@@ -65,7 +67,7 @@ public class Round
 		return request;
 	}
 
-	public List<DeliveryTime> getArrivalTimes() {
+	public List<DeliveryTime> getRoundTimeOrder() {
 		return roundTimeOrder;
 	}
 	
@@ -156,60 +158,48 @@ public class Round
 		TSP1 tspAlgorithm = new TSP1();
 
 		// The TSP algorithm is used to compute the best round
-		tspAlgorithm.chercheSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations, request.getDeliveryPointList());
+		tspAlgorithm.chercheSolution(Integer.MAX_VALUE, numberOfDelivery,
+				costTab, durations, request.getDeliveryPointList());
 		
 		int checkpointIndex;
-		int nextCheckpointIndex;
+		int prevCheckpointIndex;
 		
-		for (int i = 0; i < numberOfDelivery+1; i++){
+		Checkpoint ck = tspAlgorithm.getMeilleureSolution(0);
+		roundTimeOrder.add(new DeliveryTime(ck, null, 
+				ck.getTimeRangeStart()));
+		
+		for (int i = 1; i < numberOfDelivery+1; i++){
 			
-			Checkpoint checkpoint = tspAlgorithm.getMeilleureSolution(i%numberOfDelivery);
-			Checkpoint nextCheckpoint = tspAlgorithm.getMeilleureSolution((i + 1)%numberOfDelivery);
-			checkpointIndex = indexValues.get(checkpoint.getId());
-			nextCheckpointIndex = indexValues.get(nextCheckpoint.getId());
+			Checkpoint prevCheckpoint = tspAlgorithm.getMeilleureSolution
+					((i-1)%numberOfDelivery);
+			Checkpoint checkpoint = tspAlgorithm.getMeilleureSolution
+					((i)%numberOfDelivery);
+			checkpointIndex = indexValues.get(prevCheckpoint.getId());
+			prevCheckpointIndex = indexValues.get(checkpoint.getId());
 			
-			int cost = durations[nextCheckpointIndex] + costTab[checkpointIndex][nextCheckpointIndex]; 
+			int cost = costTab[prevCheckpointIndex][checkpointIndex]; 
 			long tmp = currentTime.getTime() + new Date(cost).getTime();
 			Date arrivalTime = new Date(tmp);
+			Date departureTime = new Date(tmp + 
+					durations[checkpointIndex]*MILLIS_TO_SEC);
 			
-			/*int cost = durations[nextCheckpointIndex] + costTab[checkpointIndex][nextCheckpointIndex]; 
-			long tmp = currentTime.getTime() + new Date(cost).getTime();
-			Date arrivalTime = new Date(tmp);
-			
-			if(request.getDeliveryPoint(nextCheckpointIndex).getTimeRangeStart() != null && request.getDeliveryPoint(nextCheckpointIndex).getTimeRangeEnd() != null){
-				if(request.getDeliveryPoint(nextCheckpointIndex).getTimeRangeStart().getTime() > arrivalTime.getTime()){
-					durations[nextCheckpointIndex] += request.getDeliveryPoint(nextCheckpointIndex).getTimeRangeStart().getTime() - arrivalTime.getTime();
-					tspAlgorithm.chercheSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations);
-					i = -1;
-				}else if (request.getDeliveryPoint(nextCheckpointIndex).getTimeRangeEnd().getTime() < arrivalTime.getTime()){
-					durations[nextCheckpointIndex] = Integer.MAX_VALUE;
-					tspAlgorithm.chercheSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations);
-					i = -1;
-				}else{
-					roundTimeOrder.add(new DeliveryTime(request.getDeliveryPoint(checkpointIndex%numberOfDelivery), arrivalTime));
-				}
-			}else{
-				roundTimeOrder.add(new DeliveryTime(request.getDeliveryPoint(checkpointIndex%numberOfDelivery), arrivalTime));
-			}*/
-			roundTimeOrder.add(new DeliveryTime(checkpoint, arrivalTime));
-			currentTime = arrivalTime;
+			roundTimeOrder.add(new DeliveryTime(checkpoint, arrivalTime,
+					departureTime));
+			currentTime = departureTime;
 		}
-		
-		/*int cost = costTab[indexValues.get(tspAlgorithm.getMeilleureSolution(numberOfDelivery-1).getId())][indexValues.get(tspAlgorithm.getMeilleureSolution(0).getId())]; 
-		long tmp = currentTime.getTime() + new Date(cost).getTime();
-		Date arrivalTime = new Date(tmp);
-		roundTimeOrder.add(new DeliveryTime(request.getDeliveryPoint(0), arrivalTime));*/
-		//roundTimeOrder.add(new DeliveryTime(request.getDeliveryPoint(0), null));
+
 		setIntermediateSections(map);
 	}
 
 	/**
 	 * @param idOrigin the id of the origin
 	 * @param idDestination the id of the destination
-	 * @return The cost of the shortests path from the origin to the destination.
+	 * @return The cost of the shortests path from the origin to 
+	 * 	the destination.
 	 */
 	public int getCost(int idOrigin, int idDestination) {
-		return costTab[indexValues.get(idOrigin)][indexValues.get(idDestination)];
+		return costTab[indexValues.get(idOrigin)][indexValues.
+		                                          get(idDestination)];
 	}
 	
 	public void addStep(Checkpoint step)
@@ -222,8 +212,10 @@ public class Round
 	private void setIntermediateSections(Map map){
 		for(int i = 0; i< roundTimeOrder.size() - 1; i++){
 			Checkpoint checkpoint = roundTimeOrder.get(i).getCheckpoint();
-			Checkpoint nextCheckpoint = roundTimeOrder.get((i+1)%roundTimeOrder.size()).getCheckpoint();
-			saveSection(map, paths.get(checkpoint.getId()).get(nextCheckpoint.getId()));
+			Checkpoint nextCheckpoint = roundTimeOrder.get((i+1)%
+					roundTimeOrder.size()).getCheckpoint();
+			saveSection(map, paths.get(checkpoint.getId())
+					.get(nextCheckpoint.getId()));
 		}
 	}
 	

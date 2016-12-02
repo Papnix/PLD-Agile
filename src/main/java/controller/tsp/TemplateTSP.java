@@ -92,7 +92,7 @@ public abstract class TemplateTSP implements TSP {
 			 return;
 		 }*/
 		 
-		Date arrivalDate = new Date(coutVus*1000 + tpsDebut);
+		Date arrivalDate = new Date(coutVus + tpsDebut);
 	    if (nonVus.size() == 0){ // tous les sommets ont ete visites
 	    	coutVus += cout[indexValues.get(sommetCrt.getId())][0];
 	    	if (coutVus < coutMeilleureSolution){ // on a trouve une solution meilleure que meilleureSolution
@@ -117,11 +117,11 @@ public abstract class TemplateTSP implements TSP {
 		 * 	if yes, check the arrival Date is in the range 
 		 * 	else return true
 		 */
-		//if(sommetcrt.getTimeRangeStart() != null && sommetcrt.getTimeRangeEnd() != null){
-		//	return (arrivalDate.getTime() > sommetcrt.getTimeRangeStart().getTime() && arrivalDate.getTime() < sommetcrt.getTimeRangeEnd().getTime());
-		//}else{
+		if(sommetcrt.getTimeRangeStart() != null && sommetcrt.getTimeRangeEnd() != null){
+			return (arrivalDate.getTime() > sommetcrt.getTimeRangeStart().getTime() && arrivalDate.getTime() < sommetcrt.getTimeRangeEnd().getTime());
+		}else{
 			return true;
-		//}
+		}
 	}
 
 }

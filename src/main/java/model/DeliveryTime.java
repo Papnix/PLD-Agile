@@ -5,20 +5,22 @@ import java.util.Date;
 public class DeliveryTime {
 	
 	private Checkpoint checkpoint;
-	private Date deliveryTime;
+	private Date arrivalTime;
+	private Date departureTime;
 	
-	public DeliveryTime(Checkpoint checkpoint, Date deliveryTime) {
+	public DeliveryTime(Checkpoint checkpoint, Date arrivalTime, Date departureTime) {
 		super();
 		this.checkpoint = checkpoint;
-		this.deliveryTime = deliveryTime;
+		this.arrivalTime = arrivalTime;
+		this.departureTime = departureTime;
 	}
 
-	public Date getDeliveryTime() {
-		return deliveryTime;
+	public Date getArrivalTime() {
+		return arrivalTime;
 	}
 
-	public void setDeliveryTime(Date deliveryTime) {
-		this.deliveryTime = deliveryTime;
+	public Date getDepartureTime() {
+		return this.departureTime;
 	}
 
 	public Checkpoint getCheckpoint() {

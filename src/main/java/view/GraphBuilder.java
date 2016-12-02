@@ -1,7 +1,7 @@
 package view;
 
 import java.util.Map.Entry;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.TreeMap;
 
@@ -102,7 +102,7 @@ public class GraphBuilder {
 	
 	private void drawRoundWaypoints(Round round, GraphicsContext graph) {
 		
-		List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
+		List<DeliveryTime> deliveryTimes = round.getRoundTimeOrder();
 		for (int i = 0; i < deliveryTimes.size(); i++) {
 			DeliveryTime dt = deliveryTimes.get(i);
 			

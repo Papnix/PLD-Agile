@@ -2,6 +2,7 @@ package view;
 
 import java.io.File;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ResourceBundle;
 import controller.xml.XMLDeserializer;
@@ -120,12 +121,27 @@ public class MainWindowController implements Initializable{
     private void createDeliveriesList(Round round) {
     	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
 
-    	List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
+    	/*List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
     	for (int i = 0; i < deliveryTimes.size() - 1; i++) {
     		DeliveryTime dt = deliveryTimes.get(i);
     		deliveriesTexts.add(deliveryToText(dt.getCheckpoint(), round.getPath(dt.getCheckpoint().getAssociatedWaypoint().getId(), deliveryTimes.get(i+1).getCheckpoint().getAssociatedWaypoint().getId())));
+    	}*/
+    	//deliveriesTexts.add(deliveryToText(round));
+    	String text = "";
+    	
+    	for(DeliveryTime dt:round.getRoundTimeOrder()){
+    		text = "Adresse : " + dt.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
+    		if(dt.getArrivalTime() != null){
+    			text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(dt.getArrivalTime().getTime()) + "\n";
+    			text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
+    		}else{
+    			text += "Heure de debut de tournée : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
+    		}
+    		
+    		deliveriesTexts.add(text);
+    		deliveryList.setItems(deliveriesTexts);
     	}
-    	deliveryList.setItems(deliveriesTexts);
+    	//deliveryList.setItems(deliveriesTexts);
 
     	if (firstDeliveryLoad) {
 	    	AnchorPane.setTopAnchor(deliveryList, 0d);
@@ -165,6 +181,15 @@ public class MainWindowController implements Initializable{
     		}
     	}
     	
+    	return text;
+    }
+    
+    private String deliveryToText(Round round){
+    	String text = "";
+    	for(DeliveryTime dt:round.getRoundTimeOrder()){
+    		text = "Adresse : " + dt.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
+    		text += "Heure d'arrivée : " + dt.getArrivalTime().getTime();
+    	}
     	return text;
     }
 
