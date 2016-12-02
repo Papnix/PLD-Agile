@@ -24,10 +24,10 @@ public interface TSP {
 	 * @param i
 	 * @return le sommet visite en i-eme position dans la solution calculee par chercheSolution
 	 */
-	public Checkpoint getMeilleureSolution(int i);
+	public Checkpoint getMeilleureSolution(int i, int j);
 	
 	/** 
 	 * @return la duree de la solution calculee par chercheSolution
 	 */
-	public int getCoutMeilleureSolution();
+	public long getCoutMeilleureSolution();
 }

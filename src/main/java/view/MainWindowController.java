@@ -254,7 +254,7 @@ public class MainWindowController implements Initializable {
 	 * @param message
 	 * 			message to display.
 	 **/
-	private static void displayWarningMessageBox(String message) {
+	public static void displayWarningMessageBox(String message) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Rapport d'erreur");
 		alert.setHeaderText("Une erreur est survenue");

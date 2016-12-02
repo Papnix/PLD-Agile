@@ -124,7 +124,7 @@ public class XMLDeserializer {
     }
 
     private static void buildDeliveryRequestFromDOMXML(Element rootNode, Map map, DeliveryRequest request) throws XMLException, NumberFormatException, ParseException {
-        DateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
         // Warehouse
         NodeList warehouseNodes = rootNode.getElementsByTagName(DELIVERY_WAREHOUSE_NODE_NAME);

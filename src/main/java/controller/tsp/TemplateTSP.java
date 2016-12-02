@@ -12,7 +12,8 @@ import model.Checkpoint;
 public abstract class TemplateTSP implements TSP {
 
 	private Checkpoint[] meilleureSolution;
-	private int coutMeilleureSolution = 0;
+	private long coutMeilleureSolution = 0;
+	private List<Checkpoint[]> roundList;
 	private Boolean tempsLimiteAtteint;
 	private HashMap<Integer, Integer> indexValues;
 	
@@ -22,8 +23,9 @@ public abstract class TemplateTSP implements TSP {
 	
 	public void chercheSolution(int tpsLimite, int nbSommets, int[][] cout, int[] duree, List<Checkpoint> checkpointList){
 		tempsLimiteAtteint = false;
-		coutMeilleureSolution = Integer.MAX_VALUE;
+		coutMeilleureSolution = Long.MAX_VALUE;
 		meilleureSolution = new Checkpoint[nbSommets];
+		roundList = new ArrayList<Checkpoint[]>();
 		buildIndex(checkpointList);
 		List<Checkpoint> nonVus = new ArrayList<Checkpoint>();
 		for(Checkpoint checkpoint:checkpointList){
@@ -35,10 +37,16 @@ public abstract class TemplateTSP implements TSP {
 		branchAndBound(checkpointList.get(0), nonVus, vus, 0, cout, duree, checkpointList.get(0).getTimeRangeStart().getTime(), tpsLimite);
 	}
 	
-	public Checkpoint getMeilleureSolution(int i){
-		if ((meilleureSolution == null) || (i<0) || (i>=meilleureSolution.length))
+	public Checkpoint getMeilleureSolution(int i, int j){
+		if ((meilleureSolution == null) || (j<0) || (j>=meilleureSolution.length))
 			return null;
-		return meilleureSolution[i];
+		return getBestRound(i)[j];
+	}
+	
+	public Checkpoint[] getBestRound(int i){
+		if ((roundList == null) || (i<0) || (i>=roundList.size()))
+			return null;
+		return roundList.get(i);
 	}
 	
 	public void buildIndex(List<Checkpoint> checkpointList) {
@@ -50,7 +58,7 @@ public abstract class TemplateTSP implements TSP {
 		}
 	}
 	
-	public int getCoutMeilleureSolution(){
+	public long getCoutMeilleureSolution(){
 		return coutMeilleureSolution;
 	}
 
@@ -86,41 +94,54 @@ public abstract class TemplateTSP implements TSP {
 	 * @param tpsDebut : moment ou la resolution a commence
 	 * @param tpsLimite : limite de temps pour la resolution
 	 */	
-	 void branchAndBound(Checkpoint sommetCrt, List<Checkpoint> nonVus, ArrayList<Checkpoint> vus, int coutVus, int[][] cout, int[] duree, long tpsDebut, int tpsLimite){
+	 void branchAndBound(Checkpoint sommetCrt, List<Checkpoint> nonVus, ArrayList<Checkpoint> vus, long coutVus, int[][] cout, int[] duree, long tpsDebut, int tpsLimite){
 		 /*if (System.currentTimeMillis() - tpsDebut > tpsLimite){
 			 tempsLimiteAtteint = true;
 			 return;
 		 }*/
 		 
-		Date arrivalDate = new Date(coutVus + tpsDebut);
+		Date arrivalDate;
+		arrivalDate = new Date(coutVus + tpsDebut);
+		long waitingTime = validTimeRange(sommetCrt, arrivalDate);
 	    if (nonVus.size() == 0){ // tous les sommets ont ete visites
 	    	coutVus += cout[indexValues.get(sommetCrt.getId())][0];
 	    	if (coutVus < coutMeilleureSolution){ // on a trouve une solution meilleure que meilleureSolution
+	    		roundList.clear();
 	    		vus.toArray(meilleureSolution);
+	    		roundList.add(meilleureSolution);
 	    		coutMeilleureSolution = coutVus;
+	    	}else if (coutVus == coutMeilleureSolution){
+	    		vus.toArray(meilleureSolution);
+	    		roundList.add(meilleureSolution);
 	    	}
-	    } else if (validTimeRange(sommetCrt, arrivalDate) && coutVus + bound(sommetCrt, nonVus, cout, duree) < coutMeilleureSolution){
-	        Iterator<Checkpoint> it = iterator(sommetCrt, nonVus, cout, duree);
+	    } else if (waitingTime !=-1 && (coutVus + bound(sommetCrt, nonVus, cout, duree) < coutMeilleureSolution)){
+	    	Iterator<Checkpoint> it = iterator(sommetCrt, nonVus, cout, duree);
 	        while (it.hasNext()){
 	        	Checkpoint prochainSommet = it.next();
 	        	vus.add(prochainSommet);
 	        	nonVus.remove(prochainSommet);
-	        	branchAndBound(prochainSommet, nonVus, vus, coutVus + cout[indexValues.get(sommetCrt.getId())][indexValues.get(prochainSommet.getId())] + duree[indexValues.get(prochainSommet.getId())], cout, duree, tpsDebut, tpsLimite);
+	        	branchAndBound(prochainSommet, nonVus, vus, coutVus + waitingTime + cout[indexValues.get(sommetCrt.getId())][indexValues.get(prochainSommet.getId())] + duree[indexValues.get(prochainSommet.getId())], cout, duree, tpsDebut, tpsLimite);
 	        	vus.remove(prochainSommet);
 	        	nonVus.add(prochainSommet);
 	        }	    
 	    }
 	}
 	 
-	private boolean validTimeRange(Checkpoint sommetcrt, Date arrivalDate){
+	private long validTimeRange(Checkpoint sommetcrt, Date arrivalDate){
 		/* check if there is a time range to arrive at the checkpoint
 		 * 	if yes, check the arrival Date is in the range 
 		 * 	else return true
 		 */
 		if(sommetcrt.getTimeRangeStart() != null && sommetcrt.getTimeRangeEnd() != null){
-			return (arrivalDate.getTime() > sommetcrt.getTimeRangeStart().getTime() && arrivalDate.getTime() < sommetcrt.getTimeRangeEnd().getTime());
+			if(arrivalDate.getTime() >= sommetcrt.getTimeRangeEnd().getTime()){
+				return -1;
+			}else if (arrivalDate.getTime() >= sommetcrt.getTimeRangeStart().getTime()){
+				return 0;
+			}else{
+				return (sommetcrt.getTimeRangeStart().getTime() - arrivalDate.getTime());
+			}
 		}else{
-			return true;
+			return 0;
 		}
 	}
 

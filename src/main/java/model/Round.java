@@ -9,6 +9,7 @@ import java.util.List;
 //import org.apache.commons.collections4.MapUtils;
 import controller.pathfinder.Dijkstra;
 import controller.tsp.TSP1;
+import view.MainWindowController;
 
 public class Round
 {
@@ -164,31 +165,36 @@ public class Round
 		int checkpointIndex;
 		int prevCheckpointIndex;
 		
-		Checkpoint ck = tspAlgorithm.getMeilleureSolution(0);
-		roundTimeOrder.add(new DeliveryTime(ck, null, 
-				ck.getTimeRangeStart()));
-		
-		for (int i = 1; i < numberOfDelivery+1; i++){
+		try {
+			Checkpoint ck = tspAlgorithm.getMeilleureSolution(0,0);
+			roundTimeOrder.add(new DeliveryTime(ck, null, 
+					ck.getTimeRangeStart()));
 			
-			Checkpoint prevCheckpoint = tspAlgorithm.getMeilleureSolution
-					((i-1)%numberOfDelivery);
-			Checkpoint checkpoint = tspAlgorithm.getMeilleureSolution
-					((i)%numberOfDelivery);
-			checkpointIndex = indexValues.get(prevCheckpoint.getId());
-			prevCheckpointIndex = indexValues.get(checkpoint.getId());
-			
-			int cost = costTab[prevCheckpointIndex][checkpointIndex]; 
-			long tmp = currentTime.getTime() + new Date(cost).getTime();
-			Date arrivalTime = new Date(tmp);
-			Date departureTime = new Date(tmp + 
-					durations[checkpointIndex]*MILLIS_TO_SEC);
-			
-			roundTimeOrder.add(new DeliveryTime(checkpoint, arrivalTime,
-					departureTime));
-			currentTime = departureTime;
-		}
+			for (int i = 1; i < numberOfDelivery+1; i++){
+				
+				Checkpoint prevCheckpoint = tspAlgorithm.getMeilleureSolution
+						(0,(i-1)%numberOfDelivery);
+				Checkpoint checkpoint = tspAlgorithm.getMeilleureSolution
+						(0,(i)%numberOfDelivery);
+				checkpointIndex = indexValues.get(prevCheckpoint.getId());
+				prevCheckpointIndex = indexValues.get(checkpoint.getId());
+				
+				int cost = costTab[prevCheckpointIndex][checkpointIndex]; 
+				long tmp = currentTime.getTime() + new Date(cost).getTime();
+				Date arrivalTime = new Date(tmp);
+				Date departureTime = new Date(tmp + 
+						durations[checkpointIndex]*MILLIS_TO_SEC);
+				
+				roundTimeOrder.add(new DeliveryTime(checkpoint, arrivalTime,
+						departureTime));
+				currentTime = departureTime;
+			}
 
-		setIntermediateSections(map);
+			setIntermediateSections(map);
+		} catch (Exception e) {
+			MainWindowController.displayWarningMessageBox("Oups, aucune tournée possible avec ces contraintes.");
+			e.printStackTrace();
+		}
 	}
 
 	/**
