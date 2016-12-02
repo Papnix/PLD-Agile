@@ -4,22 +4,23 @@ import model.Checkpoint;
 import model.DeliveryTime;
 import model.Round;
 
+import java.util.List;
+
 public class Deletion extends Command {
 
-    public Deletion(DeliveryTime deliveryTime) {
-        super(deliveryTime);
+    public Deletion(Round round) {
+        super(round);
     }
 
-    public Deletion doCommand(Round round) {
-        DeliveryTime previous = null;
-        DeliveryTime next = null;
-
-
-        return this;
+    public Round doCommand(Checkpoint checkpoint) {
+        /*List<DeliveryTime> arrivalTimes = round.getArrivalTimes();
+        for(int i = 0; i<arrivalTimes.size(); i++) {
+            if(arrivalTimes.get(i).getCheckpoint().getId() == this.deliveryTime.getCheckpoint().getId()) {
+                index = i;
+                round.getArrivalTimes().remove(i);
+                break;
+            }
+        }*/
+        return this.modifiedRound;
     }
-
-    public Deletion undoCommand(Round round) {
-        return this;
-    }
-
 }

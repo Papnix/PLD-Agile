@@ -6,14 +6,23 @@ import model.Round;
 
 public abstract class Command {
 
-    private DeliveryTime deliveryTime;
+    protected Round previousRound;
+    protected Round modifiedRound;
 
-    public Command(DeliveryTime deliveryTime) {
-        this.deliveryTime = deliveryTime;
+
+    public Command(Round round) {
+        this.previousRound = round;
+        this.modifiedRound = null;
     }
 
-    public abstract Command doCommand(Round round);
+    public abstract Round doCommand(Checkpoint checkpoint);
 
-    public abstract Command undoCommand(Round round);
+    public Round undoCommand() {
+        return this.previousRound;
+    }
+
+    public Round redoCommand() {
+        return this.modifiedRound;
+    }
 
 }

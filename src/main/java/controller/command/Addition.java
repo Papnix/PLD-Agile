@@ -6,15 +6,11 @@ import model.Round;
 
 public class Addition extends Command {
 
-    public Addition(DeliveryTime deliveryTime) {
-        super(deliveryTime);
+    public Addition(Round round) {
+        super(round);
     }
 
-    public Addition doCommand(Round round) {
-        return this;
-    }
-
-    public Addition undoCommand(Round round) {
-        return this;
+    public Round doCommand(Checkpoint checkpoint) {
+        return this.modifiedRound;
     }
 }

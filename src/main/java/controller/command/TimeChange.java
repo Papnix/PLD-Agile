@@ -6,15 +6,11 @@ import model.Round;
 
 public class TimeChange extends Command {
 
-    public TimeChange(DeliveryTime deliveryTime) {
-        super(deliveryTime);
+    public TimeChange(Round round) {
+        super(round);
     }
 
-    public TimeChange doCommand(Round round) {
-        return this;
-    }
-
-    public TimeChange undoCommand(Round round) {
-        return this;
+    public Round doCommand(Checkpoint checkpoint) {
+        return this.modifiedRound;
     }
 }
