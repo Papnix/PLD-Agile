@@ -40,5 +40,12 @@
     		<artifactId>commons-lang3</artifactId>
     		<version>3.0</version>
     	</dependency>
+		<dependency>
+			<groupId>tsp</groupId>
+			<artifactId>tsp</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/TSP.jar</systemPath>
+		</dependency>
     </dependencies>
 </project>
