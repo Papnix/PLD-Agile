@@ -17,10 +17,10 @@ public class Waypoint
 	public int getId() {
 		return id;
 	}
-	public int getxCoord() {
+	public int getXCoord() {
 		return xCoord;
 	}
-	public int getyCoord() {
+	public int getYCoord() {
 		return yCoord;
 	}
 

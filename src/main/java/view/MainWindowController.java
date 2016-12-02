@@ -21,7 +21,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -44,10 +43,11 @@ public class MainWindowController implements Initializable {
 	private DeliveryRequest deliveryRequest;
 	private ListView<String> deliveryList;
 
-	private GraphBuilder graphBuilder;
 	private Map map;
 	private Round round;
 	private String lastFolderExplored;
+	
+	private Graph mapDisplayer;
 
 	@FXML
 	private MenuItem menuLoadDelivery;
@@ -61,10 +61,7 @@ public class MainWindowController implements Initializable {
 	private AnchorPane deliveryPane;
 	@FXML
 	private AnchorPane mapPane;
-	@FXML
-	private Canvas canvasMap;
-	@FXML
-	private Canvas canvasRound;
+
 
 	/**
 	 * Constructor of the main window, initialize links with fxml file for GUI components.
@@ -94,120 +91,14 @@ public class MainWindowController implements Initializable {
 		});
 
 		assert deliveryPane != null : "fx:id=\"deliveryPane\" was not injected: check your FXML file 'view.fxml'.";
-
 		assert mapPane != null : "fx:id=\"mapPane\" was not injected: check your FXML file 'view.fxml'.";
 
-		assert canvasMap != null : "fx:id=\"canvasMap\" was not injected: check your FXML file 'view.fxml'.";
-
 		firstDeliveryLoad = true;
-
 		deliveryList = new ListView<String>();
+		
+		setupGraphDisplayer();	
 
-		graphBuilder = new GraphBuilder();
-
-		setupCanvas();
-		setupMapPaintAndResize();
 	}
-
-	/**
-	 * Load a delivery request from an xml source chosen by the user in an explorer
-	 */
-	private void handleLoadDelivery() {
-
-		File deliveryRequestFile = getFileFromExplorer();
-
-		DeliveryRequest newDeliveryRequest;
-
-		if (deliveryRequestFile != null) {
-			try {
-				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
-			}
-			catch (XMLException e) {
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraison valide.");
-				return;
-			}
-			catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
-				e.printStackTrace();
-				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
-				return;
-			}			
-
-			if (newDeliveryRequest != null) {
-				deliveryRequest = newDeliveryRequest;
-				try{
-					round = new Round(deliveryRequest);
-					round.computePaths(map);
-					round.computeRound(map);
-				}
-				catch(NullPointerException e) {
-					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
-					return;
-					
-				}
-				createDeliveriesList(round);
-				reDrawMapAndRound();
-			}
-		}
-	}
-
-	/**
-	 * Create the list of delivery from a round
-	 * @param round
-	 * 		the round with delivery point to display
-	 */
-	private void createDeliveriesList(Round round) {
-		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
-
-    	/*List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
-    	for (int i = 0; i < deliveryTimes.size() - 1; i++) {
-    		DeliveryTime dt = deliveryTimes.get(i);
-    		deliveriesTexts.add(deliveryToText(dt.getCheckpoint(), round.getPath(dt.getCheckpoint().getAssociatedWaypoint().getId(), deliveryTimes.get(i+1).getCheckpoint().getAssociatedWaypoint().getId())));
-    	}*/
-    	//deliveriesTexts.add(deliveryToText(round));
-    	String text = "";
-    	
-    	for(DeliveryTime dt:round.getRoundTimeOrder()){
-    		text = "Adresse : " + dt.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
-    		if(dt.getArrivalTime() != null){
-    			text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(dt.getArrivalTime().getTime()) + "\n";
-    			text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
-    		}else{
-    			text += "Heure de debut de tournée : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
-    		}
-    		
-    		deliveriesTexts.add(text);
-    		deliveryList.setItems(deliveriesTexts);
-    	}
-    	//deliveryList.setItems(deliveriesTexts);
-
-    	if (firstDeliveryLoad) {
-	    	AnchorPane.setTopAnchor(deliveryList, 0d);
-	    	AnchorPane.setBottomAnchor(deliveryList, 0d);
-	    	AnchorPane.setRightAnchor(deliveryList, 0d);
-	    	AnchorPane.setLeftAnchor(deliveryList, 0d);
-	    	deliveryPane.getChildren().add(deliveryList);
-			firstDeliveryLoad = false;
-    	}
-    }
-       
-	/**
-	 * Prepare texts to display about a delivery point
-	 * @param checkpoint
-	 * 		the point to deliver
-	 * @param path
-	 * 		the road map to get to the checkpoint from the previous
-	 * @return
-	 * 		return a string to display
-	 */
-	private String deliveryToText(Round round) {
-		String text = "";
-		for (DeliveryTime dt : round.getRoundTimeOrder()) {
-			text = "Adresse : " + dt.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
-			text += "Heure d'arrivée : " + dt.getArrivalTime().getTime();
-		}
-		return text;
-	}
-
 
 	/**
 	 * 	Load a map from an xml source chosen by the user in an explorer.
@@ -239,10 +130,87 @@ public class MainWindowController implements Initializable {
 				loadDeliveryButton.setDisable(false);
 				loadDeliveryButton.setText("Charger demande de livraisons");
 				clearPreviousRound();
-				reDrawMapAndRound();
+				
+				mapDisplayer.setMap(newMap);
+				mapDisplayer.setVisible(true);
 			}
 		}
 	}
+	
+	/**
+	 * Load a delivery request from an xml source chosen by the user in an explorer
+	 */
+	private void handleLoadDelivery() {
+
+		File deliveryRequestFile = getFileFromExplorer();
+
+		DeliveryRequest newDeliveryRequest;
+
+		if (deliveryRequestFile != null) {
+			try {
+				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
+			}
+			catch (XMLException e) {
+				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraison valide.");
+				return;
+			}
+			catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
+				e.printStackTrace();
+				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
+				return;
+			}			
+
+			if (newDeliveryRequest != null) {
+				deliveryRequest = newDeliveryRequest;
+				try{
+					round = new Round(deliveryRequest);
+					round.computePaths(map);
+					round.computeRound(map);
+				}
+				catch(NullPointerException e) {
+					e.printStackTrace();
+					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+					return;
+				}
+				createDeliveriesList(round);
+				mapDisplayer.displayRound(round);
+			}
+		}
+	}
+
+	/**
+	 * Create the list of delivery from a round
+	 * @param round
+	 * 		the round with delivery point to display
+	 */
+	private void createDeliveriesList(Round round) {
+		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
+
+    	String text = "";
+    	
+    	for(DeliveryTime dt:round.getRoundTimeOrder()){
+    		text = "Adresse : " + dt.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
+    		if(dt.getArrivalTime() != null){
+    			text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(dt.getArrivalTime().getTime()) + "\n";
+    			text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
+    		}else{
+    			text += "Heure de debut de tournée : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
+    		}
+    		
+    		deliveriesTexts.add(text);
+    		deliveryList.setItems(deliveriesTexts);
+    	}
+    	//deliveryList.setItems(deliveriesTexts);
+
+    	if (firstDeliveryLoad) {
+	    	AnchorPane.setTopAnchor(deliveryList, 0d);
+	    	AnchorPane.setBottomAnchor(deliveryList, 0d);
+	    	AnchorPane.setRightAnchor(deliveryList, 0d);
+	    	AnchorPane.setLeftAnchor(deliveryList, 0d);
+	    	deliveryPane.getChildren().add(deliveryList);
+			firstDeliveryLoad = false;
+    	}
+    }
 	
 	/**
 	 *	Remove the round from the list view and clear it's display.
@@ -251,7 +219,7 @@ public class MainWindowController implements Initializable {
 	{
 		// On enlève la tournée affichée
 		round = null;
-		graphBuilder.clearCanvas(canvasRound);
+		////////////////////////////////////////////graphBuilder.clearCanvas(canvasRound);
 		if(firstDeliveryLoad == false) {
 			deliveryPane.getChildren().remove(deliveryList);
 			firstDeliveryLoad = true;
@@ -259,46 +227,7 @@ public class MainWindowController implements Initializable {
 		
 	}
 
-	/**
-	 * Stretch canvas to the panel size
-	 */
-	private void setupCanvas() {
-
-		canvasMap.widthProperty().bind(mapPane.widthProperty());
-		canvasMap.heightProperty().bind(mapPane.heightProperty());
-
-		canvasRound.widthProperty().bind(mapPane.widthProperty());
-		canvasRound.heightProperty().bind(mapPane.heightProperty());
-	}
-
-	/**
-	 * Setup the repaint of the map and round when the panel size change.
-	 */
-	private void setupMapPaintAndResize() {
-
-		mapPane.widthProperty().addListener((event) -> {
-			reDrawMapAndRound();
-		});
-
-		mapPane.heightProperty().addListener((event) -> {
-			reDrawMapAndRound();
-		});
-	}
-
-	/**
-	 * Draw the map and the round(if there is one) on the differents canvas.
-	 */
-	private void reDrawMapAndRound() {
-
-		if (map != null) {
-			graphBuilder.drawMap(canvasMap, map);
-		}
-
-		if (round != null) {
-			graphBuilder.drawRound(canvasRound, round);
-		}
-	}
-
+	
 	/**
 	 *	Open an explorer to select a file and return it.
 	 **/
@@ -333,4 +262,16 @@ public class MainWindowController implements Initializable {
 		alert.showAndWait();	
 	}
 
+	/**
+	 * Initialize the map displayer system
+	 */
+	private void setupGraphDisplayer() {
+		mapDisplayer = new Graph();
+		mapPane.getChildren().add(mapDisplayer);
+		AnchorPane.setTopAnchor(mapDisplayer, 0d);
+		AnchorPane.setBottomAnchor(mapDisplayer, 0d);
+		AnchorPane.setRightAnchor(mapDisplayer, 0d);
+		AnchorPane.setLeftAnchor(mapDisplayer, 0d);
+		mapDisplayer.setVisible(false);
+	}
 }
