@@ -31,7 +31,7 @@ public class Graph extends Pane {
 	public Graph() {
 		super();
 		this.setBackground(
-				new Background(new BackgroundFill(new Color(0.75, 0.75, 0.75, 1), CornerRadii.EMPTY, Insets.EMPTY)));
+				new Background(new BackgroundFill(new Color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 		nodes = new HashMap<>();
 		sections = new HashMap<>();
 		lightedUpRoads = new LinkedList<>();

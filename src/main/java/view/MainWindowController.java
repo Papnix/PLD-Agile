@@ -22,6 +22,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import model.Checkpoint;
@@ -56,7 +57,7 @@ public class MainWindowController implements Initializable {
 	@FXML
 	private AnchorPane deliveryPane;
 	@FXML
-	private AnchorPane mapPane;
+	private ScrollPane mapPane;
 
 
 	/**
@@ -296,7 +297,7 @@ public class MainWindowController implements Initializable {
 	 */
 	private void setupGraphDisplayer() {
 		mapDisplayer = new Graph();
-		mapPane.getChildren().add(mapDisplayer);
+		mapPane.setContent(mapDisplayer);
 		AnchorPane.setTopAnchor(mapDisplayer, 0d);
 		AnchorPane.setBottomAnchor(mapDisplayer, 0d);
 		AnchorPane.setRightAnchor(mapDisplayer, 0d);
