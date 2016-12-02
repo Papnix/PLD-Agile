@@ -40,24 +40,24 @@ public class Controller {
         return XMLDeserializer.loadDeliveryRequest(path, map);
     }
 
-    public void deleteCheckpoint(Checkpoint checkpoint, Round round) {
-        this.commandManager.doCommand(new Deletion(checkpoint), round);
+    public Round deleteCheckpoint(Checkpoint checkpoint, Round round) {
+        return this.commandManager.doCommand(new Deletion(round), checkpoint);
     }
 
-    public void addCheckpoint(Checkpoint checkpoint, Round round) {
-        this.commandManager.doCommand(new Addition(checkpoint), round);
+    public Round addCheckpoint(Checkpoint checkpoint, Round round) {
+        return this.commandManager.doCommand(new Addition(round), checkpoint);
     }
 
-    public void changeCheckpointTime(Checkpoint checkpoint, Round round) {
-        this.commandManager.doCommand(new TimeChange(checkpoint), round);
+    public Round changeCheckpointTime(Checkpoint checkpoint, Round round) {
+        return this.commandManager.doCommand(new TimeChange(round), checkpoint);
     }
 
-    public void undoLastCommand(Round round) {
-        this.commandManager.undoCommand(round);
+    public Round undoLastCommand(Round round) {
+        return this.commandManager.undoCommand(round);
     }
 
-    public void redoLastCommand(Round round) {
-        this.commandManager.redoCommand(round);
+    public Round redoLastCommand(Round round) {
+        return this.commandManager.redoCommand(round);
     }
 
 }

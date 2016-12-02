@@ -1,5 +1,6 @@
 package controller.command;
 
+import model.Checkpoint;
 import model.Round;
 
 import java.util.Stack;
@@ -13,21 +14,31 @@ public class CommandManager {
 
     }
 
-    public void doCommand(Command command, Round round) {
-        done.push(command.doCommand(round));
+    public Round doCommand(Command command, Checkpoint checkpoint) {
+        Round returnValue = command.doCommand(checkpoint);
+        done.push(command);
         undone.clear();
+        return returnValue;
     }
 
-    public void undoCommand(Round round) {
+    public Round undoCommand(Round round) {
         if(!done.empty()) {
-            undone.push(done.pop().undoCommand(round));
+            Command command = done.pop();
+            Round returnValue = command.undoCommand();
+            undone.push(command);
+            return returnValue;
         }
+        return round;
     }
 
-    public void redoCommand(Round round) {
+    public Round redoCommand(Round round) {
         if(!undone.empty()) {
-            done.push(undone.pop().doCommand(round));
+            Command command = undone.pop();
+            Round returnValue = command.redoCommand();
+            done.push(command);
+            return returnValue;
         }
+        return round;
     }
 
     public void clear() {
