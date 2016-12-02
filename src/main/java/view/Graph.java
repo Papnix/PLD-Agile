@@ -119,7 +119,7 @@ public class Graph extends Pane {
 	 */
 	private void addSectionDisplay(Section section) {
 		Line line = new Line();
-
+		line.setStrokeWidth(2);
 		// We add GraphNode.SIZE + 2 (thickness of the border) because the icon
 		// polygon don't display on its center.
 		line.setStartX(section.getOrigin().getXCoord() + offsetNode);
