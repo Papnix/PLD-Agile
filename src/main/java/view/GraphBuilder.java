@@ -50,8 +50,8 @@ public class GraphBuilder {
 	
 	private void drawWaypoint(Waypoint waypoint, GraphicsContext graph, Color color) {
 
-		double sourceX = waypoint.getxCoord();
-		double sourceY = waypoint.getyCoord();
+		double sourceX = waypoint.getXCoord();
+		double sourceY = waypoint.getYCoord();
 		
 		double[] pointsX = { sourceX - WAYPOINT_SIZE, sourceX, sourceX + WAYPOINT_SIZE, sourceX };
 		double[] pointsY = { sourceY, sourceY + WAYPOINT_SIZE, sourceY, sourceY - WAYPOINT_SIZE };
@@ -68,11 +68,11 @@ public class GraphBuilder {
 
 	private void drawSection(Section section, GraphicsContext graph, Color color) {
 
-		double originX = section.getOrigin().getxCoord();
-		double originY = section.getOrigin().getyCoord();
+		double originX = section.getOrigin().getXCoord();
+		double originY = section.getOrigin().getYCoord();
 
-		double destinationX = section.getDestination().getxCoord();
-		double destinationY = section.getDestination().getyCoord();
+		double destinationX = section.getDestination().getXCoord();
+		double destinationY = section.getDestination().getYCoord();
 		
 		graph.setStroke(color);
 		graph.strokeLine(originX, originY, destinationX, destinationY);

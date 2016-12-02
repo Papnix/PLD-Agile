@@ -17,7 +17,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -40,10 +39,11 @@ public class MainWindowController implements Initializable {
 	private DeliveryRequest deliveryRequest;
 	private ListView<String> deliveryList;
 
-	private GraphBuilder graphBuilder;
 	private Map map;
 	private Round round;
 	private String lastFolderExplored;
+	
+	private Graph mapDisplayer;
 
 	@FXML
 	private MenuItem menuLoadDelivery;
@@ -57,10 +57,7 @@ public class MainWindowController implements Initializable {
 	private AnchorPane deliveryPane;
 	@FXML
 	private AnchorPane mapPane;
-	@FXML
-	private Canvas canvasMap;
-	@FXML
-	private Canvas canvasRound;
+
 
 	/**
 	 * Constructor of the main window, initialize links with fxml file for GUI components.
@@ -90,21 +87,52 @@ public class MainWindowController implements Initializable {
 		});
 
 		assert deliveryPane != null : "fx:id=\"deliveryPane\" was not injected: check your FXML file 'view.fxml'.";
-
 		assert mapPane != null : "fx:id=\"mapPane\" was not injected: check your FXML file 'view.fxml'.";
 
-		assert canvasMap != null : "fx:id=\"canvasMap\" was not injected: check your FXML file 'view.fxml'.";
-
 		firstDeliveryLoad = true;
-
 		deliveryList = new ListView<String>();
+		
+		setupGraphDisplayer();	
 
-		graphBuilder = new GraphBuilder();
-
-		setupCanvas();
-		setupMapPaintAndResize();
 	}
 
+	/**
+	 * 	Load a map from an xml source chosen by the user in an explorer.
+	 */
+	private void handleLoadMap() {
+
+		File mapFile = getFileFromExplorer();
+
+		Map newMap;
+
+		if (mapFile != null) {
+			try {
+				newMap = XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
+			} 
+			catch (XMLException e) {
+				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+				return;
+			}
+			catch (IOException | SAXException | ParserConfigurationException e) {
+				e.printStackTrace();
+				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
+				return;
+			}
+
+			if (newMap != null) {
+				map = newMap;
+				loadMapButton.setVisible(false);
+				menuLoadDelivery.setDisable(false);
+				loadDeliveryButton.setDisable(false);
+				loadDeliveryButton.setText("Charger demande de livraisons");
+				clearPreviousRound();
+				
+				mapDisplayer.setMap(newMap);
+				mapDisplayer.setVisible(true);
+			}
+		}
+	}
+	
 	/**
 	 * Load a delivery request from an xml source chosen by the user in an explorer
 	 */
@@ -138,10 +166,9 @@ public class MainWindowController implements Initializable {
 				catch(NullPointerException e) {
 					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
 					return;
-					
 				}
 				createDeliveriesList(round);
-				reDrawMapAndRound();
+				mapDisplayer.displayRound(round);
 			}
 		}
 	}
@@ -213,41 +240,6 @@ public class MainWindowController implements Initializable {
 
 		return text;
 	}
-
-	/**
-	 * 	Load a map from an xml source chosen by the user in an explorer.
-	 */
-	private void handleLoadMap() {
-
-		File mapFile = getFileFromExplorer();
-
-		Map newMap;
-
-		if (mapFile != null) {
-			try {
-				newMap = XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
-			} 
-			catch (XMLException e) {
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
-				return;
-			}
-			catch (IOException | SAXException | ParserConfigurationException e) {
-				e.printStackTrace();
-				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
-				return;
-			}
-
-			if (newMap != null) {
-				map = newMap;
-				loadMapButton.setVisible(false);
-				menuLoadDelivery.setDisable(false);
-				loadDeliveryButton.setDisable(false);
-				loadDeliveryButton.setText("Charger demande de livraisons");
-				clearPreviousRound();
-				reDrawMapAndRound();
-			}
-		}
-	}
 	
 	/**
 	 *	Remove the round from the list view and clear it's display.
@@ -256,7 +248,7 @@ public class MainWindowController implements Initializable {
 	{
 		// On enlève la tournée affichée
 		round = null;
-		graphBuilder.clearCanvas(canvasRound);
+		////////////////////////////////////////////graphBuilder.clearCanvas(canvasRound);
 		if(firstDeliveryLoad == false) {
 			deliveryPane.getChildren().remove(deliveryList);
 			firstDeliveryLoad = true;
@@ -264,46 +256,7 @@ public class MainWindowController implements Initializable {
 		
 	}
 
-	/**
-	 * Stretch canvas to the panel size
-	 */
-	private void setupCanvas() {
-
-		canvasMap.widthProperty().bind(mapPane.widthProperty());
-		canvasMap.heightProperty().bind(mapPane.heightProperty());
-
-		canvasRound.widthProperty().bind(mapPane.widthProperty());
-		canvasRound.heightProperty().bind(mapPane.heightProperty());
-	}
-
-	/**
-	 * Setup the repaint of the map and round when the panel size change.
-	 */
-	private void setupMapPaintAndResize() {
-
-		mapPane.widthProperty().addListener((event) -> {
-			reDrawMapAndRound();
-		});
-
-		mapPane.heightProperty().addListener((event) -> {
-			reDrawMapAndRound();
-		});
-	}
-
-	/**
-	 * Draw the map and the round(if there is one) on the differents canvas.
-	 */
-	private void reDrawMapAndRound() {
-
-		if (map != null) {
-			graphBuilder.drawMap(canvasMap, map);
-		}
-
-		if (round != null) {
-			graphBuilder.drawRound(canvasRound, round);
-		}
-	}
-
+	
 	/**
 	 *	Open an explorer to select a file and return it.
 	 **/
@@ -338,4 +291,16 @@ public class MainWindowController implements Initializable {
 		alert.showAndWait();	
 	}
 
+	/**
+	 * Initialize the map displayer system
+	 */
+	private void setupGraphDisplayer() {
+		mapDisplayer = new Graph();
+		mapPane.getChildren().add(mapDisplayer);
+		AnchorPane.setTopAnchor(mapDisplayer, 0d);
+		AnchorPane.setBottomAnchor(mapDisplayer, 0d);
+		AnchorPane.setRightAnchor(mapDisplayer, 0d);
+		AnchorPane.setLeftAnchor(mapDisplayer, 0d);
+		mapDisplayer.setVisible(false);
+	}
 }
