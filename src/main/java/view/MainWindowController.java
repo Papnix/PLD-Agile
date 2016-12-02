@@ -3,6 +3,8 @@ package view;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import controller.Roadmap;
 import controller.xml.XMLDeserializer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -103,6 +105,9 @@ public class MainWindowController implements Initializable{
         	Round round = new Round(deliveryRequest);
     		round.computePaths(map);
     		round.computeRound(map);
+    		
+    		// Ecriture de la feuille de route
+    		Roadmap.writeRoadmap(round, map);
     		
     		// Crée la ListView à droite si c'est le premier chargement de demande de livraisons
     		if (firstDeliveryLoad) {

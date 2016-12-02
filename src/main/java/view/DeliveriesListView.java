@@ -10,14 +10,12 @@ import model.Checkpoint;
 import model.DeliveryTime;
 import model.Map;
 import model.Round;
-import model.Section;
 
 /**
- * Descriptif de la classe :
- * Correspond à la ListView à droite contenant les livraisons d'une tournée calculée.
- * Contient la ListView en question ainsi que des méthodes pour remplir cette ListView lorsque la tournée a été calculée.
- * Lorsqu'une nouvelle tournée est calculée, il n'est pas nécessaire de créer une nouvelle instance de cette classe,
- * il suffit d'appeler la méthode createDeliveriesList.
+ * Corresponds to the ListView on the right containing the deliveries of a computed round.
+ * Contains the ListView in question and methods to fill this ListView when the round has been computed.
+ * When a new round is computed, it is not necessary to create a new insytance of this class,
+ * calling the 'createDeliveriesList' method is sufficient.
  */
 public class DeliveriesListView {
 	private ListView<String> deliveryList;
@@ -34,36 +32,15 @@ public class DeliveriesListView {
     	AnchorPane.setLeftAnchor(deliveryList, 0d);
     	this.deliveryPane.getChildren().add(deliveryList);
 	}
-	
-	/**
-	 * Remplit la ListView avec les infos des livraisons dans l'ordre chronologique.
-	 * Cette méthode peut directement être appelée lorsque la tournée change,
-	 * il n'y a pas besoin de créer une nouvelle instance de DeliveriesListView
-	 * @param round Correspond à la tournée calculée
-	 * @param map Correspond au graphe du plan de la ville
-	 */
-	public void createDeliveriesList(Round round, Map map) {
-    	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
-
-    	List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
-    	for (int i = 0; i < deliveryTimes.size() - 1; i++) {
-    		DeliveryTime dt = deliveryTimes.get(i);
-    		deliveriesTexts.add(deliveryToText(dt.getCheckpoint(),
-    										   round.getPath(dt.getCheckpoint().getAssociatedWaypoint().getId(),
-    												   		 deliveryTimes.get(i+1).getCheckpoint().getAssociatedWaypoint().getId()),
-    										   map));
-    	}
-    	deliveryList.setItems(deliveriesTexts);
-    }
     
 	/**
-	 * Extrait les informations d'une livraison et renvoie le texte à afficher dans la ListView
-	 * @param c Livraison
-	 * @param path Ensemble de Routes pour aller du point de livraison 'c' au point de livraison suivant
-	 * @param map Graphe de la ville
-	 * @return Texte à afficher directement dans une case de la ListView
+	 * Extracts a delivery's information and returns the text to display in the ListView
+	 * @param c
+	 * 		Delivery's checkpoint
+	 * @return
+	 * 		Text to display directly in a ListView's cell
 	 */
-    private String deliveryToText(Checkpoint c, List<Integer> path, Map map) {
+    public static String deliveryToText(Checkpoint c /*, List<Integer> path, Map map*/) {
     	String text = "Adresse : " + c.getAssociatedWaypoint().getId() + "\n";
     	
     	int hours = c.getDuration() / 3600;
@@ -79,7 +56,7 @@ public class DeliveriesListView {
     	duration += Integer.toString(minutes);
     	text += "Durée : " + duration;
     	
-    	text += "\n   Parcours :\n";
+    	/*text += "\n   Parcours :\n";
     	
     	for (int i = 0; i < path.size(); i++) {
     		if (i < path.size() - 1) {
@@ -88,8 +65,33 @@ public class DeliveriesListView {
     			text += "      Prendre le tronçon : " + s.getStreetName() + " entre " + s.getOrigin().getId() + " et "
     					+ s.getDestination().getId() + "\n";
     		}
-    	}
+    	}*/
     	
     	return text;
+    }
+	
+	/**
+	 * Fill the ListView with deliveries' information in the chronological order.
+	 * This method can directly be called when the round changes,
+	 * there is no need to create a new DeliveriesListView instance.
+	 * @param round
+	 * 		Computed round
+	 * @param map
+	 * 		City's map
+	 */
+	public void createDeliveriesList(Round round, Map map) {
+    	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
+
+    	List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
+    	for (int i = 0; i < deliveryTimes.size() - 1; i++) {
+    		DeliveryTime dt = deliveryTimes.get(i);
+    		deliveriesTexts.add(
+    				DeliveriesListView.deliveryToText(
+    						dt.getCheckpoint() /*,
+							round.getPath(dt.getCheckpoint().getAssociatedWaypoint().getId(),
+										  deliveryTimes.get(i+1).getCheckpoint().getAssociatedWaypoint().getId()),
+							map*/));
+    	}
+    	deliveryList.setItems(deliveriesTexts);
     }
 }
