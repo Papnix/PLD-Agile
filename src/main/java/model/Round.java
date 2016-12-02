@@ -125,9 +125,6 @@ public class Round {
     // ---------------------------------------- Other methods
     // ---------------------------------------------------
 
-    /**
-     * @param delReq the delivery request that has to be analyzed
-     */
     public void buildIndex() {
 
         // initializing the cost array
