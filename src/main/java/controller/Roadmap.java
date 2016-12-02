@@ -27,12 +27,16 @@ public class Roadmap {
 			List<Checkpoint> checkpointsList = round.getRequest().getDeliveryPointList();
 			
 			for (int i = 0; i < checkpointsList.size() - 1; i++) {
+				writer.println("De l'adresse " + checkpointsList.get(i).getAssociatedWaypoint().getId()
+							   + " à l'adresse " + checkpointsList.get(i+1).getAssociatedWaypoint().getId() + " :");
 				writer.println(Roadmap.routeToDelivery(round.getPath(checkpointsList.get(i).getAssociatedWaypoint().getId(),
 																	 checkpointsList.get(i+1).getAssociatedWaypoint().getId()),
 													   map));
 			}
 			
 			// Description du parcours du dernier point de livraison jusqu'à l'entrepôt
+			writer.println("De l'adresse " + checkpointsList.get(checkpointsList.size() - 1).getAssociatedWaypoint().getId()
+					   	   + " à l'adresse " + checkpointsList.get(0).getAssociatedWaypoint().getId() + " :");
 			writer.println(Roadmap.routeToDelivery(round.getPath(checkpointsList.get(checkpointsList.size() - 1).getAssociatedWaypoint().getId(),
 																 checkpointsList.get(0).getAssociatedWaypoint().getId()),
 												   map));
@@ -54,15 +58,52 @@ public class Roadmap {
 	public static String routeToDelivery(List<Integer> routeWithWaypointsID, Map map) {
 		String text = "";
     	
-    	for (int i = 0; i < routeWithWaypointsID.size(); i++) {
-    		if (i < routeWithWaypointsID.size() - 1) {
-    			Section s = map.getSection(routeWithWaypointsID.get(i), routeWithWaypointsID.get(i+1));
-    			
-    			text += "Prendre le tronçon : " + s.getStreetName() + " entre " + s.getOrigin().getId()
-    					+ " et " + s.getDestination().getId() + "\r\n";
-    		}
+		// Pour le premier tronçon, on n'indique pas s'il faut tourner à droite, à gauche...
+		Section nextSection = map.getSection(routeWithWaypointsID.get(0), routeWithWaypointsID.get(1));
+		text += "Prendre le tronçon " + nextSection.getStreetName() + " entre " + nextSection.getOrigin().getId()
+				+ " et " + nextSection.getDestination().getId() + "\r\n";
+		
+		Section prevSection;
+    	for (int i = 1; i < routeWithWaypointsID.size() - 1; i++) {
+    		prevSection = nextSection;
+    		nextSection = map.getSection(routeWithWaypointsID.get(i), routeWithWaypointsID.get(i+1));
+			text += Roadmap.getDescriptionForBend(prevSection, nextSection)
+					+ " et prendre le tronçon " + nextSection.getStreetName() + " entre " + nextSection.getOrigin().getId()
+					+ " et " + nextSection.getDestination().getId() + "\r\n";
     	}
     	
     	return text;
+	}
+	
+	/**
+	 * Describe the bend to get to the next section.
+	 * For example : "Turn right"
+	 * @param previousSection
+	 * 		Section that has been travelled. The driver is currently at the end of this section.
+	 * @param nextSection
+	 * 		Section that will now be travelled. The driver is currently at the beginning of this section.
+	 * @return
+	 * 		The bend's description
+	 */
+	public static String getDescriptionForBend(Section previousSection, Section nextSection) {
+		String text;
+
+		// Détermine la direction à prendre en calculant le produit vectoriel des 2 sections
+		int xVectorPrevSection = previousSection.getDestination().getxCoord() - previousSection.getOrigin().getxCoord();
+		int yVectorPrevSection = previousSection.getDestination().getyCoord() - previousSection.getOrigin().getyCoord();
+		int xVectorNextSection = nextSection.getDestination().getxCoord() - nextSection.getOrigin().getxCoord();
+		int yVectorNextSection = nextSection.getDestination().getyCoord() - nextSection.getOrigin().getyCoord();
+		int crossProduct = xVectorPrevSection * yVectorNextSection - yVectorPrevSection * xVectorNextSection;
+		
+		if (crossProduct == 0) {
+			text = (xVectorPrevSection * xVectorNextSection >= 0 && yVectorPrevSection * yVectorNextSection >= 0) ?
+				   "Continuer tout droit" : "Faire demi-tour";
+		} else if (crossProduct < 0) { // Attention : axe Y vers le bas
+			text = "Tourner à gauche";
+		} else {
+			text = "Tourner à droite";
+		}
+		
+		return text;
 	}
 }

@@ -40,7 +40,7 @@ public class DeliveriesListView {
 	 * @return
 	 * 		Text to display directly in a ListView's cell
 	 */
-    public static String deliveryToText(Checkpoint c /*, List<Integer> path, Map map*/) {
+    public static String deliveryToText(Checkpoint c) {
     	String text = "Adresse : " + c.getAssociatedWaypoint().getId() + "\n";
     	
     	int hours = c.getDuration() / 3600;
@@ -55,17 +55,6 @@ public class DeliveriesListView {
     	}
     	duration += Integer.toString(minutes);
     	text += "Durée : " + duration;
-    	
-    	/*text += "\n   Parcours :\n";
-    	
-    	for (int i = 0; i < path.size(); i++) {
-    		if (i < path.size() - 1) {
-    			Section s = map.getSection(path.get(i), path.get(i+1));
-    			
-    			text += "      Prendre le tronçon : " + s.getStreetName() + " entre " + s.getOrigin().getId() + " et "
-    					+ s.getDestination().getId() + "\n";
-    		}
-    	}*/
     	
     	return text;
     }
@@ -85,12 +74,7 @@ public class DeliveriesListView {
     	List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
     	for (int i = 0; i < deliveryTimes.size() - 1; i++) {
     		DeliveryTime dt = deliveryTimes.get(i);
-    		deliveriesTexts.add(
-    				DeliveriesListView.deliveryToText(
-    						dt.getCheckpoint() /*,
-							round.getPath(dt.getCheckpoint().getAssociatedWaypoint().getId(),
-										  deliveryTimes.get(i+1).getCheckpoint().getAssociatedWaypoint().getId()),
-							map*/));
+    		deliveriesTexts.add(DeliveriesListView.deliveryToText(dt.getCheckpoint()));
     	}
     	deliveryList.setItems(deliveriesTexts);
     }

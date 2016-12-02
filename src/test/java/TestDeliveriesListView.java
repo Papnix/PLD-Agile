@@ -9,7 +9,7 @@ import model.Waypoint;
 import view.DeliveriesListView;
 
 /**
- * Teste les méthodes de la classe DeliveriesListView
+ * Tests the DeliveriesListView's methods
  */
 public class TestDeliveriesListView {
 	
@@ -25,9 +25,9 @@ public class TestDeliveriesListView {
 		String str3 = DeliveriesListView.deliveryToText(c3);
 		String str4 = DeliveriesListView.deliveryToText(c4);
 
-		assertEquals(str1, "Adresse : 1\nDurée : 00h05");
-		assertEquals(str2, "Adresse : 2\nDurée : 00h10");
-		assertEquals(str3, "Adresse : 3\nDurée : 01h00");
-		assertEquals(str4, "Adresse : 4\nDurée : 10h01");
+		assertEquals("Adresse : 1\nDurée : 00h05", str1);
+		assertEquals("Adresse : 2\nDurée : 00h10", str2);
+		assertEquals("Adresse : 3\nDurée : 01h00", str3);
+		assertEquals("Adresse : 4\nDurée : 10h01", str4);
 	}
 }
