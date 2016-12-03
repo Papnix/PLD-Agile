@@ -78,4 +78,9 @@ public class DeliveriesListView {
     	}
     	deliveryList.setItems(deliveriesTexts);
     }
+
+	public void clear() {
+		deliveryList.getItems().clear();
+		deliveryPane.getChildren().remove(deliveryList);
+	}
 }

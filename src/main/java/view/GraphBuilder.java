@@ -1,7 +1,6 @@
 package view;
 
 import java.util.Map.Entry;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -17,28 +16,42 @@ import model.Waypoint;
 public class GraphBuilder {
 
 	private final static Color WAYPOINT_STROKE_COLOR = new Color(0,0,0, 1);
-	private final static Color WAYPOINT_FILL_COLOR = new Color(41f / 255f, 128f / 255f, 185f / 255f, 1);
 	private final static Color PATH_COLOR = new Color(20f / 255f, 20f / 255f, 20f / 255f, 1);
-	// private final static Color CHOSEN_PATH_COLOR = new Color(0,255,0,255);
 	private final static int WAYPOINT_SIZE = 5;
 	private final static double OFFSET_ID = 10;
 
 	public void drawMap(Canvas canvas, Map map) {
-
-		GraphicsContext graphContext = canvas.getGraphicsContext2D();
-
-		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
+		GraphicsContext graphContext = canvas.getGraphicsContext2D();
+		
+		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
 		getSectionsMapAndDraw(graphContext, map);
 		getWaypointsMapAndDraw(graphContext, map);
 
 	}
+	
+	public void drawRound(Canvas canvas, Round round){
+		
+		GraphicsContext graphContext = canvas.getGraphicsContext2D();
 
+		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		
+		drawRoundSections(round, graphContext);
+		drawRoundWaypoints(round, graphContext);
+	}
+	
+	public void clearCanvas(Canvas canvas) {
+		GraphicsContext graphContext = canvas.getGraphicsContext2D();
+		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+	}
+
+	//-- PRIVATE ---------------------------------------------------------------------------------
+	
 	private void drawWaypoint(Waypoint waypoint, GraphicsContext graph, Color color) {
 
-		double sourceX = waypoint.getxCoord();
-		double sourceY = waypoint.getyCoord();
+		double sourceX = waypoint.getXCoord();
+		double sourceY = waypoint.getYCoord();
 		
 		double[] pointsX = { sourceX - WAYPOINT_SIZE, sourceX, sourceX + WAYPOINT_SIZE, sourceX };
 		double[] pointsY = { sourceY, sourceY + WAYPOINT_SIZE, sourceY, sourceY - WAYPOINT_SIZE };
@@ -55,11 +68,11 @@ public class GraphBuilder {
 
 	private void drawSection(Section section, GraphicsContext graph, Color color) {
 
-		double originX = section.getOrigin().getxCoord();
-		double originY = section.getOrigin().getyCoord();
+		double originX = section.getOrigin().getXCoord();
+		double originY = section.getOrigin().getYCoord();
 
-		double destinationX = section.getDestination().getxCoord();
-		double destinationY = section.getDestination().getyCoord();
+		double destinationX = section.getDestination().getXCoord();
+		double destinationY = section.getDestination().getYCoord();
 		
 		graph.setStroke(color);
 		graph.strokeLine(originX, originY, destinationX, destinationY);
@@ -91,15 +104,7 @@ public class GraphBuilder {
 		}
 	}
 	
-	public void drawRound(Canvas canvas, Round round){
-		GraphicsContext graphContext = canvas.getGraphicsContext2D();
-
-		graphContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 		
-		drawRoundSections(round, graphContext);
-		drawRoundWaypoints(round, graphContext);
-	}
-	
 	private void drawRoundWaypoints(Round round, GraphicsContext graph) {
 		
 		List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
@@ -123,3 +128,4 @@ public class GraphBuilder {
 		}
 	}
 }
+

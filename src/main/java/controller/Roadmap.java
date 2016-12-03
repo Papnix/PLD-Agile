@@ -89,10 +89,10 @@ public class Roadmap {
 		String text;
 
 		// Détermine la direction à prendre en calculant le produit vectoriel des 2 sections
-		int xVectorPrevSection = previousSection.getDestination().getxCoord() - previousSection.getOrigin().getxCoord();
-		int yVectorPrevSection = previousSection.getDestination().getyCoord() - previousSection.getOrigin().getyCoord();
-		int xVectorNextSection = nextSection.getDestination().getxCoord() - nextSection.getOrigin().getxCoord();
-		int yVectorNextSection = nextSection.getDestination().getyCoord() - nextSection.getOrigin().getyCoord();
+		int xVectorPrevSection = previousSection.getDestination().getXCoord() - previousSection.getOrigin().getXCoord();
+		int yVectorPrevSection = previousSection.getDestination().getYCoord() - previousSection.getOrigin().getYCoord();
+		int xVectorNextSection = nextSection.getDestination().getXCoord() - nextSection.getOrigin().getXCoord();
+		int yVectorNextSection = nextSection.getDestination().getYCoord() - nextSection.getOrigin().getYCoord();
 		int crossProduct = xVectorPrevSection * yVectorNextSection - yVectorPrevSection * xVectorNextSection;
 		
 		if (crossProduct == 0) {

@@ -43,7 +43,7 @@ public class Round
 			//----------------------------------------- Constructors ---------------------------------------------------
 
 	public Round(DeliveryRequest request) {
-		super();
+
 		this.request = request;
 		arrivalTime = new ArrayList<DeliveryTime>();
 		route = new ArrayList<Section>();

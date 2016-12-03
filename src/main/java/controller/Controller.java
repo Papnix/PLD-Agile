@@ -21,16 +21,12 @@ public class Controller {
 		return round;
 	}
 	
-	public static Map loadMap(String path) throws ParserConfigurationException, SAXException, IOException, XMLException{
-		Map map = new Map();
-		XMLDeserializer.loadMap(path, map);
-		return map;
+	public static Map loadMap(String path) throws ParserConfigurationException, SAXException, IOException, XMLException{	
+		return XMLDeserializer.loadMap(path);
 	}
 	
 	public static DeliveryRequest loadDeliveryRequest(String path, Map map) throws ParserConfigurationException, SAXException, IOException, XMLException, ParseException{
-		DeliveryRequest request = new DeliveryRequest();
-		XMLDeserializer.loadDeliveryRequest(path, map, request);
-		return request;
+		return XMLDeserializer.loadDeliveryRequest(path, map);
 	}
 	
 }
