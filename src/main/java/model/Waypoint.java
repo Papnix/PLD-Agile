@@ -1,6 +1,6 @@
 package model;
 
-public class Waypoint 
+public class Waypoint implements Cloneable
 {
 
 	private int id;
@@ -26,6 +26,21 @@ public class Waypoint
 
 	public String toString() {
 		return "Waypoint { id=" + id + ", x=" + xCoord + ", y=" + yCoord + " }";
+	}
+	
+	public Waypoint clone() {
+		Waypoint wp = null;
+		try {
+			// On récupère l'instance à renvoyer par l'appel de la 
+			// méthode super.clone()
+			wp = (Waypoint) super.clone();
+		} catch(CloneNotSupportedException cnse) {
+			// Ne devrait jamais arriver car nous implémentons 
+			// l'interface Cloneable
+			cnse.printStackTrace(System.err);
+		}
+		// on renvoie le clone
+		return wp;
 	}
 	
 }

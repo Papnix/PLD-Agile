@@ -51,6 +51,9 @@ public abstract class TemplateTSP2 implements TSP2 {
 		}
 	}
 	
+	private void calcTime(){
+		
+	}
 	
 	public DeliveryTime getMeilleureSolution(int i, int j){
 		if ((meilleureSolution == null) || (j<0) || (j>=meilleureSolution.length))
@@ -123,15 +126,15 @@ public abstract class TemplateTSP2 implements TSP2 {
 	 void branchAndBound(DeliveryTime sommetCrt, List<DeliveryTime> nonVus, ArrayList<DeliveryTime> vus, long coutVus,
 			 int[][] cout, int[] duree, long tpsDebut, int tpsLimite){
 		 
-		Date arrivalDate;
-		arrivalDate = new Date(coutVus + tpsDebut);
+		Date arrivalDate = new Date(coutVus + tpsDebut);
 		long waitingTime = validTimeRange(sommetCrt.getCheckpoint(), arrivalDate);
 	    if (nonVus.size() == 0){ // tous les sommets ont ete visites
 	    	coutVus += cout[indexValues.get(sommetCrt.getCheckpoint().getId())][0];
 	    	if (coutVus < coutMeilleureSolution){ // on a trouve une solution meilleure que meilleureSolution
 	    		roundList.clear();
+	    		//vus.add(vus.get(0));
 	    		vus.toArray(meilleureSolution);
-	    		roundList.add(meilleureSolution);
+	    		roundList.add(copyOf(meilleureSolution));
 	    		coutMeilleureSolution = coutVus;
 	    	}else if (coutVus == coutMeilleureSolution){
 	    		vus.toArray(meilleureSolution);
@@ -142,9 +145,8 @@ public abstract class TemplateTSP2 implements TSP2 {
 	    } else if (waitingTime !=-1 && (coutVus + waitingTime + bound(sommetCrt.getCheckpoint(), nonVus, cout, duree) < 
 	    		coutMeilleureSolution)){
 	    	sommetCrt.setArrivalTime(arrivalDate);
+	    	sommetCrt.setDepartureTime(new Date(arrivalDate.getTime() + waitingTime + duree[indexValues.get(sommetCrt.getCheckpoint().getId())]));
 	    	sommetCrt.setWaitingTime(waitingTime);
-	    	sommetCrt.setDepartureTime(new Date(duree[indexValues.get(sommetCrt.getCheckpoint().getId())] + 
-	    			coutVus + tpsDebut + waitingTime));
 	    	Iterator<DeliveryTime> it = iterator(sommetCrt, nonVus, cout, duree);
 	        while (it.hasNext()){
 	        	DeliveryTime prochainSommet = it.next();
@@ -160,19 +162,27 @@ public abstract class TemplateTSP2 implements TSP2 {
 	    }
 	}
 	 
+	private DeliveryTime[] copyOf(DeliveryTime[] dt){
+		DeliveryTime[] newDt = new DeliveryTime[dt.length];
+		for(int i= 0; i < dt.length-1; i++){
+			newDt[i] = dt[i].clone();
+		}
+		
+		return newDt;
+	}
+	 
 	private long validTimeRange(Checkpoint sommetcrt, Date arrivalDate){
 		/* check if there is a time range to arrive at the checkpoint
-		 * 	if yes, check the arrival Date is in the range 
+		 * 	if yes, check that the arrival Date is in the range 
 		 * 	else return true
 		 */
 		if(sommetcrt.getTimeRangeStart() != null && sommetcrt.getTimeRangeEnd() != null){
-			if(arrivalDate.getTime() >= sommetcrt.getTimeRangeEnd().getTime()){
+			if(arrivalDate.getTime() > sommetcrt.getTimeRangeEnd().getTime()){
 				return -1;
-			}else if (arrivalDate.getTime() >= sommetcrt.getTimeRangeStart().getTime()){
-				return 0;
-			}else{
-				
+			}else if (arrivalDate.getTime() < sommetcrt.getTimeRangeStart().getTime()){
 				return (sommetcrt.getTimeRangeStart().getTime() - arrivalDate.getTime());
+			}else{
+				return 0;
 			}
 		}else{
 			return 0;

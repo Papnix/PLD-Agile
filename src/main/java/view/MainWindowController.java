@@ -208,8 +208,13 @@ public class MainWindowController implements Initializable {
     						.getTime()) + " à " + new SimpleDateFormat("HH:mm").format(dt.getCheckpoint()
     								.getTimeRangeEnd().getTime()) + "\n";
     			}
-				text += "Temps d'attente : " + new SimpleDateFormat("HH:mm").format(dt.getWaitingTime().getTime())
-						+ "\n";
+    			if (dt.getWaitingTime() != 0){
+					text += "Temps d'attente : " + new SimpleDateFormat("HH:mm").format(dt.getWaitingTime())
+							+ "\n";
+    			}else{
+    				text += "auncune Attente \n";
+    			}
+    				
     			text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(dt.getArrivalTime().getTime())
     					+ "		";
     			text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
