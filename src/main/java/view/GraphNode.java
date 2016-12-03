@@ -14,15 +14,17 @@ public class GraphNode extends Group {
 	
 	public enum State {
 		  NORMAL,
-		  CHECKPOINT,
+		  WAYPOINT,
+		  DELIVERYPOINT,
 		  WAREHOUSE  
 	}
 	public final static double SIZE = 6.0;
 	public final static double OFFSET_TOOLTIP = 20.;
 	
-	private final static Color normalColor = new Color(0.4,0.4,0.4,1);
-	private final static Color checkpointColor = new Color(0.8,0.2,0.2,1);
-	private final static Color warehouseColor = new Color(0,0,1,1);
+	private final static Color NORMALCOLOR = new Color(0.4,0.4,0.4,1);
+	private final static Color WAYPOINTCOLOR = new Color(0.8,0.2,0.2,1);
+	private final static Color DELIVERYPOINTCOLOR = new Color(0.2,0.8,0,1);
+	private final static Color WAREHOUSECOLOR = new Color(0,0,1,1);
 	
 	private Polygon icon;
 	private InfoBox infobox;
@@ -48,13 +50,16 @@ public class GraphNode extends Group {
 	private void setStateColor() {
 		switch(state) {
 		case NORMAL :
-			icon.setFill(normalColor);
+			icon.setFill(NORMALCOLOR);
 			break;
-		case CHECKPOINT :
-			icon.setFill(checkpointColor);
+		case WAYPOINT :
+			icon.setFill(WAYPOINTCOLOR);
+			break;
+		case DELIVERYPOINT :
+			icon.setFill(DELIVERYPOINTCOLOR);
 			break;
 		case WAREHOUSE : 
-			icon.setFill(warehouseColor);
+			icon.setFill(WAREHOUSECOLOR);
 			break;
 		}
 		
@@ -91,7 +96,7 @@ public class GraphNode extends Group {
 		icon = new Polygon();	
 		icon.setStroke(new Color(0.1,0.1,0.1,1));
 		icon.setStrokeWidth(2);
-		icon.setFill(normalColor);
+		icon.setFill(NORMALCOLOR);
 		icon.getPoints().addAll(new Double []{
 				- SIZE , 0.,
 					0. , SIZE,

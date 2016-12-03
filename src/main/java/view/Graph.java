@@ -1,6 +1,8 @@
 package view;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -13,6 +15,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import model.DeliveryTime;
 import model.Map;
 import model.Round;
 import model.Section;
@@ -61,8 +64,10 @@ public class Graph extends Pane {
 	 *            The path to display
 	 */
 	public void displayRound(Round round) {
+		
 		lightDownWaypoint();
 		lightDownRoads();
+		
 		lightUpWaypoint(round);
 		lightUpRoads(round);
 	}
@@ -169,18 +174,34 @@ public class Graph extends Pane {
 	 * @param round
 	 */
 	private void lightUpWaypoint(Round round) {
+		
+		ArrayList<Integer> allPoints = new ArrayList<>();
 		List<Section> points = round.getRoute();
-
 		for (Section section : points) {
-			int id = section.getOrigin().getId();
-			nodes.get(id).setState(GraphNode.State.CHECKPOINT);
-			lightedUpWaypoints.add(id);
+			allPoints.add(section.getOrigin().getId());
+		}
+		lightedUpWaypoints.addAll(allPoints);
+		
+		ArrayList<Integer> deliveryPoints = new ArrayList<>();
+		List<DeliveryTime> deliveries = round.getArrivalTimes();
+		for (DeliveryTime delivery : deliveries) {
+			deliveryPoints.add(delivery.getCheckpoint().getId());
+		}
+		
+		allPoints.removeAll(deliveries);
+		
+		// Paint the points !
+		for(Integer id : allPoints) {
+			nodes.get(id).setState(GraphNode.State.WAYPOINT);
+		}
+		
+		for(Integer id : deliveryPoints) {
+			nodes.get(id).setState(GraphNode.State.DELIVERYPOINT);
 		}
 
 		// Paint the warehouse differently
 		int id = points.get(0).getOrigin().getId();
 		nodes.get(id).setState(GraphNode.State.WAREHOUSE);
-
 	}
 
 	/**
