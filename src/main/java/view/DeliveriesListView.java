@@ -1,7 +1,10 @@
 package view;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
@@ -19,12 +22,17 @@ import model.Round;
  */
 public class DeliveriesListView {
 	private ListView<String> deliveryList;
+	private List<Integer> idDeliveryPoints;
 	private AnchorPane deliveryPane;
+	private Graph graph; 
 	
 	
-	public DeliveriesListView(AnchorPane deliveryPane) {
-        deliveryList = new ListView<String>();
+	public DeliveriesListView(AnchorPane deliveryPane, Graph graph) {
+        deliveryList = new ListView<String>();        
+        idDeliveryPoints = new ArrayList<>();
+        
         this.deliveryPane = deliveryPane;
+        this.graph = graph;
         
     	AnchorPane.setTopAnchor(deliveryList, 0d);
     	AnchorPane.setBottomAnchor(deliveryList, 0d);
@@ -75,12 +83,41 @@ public class DeliveriesListView {
     	for (int i = 0; i < deliveryTimes.size() - 1; i++) {
     		DeliveryTime dt = deliveryTimes.get(i);
     		deliveriesTexts.add(DeliveriesListView.deliveryToText(dt.getCheckpoint()));
+    		idDeliveryPoints.add(dt.getCheckpoint().getId());
     	}
     	deliveryList.setItems(deliveriesTexts);
+    	
+    	addItemAction();
     }
 
+	/*
+	 * Reset all containers to erase tracks of the previous delivery request.
+	 */
 	public void clear() {
 		deliveryList.getItems().clear();
 		deliveryPane.getChildren().remove(deliveryList);
+		idDeliveryPoints.clear();
+	}
+	
+	/**
+	 * Add the interaction between the map representation and the list of delivery
+	 */
+	private void addItemAction() {
+		
+		deliveryList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+
+		    @Override
+		    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+	            if(newValue != null) {
+	            	int idCheckpoint = idDeliveryPoints.get(deliveryList.getItems().indexOf(newValue));
+		        	
+		        	if(idCheckpoint != -1) {
+		        		graph.lightUpPath(idCheckpoint);
+		        	} else {
+		        		graph.lightDownPath();
+		        	}
+	            }        	
+	        }
+	    });
 	}
 }

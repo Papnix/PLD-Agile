@@ -2,13 +2,15 @@ package view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -24,21 +26,32 @@ import view.GraphNode.State;
 
 public class Graph extends Pane {
 
+	public final static Color BORDERNORMALCOLOR = new Color(0.1, 0.1, 0.1, 1);
+	public final static Color BORDERLIGHTEDCOLOR = Color.BLANCHEDALMOND;
+
 	private Map map;
+	private Round round;
+
 	private HashMap<Integer, GraphNode> nodes;
 	private HashMap<String, Line> sections;
-	private LinkedList<String> lightedUpRoads;
-	private LinkedList<Integer> lightedUpWaypoints;
+	private LinkedList<String> roundRoads;
+	private LinkedList<Integer> roundWaypoints;
+
+	private LinkedList<String> lightedRoads;
+	private LinkedList<Integer> lightedWaypoints;
+
 	private final static double offsetNode = GraphNode.SIZE + 2;
 
 	public Graph() {
 		super();
-		this.setBackground(
-				new Background(new BackgroundFill(new Color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
+		this.setBackground(new Background(new BackgroundFill(new Color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 		nodes = new HashMap<>();
 		sections = new HashMap<>();
-		lightedUpRoads = new LinkedList<>();
-		lightedUpWaypoints = new LinkedList<>();
+		roundRoads = new LinkedList<>();
+		roundWaypoints = new LinkedList<>();
+		lightedRoads = new LinkedList<>();
+		lightedWaypoints = new LinkedList<>();
+
 	}
 
 	/**
@@ -63,13 +76,43 @@ public class Graph extends Pane {
 	 * @param round
 	 *            The path to display
 	 */
-	public void displayRound(Round round) {
-		
+	public void setRound(Round round) {
+		this.round = round;
+		clearDisplay();
+		lightDownPath();
+		clearDisplayWaypoint();
+		clearDisplayRoads();
+
+		displayRoundWaypoint(round);
+		displayRoundRoads(round);
+	}
+
+	/**
+	 * Clear all kind of display of roads and specials points.
+	 */
+	private void clearDisplay() {
+		clearDisplayWaypoint();
+		clearDisplayRoads();
+	}
+
+	/**
+	 * Ligh up the path from the warehouse to a certain point.
+	 * 
+	 * @param idLastPoint
+	 *            The point where we want to end the path.
+	 */
+	public void lightUpPath(int idLastPoint) {
+		lightDownPath();
+		lightUpWaypoint(idLastPoint);
+		lightUpRoads(idLastPoint);
+	}
+
+	/**
+	 * Remove the display of the path.
+	 */
+	public void lightDownPath() {
 		lightDownWaypoint();
 		lightDownRoads();
-		
-		lightUpWaypoint(round);
-		lightUpRoads(round);
 	}
 
 	// PRIVATE
@@ -94,6 +137,18 @@ public class Graph extends Pane {
 
 		GraphNode node = new GraphNode(waypoint);
 		node.relocate(waypoint.getXCoord(), waypoint.getYCoord());
+		node.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent t) {
+				if (node.getState() == GraphNode.State.DELIVERYPOINT) {
+
+					lightUpPath(waypoint.getId());
+				} else {
+					lightDownPath();
+				}
+
+			}
+		});
 		this.getChildren().add(node);
 		nodes.put(waypoint.getId(), node);
 	}
@@ -125,6 +180,7 @@ public class Graph extends Pane {
 	private void addSectionDisplay(Section section) {
 		Line line = new Line();
 		line.setStrokeWidth(2);
+		line.setStroke(BORDERNORMALCOLOR);
 		// We add GraphNode.SIZE + 2 (thickness of the border) because the icon
 		// polygon don't display on its center.
 		line.setStartX(section.getOrigin().getXCoord() + offsetNode);
@@ -163,8 +219,10 @@ public class Graph extends Pane {
 	private void clearAllContainers() {
 		nodes.clear();
 		sections.clear();
-		lightedUpRoads.clear();
-		lightedUpWaypoints.clear();
+		roundRoads.clear();
+		roundWaypoints.clear();
+		lightedRoads.clear();
+		lightedWaypoints.clear();
 		this.getChildren().clear();
 	}
 
@@ -173,33 +231,37 @@ public class Graph extends Pane {
 	 * 
 	 * @param round
 	 */
-	private void lightUpWaypoint(Round round) {
-		
+	private void displayRoundWaypoint(Round round) {
+
+		// On récupère tous les points de la tournée
 		ArrayList<Integer> allPoints = new ArrayList<>();
 		List<Section> points = round.getRoute();
 		for (Section section : points) {
 			allPoints.add(section.getOrigin().getId());
 		}
-		lightedUpWaypoints.addAll(allPoints);
-		
+		roundWaypoints.addAll(allPoints);
+
+		// On récupère les points de livraisons
 		ArrayList<Integer> deliveryPoints = new ArrayList<>();
 		List<DeliveryTime> deliveries = round.getArrivalTimes();
 		for (DeliveryTime delivery : deliveries) {
 			deliveryPoints.add(delivery.getCheckpoint().getId());
 		}
-		
+
+		// Cela nous permet d'avoir deux ensemble (les livraions et les points
+		// de passage)
 		allPoints.removeAll(deliveries);
-		
+
 		// Paint the points !
-		for(Integer id : allPoints) {
+		for (Integer id : allPoints) {
 			nodes.get(id).setState(GraphNode.State.WAYPOINT);
 		}
-		
-		for(Integer id : deliveryPoints) {
+
+		for (Integer id : deliveryPoints) {
 			nodes.get(id).setState(GraphNode.State.DELIVERYPOINT);
 		}
 
-		// Paint the warehouse differently
+		// On paint l'entrepôt
 		int id = points.get(0).getOrigin().getId();
 		nodes.get(id).setState(GraphNode.State.WAREHOUSE);
 	}
@@ -210,36 +272,128 @@ public class Graph extends Pane {
 	 * @param round
 	 *            the round to display
 	 */
-	private void lightUpRoads(Round round) {
+	private void displayRoundRoads(Round round) {
 
 		List<Section> roads = round.getRoute();
 
 		for (Section line : roads) {
 			String key = getSectionKey(line.getOrigin(), line.getDestination());
 			sections.get(key).setStroke(Color.RED);
-			lightedUpRoads.add(key);
+			roundRoads.add(key);
 		}
 	}
 
 	/**
 	 * Light down the points of the previous round
 	 */
-	private void lightDownWaypoint() {
-		for (Integer id : lightedUpWaypoints) {
+	private void clearDisplayWaypoint() {
+		lightDownWaypoint();
+		for (Integer id : roundWaypoints) {
 			nodes.get(id).setState(State.NORMAL);
 		}
-		lightedUpWaypoints.clear();
-
+		roundWaypoints.clear();
 	}
 
 	/**
 	 * Light down the sections of the previous roads
 	 */
-	private void lightDownRoads() {
-		for (String key : lightedUpRoads) {
-			sections.get(key).setStroke(Color.BLACK);
+	private void clearDisplayRoads() {
+		lightDownRoads();
+		for (String key : roundRoads) {
+			sections.get(key).setStroke(BORDERNORMALCOLOR);
 		}
-		lightedUpRoads.clear();
+		roundRoads.clear();
+	}
+
+	/*
+	 * Add an enlightment of waypoints of the round.
+	 */
+	private void lightUpWaypoint(int idLastPoint) {
+
+		// On récupère l'ordres des points à livrer.
+		LinkedList<Integer> pointsToDeliver = getIdOfPointsToDeliver(idLastPoint);
+
+		Iterator<Integer> idIterator = roundWaypoints.iterator();
+		while (idIterator.hasNext()) {
+
+			int id = idIterator.next();
+			nodes.get(id).lightUp();
+			lightedWaypoints.add(id);
+
+			if (id == pointsToDeliver.getFirst()) {
+				pointsToDeliver.removeFirst();
+				if (pointsToDeliver.isEmpty()) {
+					break;
+				}
+			}
+		}
+	}
+
+	/*
+	 * Add an enlightment of roads of the round.
+	 */
+	private void lightUpRoads(int idLastPoint) {
+		
+		// On récupère l'ordres des points à livrer.
+		LinkedList<Integer> pointsToDeliver = getIdOfPointsToDeliver(idLastPoint);
+
+		Iterator<String> sectionKey = roundRoads.iterator();
+		while (sectionKey.hasNext()) {
+			String key = sectionKey.next();
+
+			sections.get(key).setStroke(BORDERLIGHTEDCOLOR);
+			lightedRoads.add(key);
+
+			if (Integer.parseInt(key.substring(key.lastIndexOf(':') + 1)) == pointsToDeliver.getFirst()
+					|| Integer.parseInt(key.substring(0, key.lastIndexOf(':'))) == pointsToDeliver.getFirst()) {
+				pointsToDeliver.removeFirst();
+				if (pointsToDeliver.isEmpty()) {
+					break;
+				}
+			}
+		}
+	}
+	
+	/*
+	 * Remove the enlightment of waypoint of the round.
+	 */
+	private void lightDownWaypoint() {
+		for (Integer id : lightedWaypoints) {
+			nodes.get(id).lightDown();
+		}
+		lightedWaypoints.clear();
+	}
+
+	/*
+	 * Remove the enlightment of roads of the round.
+	 */
+	private void lightDownRoads() {
+		for (String key : lightedRoads) {
+			sections.get(key).setStroke(Color.RED);
+		}
+		lightedRoads.clear();
+	}
+
+	/**
+	 *  Return a list of id of the one given in parameter and id of points which be delivered before this certain point.
+	 * @param idLastPoint The id of the ending point.
+	 * @return List of id of points delivered on the path.
+	 */
+	private LinkedList<Integer> getIdOfPointsToDeliver(int idLastPoint) {
+		// On récupère l'ordres des points à livrer.
+		LinkedList<Integer> pointsToDeliver = new LinkedList<>();
+
+		ArrayList<DeliveryTime> listDeliveries =  (ArrayList<DeliveryTime>) round.getArrivalTimes();
+		for(int i = 0; i < listDeliveries.size(); i++) {
+			
+			int id = listDeliveries.get(i).getCheckpoint().getId();
+			pointsToDeliver.add(id);
+			
+			if (id == idLastPoint) {
+				break;
+			}
+		}
+		return pointsToDeliver;
 	}
 
 }

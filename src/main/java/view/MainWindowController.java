@@ -169,14 +169,14 @@ public class MainWindowController implements Initializable {
 	    		
 	    		// Crée la ListView à droite si c'est le premier chargement de demande de livraisons
 	    		if (firstDeliveryLoad) {
-	    			deliveriesListView = new DeliveriesListView(deliveryPane);
+	    			deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
 	    			firstDeliveryLoad = false;
 	    		}
 	    		
 	    		// Met à jour l'interface graphique
 	        	deliveriesListView.createDeliveriesList(round, map);
 	        	loadDeliveryButton.setVisible(false);
-	        	mapDisplayer.displayRound(round);
+	        	mapDisplayer.setRound(round);
 	        					
 			}
 		}
