@@ -169,7 +169,7 @@ public class Graph extends Pane {
 	 * @param round
 	 */
 	private void lightUpWaypoint(Round round) {
-		List<Section> points = round.getRoute();
+		List<Section> points = round.getRoute(0);
 
 		for (Section section : points) {
 			int id = section.getOrigin().getId();
@@ -191,7 +191,7 @@ public class Graph extends Pane {
 	 */
 	private void lightUpRoads(Round round) {
 
-		List<Section> roads = round.getRoute();
+		List<Section> roads = round.getRoute(0);
 
 		for (Section line : roads) {
 			String key = getSectionKey(line.getOrigin(), line.getDestination());

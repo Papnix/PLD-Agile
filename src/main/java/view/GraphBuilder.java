@@ -107,7 +107,7 @@ public class GraphBuilder {
 		
 	private void drawRoundWaypoints(Round round, GraphicsContext graph) {
 		
-		List<DeliveryTime> deliveryTimes = round.getRoundTimeOrder();
+		List<DeliveryTime> deliveryTimes = round.getRoundTimeOrder(0);
 		for (int i = 0; i < deliveryTimes.size(); i++) {
 			DeliveryTime dt = deliveryTimes.get(i);
 			
@@ -120,7 +120,7 @@ public class GraphBuilder {
 	}
 	
 	private void drawRoundSections(Round round, GraphicsContext graph) {
-		List<Section> route = round.getRoute();
+		List<Section> route = round.getRoute(0);
 		
 		for (Section s : route)
 		{

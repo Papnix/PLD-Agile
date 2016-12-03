@@ -72,13 +72,15 @@ public class MainWindowController implements Initializable {
 			handleLoadMap();
 		});
 
-		assert menuLoadDelivery != null : "fx:id=\"menuLoadDelivery\" was not injected: check your FXML file 'view.fxml'.";
+		assert menuLoadDelivery != null : "fx:id=\"menuLoadDelivery\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
 		menuLoadDelivery.setOnAction((event) -> {
 			handleLoadDelivery();
 		});
 		menuLoadDelivery.setDisable(true);
 
-		assert loadDeliveryButton != null : "fx:id=\"loadDeliveryButton\" was not injected: check your FXML file 'view.fxml'.";
+		assert loadDeliveryButton != null : "fx:id=\"loadDeliveryButton\" was not injected: check your FXML"
+				+ " file 'view.fxml'.";
 		loadDeliveryButton.setOnAction((event) -> {
 			handleLoadDelivery();
 		});
@@ -114,7 +116,8 @@ public class MainWindowController implements Initializable {
 				newMap = XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
 			} 
 			catch (XMLException e) {
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas"
+						+ " une carte valide.");
 				return;
 			}
 			catch (IOException | SAXException | ParserConfigurationException e) {
@@ -148,10 +151,12 @@ public class MainWindowController implements Initializable {
 
 		if (deliveryRequestFile != null) {
 			try {
-				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
+				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath()
+						.toString(), map);
 			}
 			catch (XMLException e) {
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraison valide.");
+				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
+						+ " demande de livraison valide.");
 				return;
 			}
 			catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
@@ -169,7 +174,8 @@ public class MainWindowController implements Initializable {
 				}
 				catch(NullPointerException e) {
 					e.printStackTrace();
-					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas"
+							+ " correspondre à la carte actuelle.");
 					return;
 				}
 				createDeliveriesList(round);
@@ -188,13 +194,25 @@ public class MainWindowController implements Initializable {
 
     	String text = "";
     	
-    	for(DeliveryTime dt:round.getRoundTimeOrder()){
+    	for(DeliveryTime dt:round.getRoundTimeOrder(0)){
     		text = "Adresse : " + dt.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
-    		if(dt.getArrivalTime() != null){
-    			text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(dt.getArrivalTime().getTime()) + "\n";
-    			text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
+    		if(dt.getArrivalTime() != null && dt.getDepartureTime() == null){
+    			text += "Heure de fin de tournée : " + new SimpleDateFormat("HH:mm").format(dt.getArrivalTime()
+    					.getTime());
+    		}else if(dt.getDepartureTime() != null && dt.getArrivalTime() == null){
+    			text += "Heure de debut de tournée : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime()
+    					.getTime());
     		}else{
-    			text += "Heure de debut de tournée : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
+    			if(dt.getCheckpoint().getTimeRangeStart() != null && dt.getCheckpoint().getTimeRangeEnd() != null){
+    				text += "ouvert de " + new SimpleDateFormat("HH:mm").format(dt.getCheckpoint().getTimeRangeStart()
+    						.getTime()) + " à " + new SimpleDateFormat("HH:mm").format(dt.getCheckpoint()
+    								.getTimeRangeEnd().getTime()) + "\n";
+    			}
+				text += "Temps d'attente : " + new SimpleDateFormat("HH:mm").format(dt.getWaitingTime().getTime())
+						+ "\n";
+    			text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(dt.getArrivalTime().getTime())
+    					+ "		";
+    			text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
     		}
     		
     		deliveriesTexts.add(text);
