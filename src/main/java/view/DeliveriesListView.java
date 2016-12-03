@@ -41,7 +41,7 @@ public class DeliveriesListView {
 	 * 		Text to display directly in a ListView's cell
 	 */
     public static String deliveryToText(Checkpoint c) {
-    	String text = "Adresse : " + c.getAssociatedWaypoint().getId() + "\n";
+    	String text = "Adresse : " + c.getId() + "\n";
     	
     	int hours = c.getDuration() / 3600;
     	int minutes = (c.getDuration() % 3600) / 60;
@@ -72,7 +72,7 @@ public class DeliveriesListView {
     	ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
 
     	List<DeliveryTime> deliveryTimes = round.getArrivalTimes();
-    	for (int i = 0; i < deliveryTimes.size() - 1; i++) {
+    	for (int i = 0; i < deliveryTimes.size(); i++) {
     		DeliveryTime dt = deliveryTimes.get(i);
     		deliveriesTexts.add(DeliveriesListView.deliveryToText(dt.getCheckpoint()));
     	}
