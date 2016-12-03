@@ -16,7 +16,7 @@ public class TestXMLDeserializer {
 		Map map = new Map();
 		try {
 			// ouverture de la map de test (créé a cette effet)
-			XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml", map);
+			map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -34,13 +34,13 @@ public class TestXMLDeserializer {
 	
 	@Test
 	public void testLoadDeliveryRequest() {
-		Map map = new Map();
+		Map map;
 		DeliveryRequest request = new DeliveryRequest();
 		
 		try {
 			// ouverture de la map de test (créé a cette effet)
-			XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml", map);
-			XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons2x2.xml", map, request);
+			map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+			request = XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons2x2.xml", map);
 		} catch (Exception e) {
 
 			e.printStackTrace();

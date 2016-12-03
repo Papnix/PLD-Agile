@@ -61,7 +61,7 @@ public class TestDijkstra {
 		Map map = new Map();
 		try {
 			// ouverture de la map de test (créé a cette effet)
-			XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml", map);
+			map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,7 +101,7 @@ public class TestDijkstra {
 		Map map = new Map();
 		try {
 			// ouverture de la map de test (créé a cette effet)
-			XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml", map);
+			map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

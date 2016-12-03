@@ -54,8 +54,9 @@ public class XMLDeserializer {
      * @throws IOException
      * @throws XMLException
      */
-    public static void loadMap(String path, Map map) throws ParserConfigurationException, SAXException, IOException, XMLException {
+    public static Map loadMap(String path) throws ParserConfigurationException, SAXException, IOException, XMLException {
 
+    	Map map = new Map();
         File xml = new File(path);
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = docBuilder.parse(xml);
@@ -66,6 +67,8 @@ public class XMLDeserializer {
         } else {
             throw new XMLException("Document non conforme");
         }
+        
+        return map;
     }
 
     /**
@@ -76,8 +79,10 @@ public class XMLDeserializer {
      * @throws IOException
      * @throws XMLException
      */
-    public static void loadDeliveryRequest(String path, Map map, DeliveryRequest request) throws ParserConfigurationException,
+    public static DeliveryRequest loadDeliveryRequest(String path, Map map) throws ParserConfigurationException,
     		SAXException, IOException, XMLException, ParseException {
+    	
+    	DeliveryRequest request = new DeliveryRequest();
         File xml = new File(path);
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = docBuilder.parse(xml);
@@ -88,6 +93,8 @@ public class XMLDeserializer {
         } else {
             throw new XMLException("Document non conforme");
         }
+        
+        return request;
     }
 
     private static void buildMapFromDOMXML(Element rootNode, Map map) throws XMLException, NumberFormatException {
