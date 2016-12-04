@@ -46,7 +46,7 @@ public class MainWindowController implements Initializable {
 	private Map map;
 	private Round round;
 	private String lastFolderExplored;
-	
+
 	private Graph mapDisplayer;
 
 	@FXML
@@ -62,9 +62,9 @@ public class MainWindowController implements Initializable {
 	@FXML
 	private AnchorPane mapPane;
 
-
 	/**
-	 * Constructor of the main window, initialize links with fxml file for GUI components.
+	 * Constructor of the main window, initialize links with fxml file for GUI
+	 * components.
 	 */
 	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 		assert menuLoadMap != null : "fx:id=\"menuLoadMap\" was not injected: check your FXML file 'view.fxml'.";
@@ -97,13 +97,13 @@ public class MainWindowController implements Initializable {
 
 		firstDeliveryLoad = true;
 		deliveryList = new ListView<String>();
-		
-		setupGraphDisplayer();	
+
+		setupGraphDisplayer();
 
 	}
 
 	/**
-	 * 	Load a map from an xml source chosen by the user in an explorer.
+	 * Load a map from an xml source chosen by the user in an explorer.
 	 */
 	private void handleLoadMap() {
 
@@ -114,13 +114,11 @@ public class MainWindowController implements Initializable {
 		if (mapFile != null) {
 			try {
 				newMap = XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
-			} 
-			catch (XMLException e) {
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas"
-						+ " une carte valide.");
+			} catch (XMLException e) {
+				displayWarningMessageBox(
+						"Oups, il semble que le fichier que vous avez spécifié ne soit pas" + " une carte valide.");
 				return;
-			}
-			catch (IOException | SAXException | ParserConfigurationException e) {
+			} catch (IOException | SAXException | ParserConfigurationException e) {
 				e.printStackTrace();
 				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
 				return;
@@ -133,15 +131,16 @@ public class MainWindowController implements Initializable {
 				loadDeliveryButton.setDisable(false);
 				loadDeliveryButton.setText("Charger demande de livraisons");
 				clearPreviousRound();
-				
+
 				mapDisplayer.setMap(newMap);
 				mapDisplayer.setVisible(true);
 			}
 		}
 	}
-	
+
 	/**
-	 * Load a delivery request from an xml source chosen by the user in an explorer
+	 * Load a delivery request from an xml source chosen by the user in an
+	 * explorer
 	 */
 	private void handleLoadDelivery() {
 
@@ -151,28 +150,25 @@ public class MainWindowController implements Initializable {
 
 		if (deliveryRequestFile != null) {
 			try {
-				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath()
-						.toString(), map);
-			}
-			catch (XMLException e) {
+				newDeliveryRequest = XMLDeserializer
+						.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
+			} catch (XMLException e) {
 				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
 						+ " demande de livraison valide.");
 				return;
-			}
-			catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
+			} catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
 				e.printStackTrace();
 				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
 				return;
-			}			
+			}
 
 			if (newDeliveryRequest != null) {
 				deliveryRequest = newDeliveryRequest;
-				try{
+				try {
 					round = new Round(deliveryRequest);
 					round.computePaths(map);
 					round.computeRound(map);
-				}
-				catch(NullPointerException e) {
+				} catch (NullPointerException e) {
 					e.printStackTrace();
 					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas"
 							+ " correspondre à la carte actuelle.");
@@ -186,73 +182,86 @@ public class MainWindowController implements Initializable {
 
 	/**
 	 * Create the list of delivery from a round
+	 * 
 	 * @param round
-	 * 		the round with delivery point to display
+	 *            the round with delivery point to display
 	 */
 	private void createDeliveriesList(Round round) {
 		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
 
-    	String text = "";
-    	
-    	for(DeliveryTime dt:round.getRoundTimeOrder(0)){
-    		text = "Adresse : " + dt.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
-    		if(dt.getArrivalTime() != null && dt.getDepartureTime() == null){
-    			text += "Heure de fin de tournée : " + new SimpleDateFormat("HH:mm").format(dt.getArrivalTime()
-    					.getTime());
-    		}else if(dt.getDepartureTime() != null && dt.getArrivalTime() == null){
-    			text += "Heure de debut de tournée : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime()
-    					.getTime());
-    		}else{
-    			if(dt.getCheckpoint().getTimeRangeStart() != null && dt.getCheckpoint().getTimeRangeEnd() != null){
-    				text += "ouvert de " + new SimpleDateFormat("HH:mm").format(dt.getCheckpoint().getTimeRangeStart()
-    						.getTime()) + " à " + new SimpleDateFormat("HH:mm").format(dt.getCheckpoint()
-    								.getTimeRangeEnd().getTime()) + "\n";
-    			}
-    			if (dt.getWaitingTime() != 0){
-					text += "Temps d'attente : " + new SimpleDateFormat("HH:mm").format(dt.getWaitingTime())
-							+ "\n";
-    			}else{
-    				text += "auncune Attente \n";
-    			}
-    				
-    			text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(dt.getArrivalTime().getTime())
-    					+ "		";
-    			text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(dt.getDepartureTime().getTime());
-    		}
-    		
-    		deliveriesTexts.add(text);
-    		deliveryList.setItems(deliveriesTexts);
-    	}
-    	//deliveryList.setItems(deliveriesTexts);
+		String text = "";
+		List<DeliveryTime> rdt = round.getRoundTimeOrder(0);
 
-    	if (firstDeliveryLoad) {
-	    	AnchorPane.setTopAnchor(deliveryList, 0d);
-	    	AnchorPane.setBottomAnchor(deliveryList, 0d);
-	    	AnchorPane.setRightAnchor(deliveryList, 0d);
-	    	AnchorPane.setLeftAnchor(deliveryList, 0d);
-	    	deliveryPane.getChildren().add(deliveryList);
+		text = "Adresse : " + rdt.get(0).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
+		text += "Heure de debut de tournée : "
+				+ new SimpleDateFormat("HH:mm").format(rdt.get(0).getDepartureTime().getTime());
+		deliveriesTexts.add(text);
+
+		for (int i = 1; i < rdt.size()-1; i++) {
+			text = "Adresse : " + rdt.get(i).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
+			if (rdt.get(i).getCheckpoint().getTimeRangeStart() != null
+					&& rdt.get(i).getCheckpoint().getTimeRangeEnd() != null) {
+				text += "ouvert de "
+						+ new SimpleDateFormat("HH:mm").format(rdt.get(i).getCheckpoint().getTimeRangeStart().getTime())
+						+ " à "
+						+ new SimpleDateFormat("HH:mm").format(rdt.get(i).getCheckpoint().getTimeRangeEnd().getTime())
+						+ "\n";
+			}
+			if (rdt.get(i).getWaitingTime() != 0) {
+				text += "Temps d'attente : " + millisToText(rdt.get(i).getWaitingTime()) + "\n";
+			} else {
+				text += "aucune attente \n";
+			}
+
+			text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(rdt.get(i).getArrivalTime().getTime())
+					+ "		";
+			text += "Heure de depart : "
+					+ new SimpleDateFormat("HH:mm").format(rdt.get(i).getDepartureTime().getTime());
+
+			deliveriesTexts.add(text);
+		}
+
+		text = "Adresse : " + rdt.get(rdt.size()-1).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
+		text += "Heure de fin de tournée : "
+				+ new SimpleDateFormat("HH:mm").format(rdt.get(rdt.size()-1).getArrivalTime().getTime());
+		deliveriesTexts.add(text);
+
+		deliveryList.setItems(deliveriesTexts);
+
+		if (firstDeliveryLoad) {
+			AnchorPane.setTopAnchor(deliveryList, 0d);
+			AnchorPane.setBottomAnchor(deliveryList, 0d);
+			AnchorPane.setRightAnchor(deliveryList, 0d);
+			AnchorPane.setLeftAnchor(deliveryList, 0d);
+			deliveryPane.getChildren().add(deliveryList);
 			firstDeliveryLoad = false;
-    	}
-    }
+		}
+	}
 	
+	private String millisToText(long timeInMillis){
+		long sec = timeInMillis/1000;
+		long min = sec % 60;
+		long heure = min / 60;
+		
+		return heure + ":" + min;
+	}
+
 	/**
-	 *	Remove the round from the list view and clear it's display.
+	 * Remove the round from the list view and clear it's display.
 	 */
-	private void clearPreviousRound()
-	{
+	private void clearPreviousRound() {
 		// On enlève la tournée affichée
 		round = null;
-		////////////////////////////////////////////graphBuilder.clearCanvas(canvasRound);
-		if(firstDeliveryLoad == false) {
+		//////////////////////////////////////////// graphBuilder.clearCanvas(canvasRound);
+		if (firstDeliveryLoad == false) {
 			deliveryPane.getChildren().remove(deliveryList);
 			firstDeliveryLoad = true;
 		}
-		
+
 	}
 
-	
 	/**
-	 *	Open an explorer to select a file and return it.
+	 * Open an explorer to select a file and return it.
 	 **/
 	private File getFileFromExplorer() {
 
@@ -262,7 +271,8 @@ public class MainWindowController implements Initializable {
 		if (lastFolderExplored != null) {
 			try {
 				explorer.setInitialDirectory(new File(lastFolderExplored));
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 		}
 
 		File file = explorer.showOpenDialog(null);
@@ -271,18 +281,19 @@ public class MainWindowController implements Initializable {
 
 		return file;
 	}
-	
+
 	/**
 	 * Display a dialog to display some informations to users.
+	 * 
 	 * @param message
-	 * 			message to display.
+	 *            message to display.
 	 **/
 	public static void displayWarningMessageBox(String message) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Rapport d'erreur");
 		alert.setHeaderText("Une erreur est survenue");
 		alert.setContentText(message);
-		alert.showAndWait();	
+		alert.showAndWait();
 	}
 
 	/**
