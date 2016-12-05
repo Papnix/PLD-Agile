@@ -4,10 +4,11 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import model.Checkpoint;
+import model.DeliveryTime;
 
-public class IteratorSeq implements Iterator<Checkpoint> {
+public class IteratorSeq implements Iterator<DeliveryTime> {
 
-	private Checkpoint[] candidats;
+	private DeliveryTime[] candidats;
 	private int nbCandidats;
 
 	/**
@@ -15,10 +16,10 @@ public class IteratorSeq implements Iterator<Checkpoint> {
 	 * @param nonVus
 	 * @param sommetcrt
 	 */
-	public IteratorSeq(Collection<Checkpoint> nonVus, Checkpoint sommetcrt){
-		this.candidats = new Checkpoint[nonVus.size()];
+	public IteratorSeq(Collection<DeliveryTime> nonVus, DeliveryTime sommetcrt){
+		this.candidats = new DeliveryTime[nonVus.size()];
 		nbCandidats = 0;
-		for (Checkpoint s : nonVus){
+		for (DeliveryTime s : nonVus){
 			candidats[nbCandidats++] = s;
 		}
 	}
@@ -29,7 +30,7 @@ public class IteratorSeq implements Iterator<Checkpoint> {
 	}
 
 	@Override
-	public Checkpoint next() {
+	public DeliveryTime next() {
 		return candidats[--nbCandidats];
 	}
 
