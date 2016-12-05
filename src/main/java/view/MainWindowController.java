@@ -10,6 +10,7 @@ import java.text.ParseException;
 
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -238,12 +239,13 @@ public class MainWindowController implements Initializable {
 		}
 	}
 	
-	private String millisToText(long timeInMillis){
-		long sec = timeInMillis/1000;
-		long min = sec % 60;
-		long heure = min / 60;
-		
-		return heure + ":" + min;
+	private String millisToText(long millis){
+		return String.format("%02d:%02d", 
+				TimeUnit.MILLISECONDS.toHours(millis),
+				TimeUnit.MILLISECONDS.toMinutes(millis) -  
+				TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
+				TimeUnit.MILLISECONDS.toSeconds(millis) - 
+				TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
 	}
 
 	/**

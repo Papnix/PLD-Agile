@@ -36,7 +36,6 @@ public abstract class TemplateTSP2 implements TSP2 {
 			if (arrivalDate.getTime() > sommetcrt.getTimeRangeEnd().getTime()) {
 				return -1;
 			} else if (arrivalDate.getTime() < sommetcrt.getTimeRangeStart().getTime()) {
-				System.out.println(sommetcrt.getTimeRangeStart() + " - " + arrivalDate + " = " + new Date(sommetcrt.getTimeRangeStart().getTime() - arrivalDate.getTime()));
 				return (sommetcrt.getTimeRangeStart().getTime() - arrivalDate.getTime());
 			} else {
 				return 0;
