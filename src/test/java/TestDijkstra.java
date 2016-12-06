@@ -8,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import controller.Controller;
 import controller.pathfinder.Dijkstra;
 import controller.xml.XMLDeserializer;
 import controller.xml.XMLException;
@@ -30,7 +29,8 @@ public class TestDijkstra {
 	 */
 	@Test
 	public void evaluateGetSuccessors() throws ParserConfigurationException, SAXException, IOException, XMLException {
-		Map map = Controller.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+		
+		Map map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 
 		Dijkstra dj = new Dijkstra(map);
 
@@ -89,6 +89,7 @@ public class TestDijkstra {
 
 		// Calcul et test cout de l'"arrete" s2-s3.
 		costS2S3Estimated = (5440.0 / 43.0)*1000;
+
 		Assert.assertEquals(costS2S3Estimated, dj.computeCost(s2, s3), 0.01);
 	}
 
@@ -117,7 +118,8 @@ public class TestDijkstra {
 		result.push(1);
 
 		Assert.assertTrue(result.equals(dj.getPath(target)));
-		Assert.assertEquals(227, dj.getTargetPathCost(target)/1000,1);
+		Assert.assertEquals(227, dj.getTargetPathCost(target)/1000, 1);
+
 
 		source = 2;
 		target = 6;
@@ -127,6 +129,7 @@ public class TestDijkstra {
 		result.push(2);
 
 		Assert.assertTrue(result.equals(dj.getPath(target)));
-		Assert.assertEquals(313, dj.getTargetPathCost(target)/1000,1);
+		Assert.assertEquals(313, dj.getTargetPathCost(target)/1000, 1);
+
 	}
 }

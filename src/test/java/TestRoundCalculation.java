@@ -1,5 +1,3 @@
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -29,7 +27,7 @@ import model.Section;
  */
 
 public class TestRoundCalculation {
-
+	
 	/**
 	 * This method checks thats the RoundCalculator gives the best round, and
 	 * sets active the associated sections.
@@ -69,6 +67,7 @@ public class TestRoundCalculation {
 
 		Assert.assertTrue(expectedRound.containsAll(CheckpointId) && CheckpointId.containsAll(expectedRound));
 	}
+
 
 	/**
 	 * This method checks the respect of the time range of the round compute by
