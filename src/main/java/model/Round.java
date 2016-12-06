@@ -111,6 +111,10 @@ public class Round {
         return roundTimeOrder.get(i);
     }
 
+    public List<List<DeliveryTime>> getRoundTimeOrders() {
+        return roundTimeOrder;
+    }
+
     // ------------------------------------------- Setters
     // ------------------------------------------------------
 

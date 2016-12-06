@@ -34,25 +34,25 @@ public class TestDeletion {
 		round.computeRound(map);
 
 		Deletion deletion = new Deletion(round);
-		Round newRound = deletion.doCommand(round.getArrivalTimes().get(1).getCheckpoint());
+		Round newRound = deletion.doCommand(round.getRoundTimeOrder(0).get(1).getCheckpoint());
 
-		Assert.assertEquals(3, newRound.getArrivalTimes().size());
-		Assert.assertEquals(0, newRound.getArrivalTimes().get(0).getCheckpoint().getId());
-		Assert.assertEquals(1, newRound.getArrivalTimes().get(1).getCheckpoint().getId());
-		Assert.assertEquals(0, newRound.getArrivalTimes().get(2).getCheckpoint().getId());
+		Assert.assertEquals(3, newRound.getRoundTimeOrder(0).size());
+		Assert.assertEquals(0, newRound.getRoundTimeOrder(0).get(0).getCheckpoint().getId());
+		Assert.assertEquals(1, newRound.getRoundTimeOrder(0).get(1).getCheckpoint().getId());
+		Assert.assertEquals(0, newRound.getRoundTimeOrder(0).get(2).getCheckpoint().getId());
 
 		Round undoRound = deletion.undoCommand();
-		Assert.assertEquals(round.getArrivalTimes().size(), undoRound.getArrivalTimes().size());
-		Assert.assertEquals(round.getArrivalTimes().get(0).getCheckpoint().getId(), undoRound.getArrivalTimes().get(0).getCheckpoint().getId());
-		Assert.assertEquals(round.getArrivalTimes().get(1).getCheckpoint().getId(), undoRound.getArrivalTimes().get(1).getCheckpoint().getId());
-		Assert.assertEquals(round.getArrivalTimes().get(2).getCheckpoint().getId(), undoRound.getArrivalTimes().get(2).getCheckpoint().getId());
-		Assert.assertEquals(round.getArrivalTimes().get(3).getCheckpoint().getId(), undoRound.getArrivalTimes().get(3).getCheckpoint().getId());
+		Assert.assertEquals(round.getRoundTimeOrder(0).size(), undoRound.getRoundTimeOrder(0).size());
+		Assert.assertEquals(round.getRoundTimeOrder(0).get(0).getCheckpoint().getId(), undoRound.getRoundTimeOrder(0).get(0).getCheckpoint().getId());
+		Assert.assertEquals(round.getRoundTimeOrder(0).get(1).getCheckpoint().getId(), undoRound.getRoundTimeOrder(0).get(1).getCheckpoint().getId());
+		Assert.assertEquals(round.getRoundTimeOrder(0).get(2).getCheckpoint().getId(), undoRound.getRoundTimeOrder(0).get(2).getCheckpoint().getId());
+		Assert.assertEquals(round.getRoundTimeOrder(0).get(3).getCheckpoint().getId(), undoRound.getRoundTimeOrder(0).get(3).getCheckpoint().getId());
 
 		Round redoRound = deletion.redoCommand();
-		Assert.assertEquals(redoRound.getArrivalTimes().size(), newRound.getArrivalTimes().size());
-		Assert.assertEquals(redoRound.getArrivalTimes().get(0).getCheckpoint().getId(), newRound.getArrivalTimes().get(0).getCheckpoint().getId());
-		Assert.assertEquals(redoRound.getArrivalTimes().get(1).getCheckpoint().getId(), newRound.getArrivalTimes().get(1).getCheckpoint().getId());
-		Assert.assertEquals(redoRound.getArrivalTimes().get(2).getCheckpoint().getId(), newRound.getArrivalTimes().get(2).getCheckpoint().getId());
+		Assert.assertEquals(redoRound.getRoundTimeOrder(0).size(), newRound.getRoundTimeOrder(0).size());
+		Assert.assertEquals(redoRound.getRoundTimeOrder(0).get(0).getCheckpoint().getId(), newRound.getRoundTimeOrder(0).get(0).getCheckpoint().getId());
+		Assert.assertEquals(redoRound.getRoundTimeOrder(0).get(1).getCheckpoint().getId(), newRound.getRoundTimeOrder(0).get(1).getCheckpoint().getId());
+		Assert.assertEquals(redoRound.getRoundTimeOrder(0).get(2).getCheckpoint().getId(), newRound.getRoundTimeOrder(0).get(2).getCheckpoint().getId());
 
 	}
 }

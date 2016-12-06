@@ -12,7 +12,7 @@ public abstract class Command {
 
     public Command(Round round) {
         this.previousRound = round;
-        this.modifiedRound = null;
+        this.modifiedRound = new Round(round);
     }
 
     public abstract Round doCommand(Checkpoint checkpoint);
