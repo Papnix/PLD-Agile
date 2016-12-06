@@ -463,13 +463,14 @@
  *                                                                             *
  ******************************************************************************/
 
+.scroll-pane .viewport {
+    -fx-background-color: rgb(150,150,150);
+  }
+
 .scroll-pane {
-    -fx-background-color: transparent,-fx-background;
+    -fx-background-color:transparent;
 }
 
-.scroll-pane .corner {
-    -fx-background-color: black, #4a4a4a;
-}
 
 /*******************************************************************************
  *                                                                             *
@@ -492,11 +493,11 @@
     
 }
 
-/*.combo-box-base:focused {
+.combo-box-base:focused {
     -fx-background-color: -fx-focus-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-radius: 6.4, 4, 5, 3;
     -fx-background-insets: -1.4, 0, 1, 2;
-}*/
+}
 
 .combo-box-base:disabled {
     -fx-opacity: .4;

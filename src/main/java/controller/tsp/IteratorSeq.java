@@ -3,7 +3,6 @@ package controller.tsp;
 import java.util.Collection;
 import java.util.Iterator;
 
-import model.Checkpoint;
 import model.DeliveryTime;
 
 public class IteratorSeq implements Iterator<DeliveryTime> {

@@ -41,8 +41,13 @@
             </MenuBar>
             <SplitPane dividerPositions="0.9" layoutX="200.0" layoutY="120.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                <items>
-                  <AnchorPane fx:id="mapPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" style="-fx-background-color: #7f8c8d;" styleClass="pane">
+                  <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" style="-fx-background-color: #7f8c8d;" styleClass="pane">
                      <children>
+                        <ScrollPane fx:id="mapPane" hbarPolicy="NEVER" pannable="true" prefHeight="643.0" prefWidth="908.0" vbarPolicy="NEVER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                          </content>
+                        </ScrollPane>
                         <Button fx:id="loadMapButton" graphicTextGap="0.0" mnemonicParsing="false" text="Charger carte" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <font>
                               <Font name="Arial" size="12.0" />
