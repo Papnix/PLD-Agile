@@ -40,7 +40,7 @@ public class Dijkstra {
 	 * Treemap of the cost of section between the waypoint.
 	 */
 	private TreeMap<Integer, Integer> cost;
-
+	
 	/**
 	 * Dijkstra Class constructor
 	 */
@@ -108,7 +108,6 @@ public class Dijkstra {
 	 * @return All the direct successors of the specified origin
 	 */
 	public int[] getSuccessors(int idOrigin) {
-		
 		if(map == null) System.out.println("flute");
 		
 		Object[] sections = map.getSections().get(idOrigin).values().toArray();
@@ -137,16 +136,16 @@ public class Dijkstra {
 	 */
 	private void findMinimalCost(int idOrigin) {
 		int[] successors = getSuccessors(idOrigin);
-
-		for (int target : successors) {
-			if (getShortestDistance(target) > getShortestDistance(idOrigin) + 
-					computeCost(idOrigin, target)) {
-				cost.put(target, (int) (getShortestDistance(idOrigin) + 
-						computeCost(idOrigin, target)));
-				predecessors.put(target, idOrigin);
-				visitedWaypoints.add(target);
+			for (int target : successors) {
+				if (getShortestDistance(target) > getShortestDistance(idOrigin) + 
+						computeCost(idOrigin, target)) {
+					cost.put(target, (int) (getShortestDistance(idOrigin) + 
+							computeCost(idOrigin, target)));
+					predecessors.put(target, idOrigin);
+					visitedWaypoints.add(target);
+				}
 			}
-		}
+		
 	}
 
 	/**

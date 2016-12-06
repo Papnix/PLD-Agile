@@ -104,12 +104,12 @@ public class MainWindowController implements Initializable {
 			try {
 				newMap = XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
 			} catch (XMLException e) {
-				displayWarningMessageBox(
+				errorHandler.displayWarningMessageBox(
 						"Oups, il semble que le fichier que vous avez spécifié ne soit pas" + " une carte valide.");
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException e) {
 				e.printStackTrace();
-				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
+				errorHandler.displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
 				return;
 			}
 
@@ -143,12 +143,12 @@ public class MainWindowController implements Initializable {
 				newDeliveryRequest = XMLDeserializer
 						.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
 			} catch (XMLException e) {
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
+				errorHandler.displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
 						+ " demande de livraison valide.");
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
 				e.printStackTrace();
-				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
+				errorHandler.displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
 				return;
 			}
 
@@ -161,10 +161,10 @@ public class MainWindowController implements Initializable {
 		    		round.computeRound(map);
 				}
 				catch(NullPointerException e) {
-					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+					errorHandler.displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
 					return;
 				}
-	    		
+				
 	    		// Ecriture de la feuille de route
 	    		Roadmap.writeRoadmap(round, map);
 	    		
@@ -216,20 +216,6 @@ public class MainWindowController implements Initializable {
 		lastFolderExplored = file.getParent();
 
 		return file;
-	}
-
-	/**
-	 * Display a dialog to display some informations to users.
-	 * 
-	 * @param message
-	 *            message to display.
-	 **/
-	public static void displayWarningMessageBox(String message) {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Rapport d'erreur");
-		alert.setHeaderText("Une erreur est survenue");
-		alert.setContentText(message);
-		alert.showAndWait();
 	}
 
 	/**

@@ -21,6 +21,7 @@ public class Round {
 	private List<List<Section>> route;
 	private DeliveryRequest request;
 	private List<List<DeliveryTime>> roundTimeOrder;
+	private int numOfRound;
 
 	/**
 	 * This array contains the cost of the shortest path from cp1 to cp2
@@ -72,8 +73,16 @@ public class Round {
 		return request;
 	}
 
+	public int getNumOfRound(){
+		return numOfRound;
+	}
+	
 	public List<DeliveryTime> getRoundTimeOrder(int i) {
-		return roundTimeOrder.get(i);
+		if(numOfRound > 0){
+			return roundTimeOrder.get(i);
+		}else{
+			return null;
+		}
 	}
 
 	// ------------------------------------------- Setters
@@ -171,13 +180,14 @@ public class Round {
 		TSP1 tspAlgorithm = new TSP1();
 
 		// The TSP algorithm is used to compute the best round
-		int numSolution = tspAlgorithm.findSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations,
+		numOfRound = tspAlgorithm.findSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations,
 				request.getDeliveryPointList());
 
-		for (int i = 0; i < numSolution && tspAlgorithm.getBestRound(i) != null; i++) {
+		for (int i = 0; i < numOfRound && tspAlgorithm.getBestRound(i) != null; i++) {
 			roundTimeOrder.add(Arrays.asList(tspAlgorithm.getBestRound(i)));
 			route.add(buildRoute(map, Arrays.asList(tspAlgorithm.getBestRound(i))));
 		}
+		System.out.println("");
 	}
 
 	/**

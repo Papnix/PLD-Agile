@@ -8,9 +8,9 @@ import model.DeliveryTime;
 
 public class TSP1 extends TemplateTSP {
 
+	
 	@Override
 	protected int bound(Checkpoint currentVertice, List<DeliveryTime> unseen, int[][] cost, int[] duration) {
-
 		return 0;
 	}
 

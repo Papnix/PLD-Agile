@@ -34,32 +34,6 @@ public class DeliveriesListView {
     	AnchorPane.setLeftAnchor(deliveryList, 0d);
     	this.deliveryPane.getChildren().add(deliveryList);
 	}
-    
-	/**
-	 * Extracts a delivery's information and returns the text to display in the ListView
-	 * @param c
-	 * 		Delivery's checkpoint
-	 * @return
-	 * 		Text to display directly in a ListView's cell
-	 */
-    public static String deliveryToText(Checkpoint c) {
-    	String text = "Adresse : " + c.getId() + "\n";
-    	
-    	int hours = c.getDuration() / 3600;
-    	int minutes = (c.getDuration() % 3600) / 60;
-    	String duration = "";
-    	if (hours < 10) {
-    		duration = "0";
-    	}
-    	duration += Integer.toString(hours) + "h";
-    	if (minutes < 10) {
-    		duration += "0";
-    	}
-    	duration += Integer.toString(minutes);
-    	text += "Durée : " + duration;
-    	
-    	return text;
-    }
 	
 	/**
 	 * Fill the ListView with deliveries' information in the chronological order.
@@ -74,43 +48,49 @@ public class DeliveriesListView {
 		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
 
 		String text = "";
-		List<DeliveryTime> rdt = round.getRoundTimeOrder(0);
+		try {
+			List<DeliveryTime> rdt = round.getRoundTimeOrder(0);
 
-		text = "Adresse : " + rdt.get(0).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
-		text += "Heure de debut de tournée : "
-				+ new SimpleDateFormat("HH:mm").format(rdt.get(0).getDepartureTime().getTime());
-		deliveriesTexts.add(text);
-
-		for (int i = 1; i < rdt.size()-1; i++) {
-			text = "Adresse : " + rdt.get(i).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
-			if (rdt.get(i).getCheckpoint().getTimeRangeStart() != null
-					&& rdt.get(i).getCheckpoint().getTimeRangeEnd() != null) {
-				text += "ouvert de "
-						+ new SimpleDateFormat("HH:mm").format(rdt.get(i).getCheckpoint().getTimeRangeStart().getTime())
-						+ " à "
-						+ new SimpleDateFormat("HH:mm").format(rdt.get(i).getCheckpoint().getTimeRangeEnd().getTime())
-						+ "\n";
-			}
-			if (rdt.get(i).getWaitingTime() != 0) {
-				text += "Temps d'attente : " + millisToText(rdt.get(i).getWaitingTime()) + "\n";
-			} else {
-				text += "aucune attente \n";
-			}
-
-			text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(rdt.get(i).getArrivalTime().getTime())
-					+ "		";
-			text += "Heure de depart : "
-					+ new SimpleDateFormat("HH:mm").format(rdt.get(i).getDepartureTime().getTime());
-
+			text = "Adresse : " + rdt.get(0).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
+			text += "Heure de debut de tournée : "
+					+ new SimpleDateFormat("HH:mm").format(rdt.get(0).getDepartureTime().getTime());
 			deliveriesTexts.add(text);
+
+			for (int i = 1; i < rdt.size()-1; i++) {
+				text = "Adresse : " + rdt.get(i).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
+				if (rdt.get(i).getCheckpoint().getTimeRangeStart() != null
+						&& rdt.get(i).getCheckpoint().getTimeRangeEnd() != null) {
+					text += "ouvert de "
+							+ new SimpleDateFormat("HH:mm").format(rdt.get(i).getCheckpoint().getTimeRangeStart().getTime())
+							+ " à "
+							+ new SimpleDateFormat("HH:mm").format(rdt.get(i).getCheckpoint().getTimeRangeEnd().getTime())
+							+ "\n";
+				}
+				if (rdt.get(i).getWaitingTime() != 0) {
+					text += "Temps d'attente : " + millisToText(rdt.get(i).getWaitingTime()) + "\n";
+				} else {
+					text += "aucune attente \n";
+				}
+
+				text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(rdt.get(i).getArrivalTime().getTime())
+						+ "		";
+				text += "Heure de depart : "
+						+ new SimpleDateFormat("HH:mm").format(rdt.get(i).getDepartureTime().getTime());
+
+				deliveriesTexts.add(text);
+			}
+
+			text = "Adresse : " + rdt.get(rdt.size()-1).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
+			text += "Heure de fin de tournée : "
+					+ new SimpleDateFormat("HH:mm").format(rdt.get(rdt.size()-1).getArrivalTime().getTime());
+			deliveriesTexts.add(text);
+			deliveryList.setItems(deliveriesTexts);
+		} catch (Exception e) {
+			errorHandler.impossibleRound(round, deliveriesTexts);
+			deliveryList.setItems(deliveriesTexts);
 		}
 
-		text = "Adresse : " + rdt.get(rdt.size()-1).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
-		text += "Heure de fin de tournée : "
-				+ new SimpleDateFormat("HH:mm").format(rdt.get(rdt.size()-1).getArrivalTime().getTime());
-		deliveriesTexts.add(text);
-
-		deliveryList.setItems(deliveriesTexts);
+		
 	}
 	
 	private String millisToText(long millis){

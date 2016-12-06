@@ -16,7 +16,7 @@ public abstract class TemplateTSP implements TSP {
 	private long BestSolutionCost = 0;
 	private List<DeliveryTime[]> roundList;
 	private Boolean limiteTimeReached;
-	private HashMap<Integer, Integer> indexValues;
+	public static HashMap<Integer, Integer> indexValues;
 
 	private DeliveryTime[] copyOf(DeliveryTime[] dt) {
 		DeliveryTime[] newDt = new DeliveryTime[dt.length];
@@ -81,12 +81,7 @@ public abstract class TemplateTSP implements TSP {
 		buildIndex(unseen);
 		unseen.remove(0);
 		ArrayList<DeliveryTime> seen = new ArrayList<DeliveryTime>(checkpointList.size());
-		seen.add(new DeliveryTime(checkpointList.get(0), null, checkpointList.get(0).getTimeRangeStart(), 0)); // le
-																												// premier
-																												// sommet
-																												// visite
-																												// est
-																												// 0
+		seen.add(new DeliveryTime(checkpointList.get(0), null, checkpointList.get(0).getTimeRangeStart(), 0)); 
 		branchAndBound(seen.get(0), unseen, seen, 0, cout, duree, checkpointList.get(0).getTimeRangeStart().getTime(),
 				tpsLimite);
 		completeRound(cout);
