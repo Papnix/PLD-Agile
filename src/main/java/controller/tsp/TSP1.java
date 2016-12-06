@@ -1,6 +1,5 @@
 package controller.tsp;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,22 +7,22 @@ import java.util.List;
 import model.Checkpoint;
 import model.DeliveryTime;
 
-public class TSP1 extends TemplateTSP{
+public class TSP1 extends TemplateTSP {
 
 	@Override
-	protected int bound(Checkpoint sommetcrt, List<DeliveryTime> nonVus, int[][] cout, int[] duree) {
+	protected int bound(Checkpoint currentVertice, List<DeliveryTime> unseen, int[][] cost, int[] duration) {
 		
 		int bound = 0;
 		
 		List<Integer> indicesToConsider = new ArrayList<Integer>();
 		
-		for (DeliveryTime dt1 : nonVus) {
+		for (DeliveryTime dt1 : unseen) {
 			indicesToConsider.add(indexValues.get(dt1.getCheckpoint().getId()));
 		}
 		
 		for (Integer index : indicesToConsider) {
 			
-			int[] outCost = cout[index];
+			int[] outCost = cost[index];
 			
 			int min = getMinimum(index, outCost, indicesToConsider);
 			
@@ -31,16 +30,16 @@ public class TSP1 extends TemplateTSP{
 				bound += min;
 			}
 			
-			bound += duree[index];
+			bound += duration[index];
 		}
 		
 		return bound;
 	}
 
 	@Override
-	protected Iterator<DeliveryTime> iterator(DeliveryTime sommetcrt, List<DeliveryTime> nonVus, int[][] cout,
-			int[] duree) {
-		return new IteratorSeq(nonVus, sommetcrt);
+	protected Iterator<DeliveryTime> iterator(DeliveryTime currentVertice, List<DeliveryTime> unseen, int[][] cost,
+			int[] duration) {
+		return new IteratorSeq(unseen, currentVertice);
 	}
 	
 	/**

@@ -9,8 +9,8 @@ public class Map {
     private TreeMap<Integer, Waypoint> waypoints;
     private TreeMap<Integer, TreeMap<Integer, Section>> sections;
 
-    public Map(){
-    	waypoints = new TreeMap<Integer, Waypoint>();
+    public Map() {
+        waypoints = new TreeMap<Integer, Waypoint>();
         sections = new TreeMap<Integer, TreeMap<Integer, Section>>();
     }
 
@@ -21,9 +21,7 @@ public class Map {
     }
 
     public Map addSection(Section section) {
-        if (sections.get(section.getOrigin().getId()) == null) {
-            sections.put(section.getOrigin().getId(), new TreeMap<Integer, Section>());
-        }
+        sections.putIfAbsent(section.getOrigin().getId(), new TreeMap<Integer, Section>());
         sections.get(section.getOrigin().getId()).put(section.getDestination().getId(), section);
 
         return this;
@@ -59,45 +57,45 @@ public class Map {
     public Section getSection(int idOrigin, int idDestination) {
         return sections.get(idOrigin).get(idDestination);
     }
-    
+
     public List<Section> getAllSections() {
-    	List<Section> result = new ArrayList<Section>();
-    	
-    	for (Integer i : sections.keySet()) {
-    		TreeMap<Integer, Section> sec = sections.get(i);
-    		
-    		for (Integer j : sec.keySet()) {
-    			result.add(sec.get(j));
-    		}
-    	}
-    	
-    	return result;
+        List<Section> result = new ArrayList<Section>();
+
+        for (Integer i : sections.keySet()) {
+            TreeMap<Integer, Section> sec = sections.get(i);
+
+            for (Integer j : sec.keySet()) {
+                result.add(sec.get(j));
+            }
+        }
+
+        return result;
     }
-    
+
     public List<Section> getActiveSections() {
-    	List<Section> result = new ArrayList<Section>();
-    	
-    	for (Integer i : sections.keySet()) {
-    		TreeMap<Integer, Section> sec = sections.get(i);
-    		
-    		for (Integer j : sec.keySet()) {
-    			Section s = sec.get(j);
-    			
-    			if (s.isActive()) {
-    				result.add(s);
-    			}
-    		}
-    	}
-    	
-    	return result;
+        List<Section> result = new ArrayList<Section>();
+
+        for (Integer i : sections.keySet()) {
+            TreeMap<Integer, Section> sec = sections.get(i);
+
+            for (Integer j : sec.keySet()) {
+                Section s = sec.get(j);
+
+                if (s.isActive()) {
+                    result.add(s);
+                }
+            }
+        }
+
+        return result;
     }
-    
+
     public void resetPath() {
-    	List<Section> sec = getAllSections();
-    	
-    	for (Section s : sec) {
-    		s.setActive(false);
-    	}
+        List<Section> sec = getAllSections();
+
+        for (Section s : sec) {
+            s.setActive(false);
+        }
     }
 
     public Map clear() {
