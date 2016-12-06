@@ -13,10 +13,10 @@ import model.DeliveryTime;
 public abstract class TemplateTSP implements TSP {
 
 	private DeliveryTime[] meilleureSolution;
-	private long coutMeilleureSolution = 0;
+	private long coutMeilleureSolution;
 	private List<DeliveryTime[]> roundList;
 	private Boolean tempsLimiteAtteint;
-	private HashMap<Integer, Integer> indexValues;
+	protected HashMap<Integer, Integer> indexValues;
 
 	private DeliveryTime[] copyOf(DeliveryTime[] dt) {
 		DeliveryTime[] newDt = new DeliveryTime[dt.length];
@@ -90,6 +90,7 @@ public abstract class TemplateTSP implements TSP {
 																												// 0
 		branchAndBound(vus.get(0), nonVus, vus, 0, cout, duree, checkpointList.get(0).getTimeRangeStart().getTime(),
 				tpsLimite);
+		
 		completeRound(cout);
 		return roundList.size();
 	}
@@ -189,6 +190,9 @@ public abstract class TemplateTSP implements TSP {
 			sommetCourant.setArrivalTime(arrivalDate);
 			sommetCourant.setDepartureTime(departureTime);
 			sommetCourant.setWaitingTime(waitingTime);
+			
+			int bound = bound(sommetCourant.getCheckpoint(), nonVus, cout, duree);
+			
 			if (nonVus.size() == 0) { // tous les sommets ont ete visites
 				coutVus += cout[indexValues.get(sommetCourant.getCheckpoint().getId())][0];
 				if (coutVus < coutMeilleureSolution) { // on a trouve une
@@ -205,7 +209,7 @@ public abstract class TemplateTSP implements TSP {
 					}
 				}
 			} else if (coutVus + waitingTime
-					+ bound(sommetCourant.getCheckpoint(), nonVus, cout, duree) < coutMeilleureSolution) {
+					+ bound < coutMeilleureSolution) {
 				Iterator<DeliveryTime> it = iterator(sommetCourant, nonVus, cout, duree);
 				while (it.hasNext()) {
 					DeliveryTime prochainSommet = it.next();
@@ -217,10 +221,7 @@ public abstract class TemplateTSP implements TSP {
 											.get(prochainSommet.getCheckpoint().getId())]
 									- tpsDebut,
 							cout, duree, tpsDebut, tpsLimite);
-					// coutVus + waitingTime +
-					// cout[indexValues.get(sommetCrt.getCheckpoint().getId())][indexValues.get(prochainSommet.getCheckpoint().getId())]
-					// +
-					// duree[indexValues.get(prochainSommet.getCheckpoint().getId())]
+					
 					vus.remove(prochainSommet);
 					nonVus.add(prochainSommet);
 				}
