@@ -54,9 +54,9 @@ public class MainWindowController implements Initializable {
 	@FXML
 	private ScrollPane mapPane;
 
-
 	/**
-	 * Constructor of the main window, initialize links with fxml file for GUI components.
+	 * Constructor of the main window, initialize links with fxml file for GUI
+	 * components.
 	 */
 	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 		assert menuLoadMap != null : "fx:id=\"menuLoadMap\" was not injected: check your FXML file 'view.fxml'.";
@@ -85,13 +85,13 @@ public class MainWindowController implements Initializable {
 		assert deliveryPane != null : "fx:id=\"deliveryPane\" was not injected: check your FXML file 'view.fxml'.";
 		assert mapPane != null : "fx:id=\"mapPane\" was not injected: check your FXML file 'view.fxml'.";
 
-		firstDeliveryLoad = true;		
-		setupGraphDisplayer();	
+		firstDeliveryLoad = true;
+		setupGraphDisplayer();
 
 	}
 
 	/**
-	 * 	Load a map from an xml source chosen by the user in an explorer.
+	 * Load a map from an xml source chosen by the user in an explorer.
 	 */
 	private void handleLoadMap() {
 
@@ -102,12 +102,11 @@ public class MainWindowController implements Initializable {
 		if (mapFile != null) {
 			try {
 				newMap = XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
-			} 
-			catch (XMLException e) {
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+			} catch (XMLException e) {
+				displayWarningMessageBox(
+						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
 				return;
-			}
-			catch (IOException | SAXException | ParserConfigurationException e) {
+			} catch (IOException | SAXException | ParserConfigurationException e) {
 				e.printStackTrace();
 				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
 				return;
@@ -120,85 +119,85 @@ public class MainWindowController implements Initializable {
 				loadDeliveryButton.setDisable(false);
 				loadDeliveryButton.setText("Charger demande de livraisons");
 				clearPreviousRound();
-				
+
 				mapDisplayer.setMap(newMap);
 				mapDisplayer.setVisible(true);
 			}
 		}
 	}
-	
+
 	/**
-	 * Load a delivery request from an xml source chosen by the user in an explorer
+	 * Load a delivery request from an xml source chosen by the user in an
+	 * explorer
 	 */
 	private void handleLoadDelivery() {
-    	// Demande à l'utilisateur de sélectionner un fichier à charger
-    	FileChooser filechooser = new FileChooser();
-    	File deliveryRequestFile = filechooser.showOpenDialog(null);
-        deliveryRequest = new DeliveryRequest();
-        
+		// Demande à l'utilisateur de sélectionner un fichier à charger
+		FileChooser filechooser = new FileChooser();
+		File deliveryRequestFile = filechooser.showOpenDialog(null);
+		deliveryRequest = new DeliveryRequest();
+
 		if (deliveryRequestFile != null) {
 			DeliveryRequest newDeliveryRequest;
 			try {
-				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
-			}
-			catch (XMLException e) {
-				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraison valide.");
+				newDeliveryRequest = XMLDeserializer
+						.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
+			} catch (XMLException e) {
+				displayWarningMessageBox(
+						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraison valide.");
 				return;
-			}
-			catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
+			} catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
 				e.printStackTrace();
 				displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
 				return;
-			}			
+			}
 
 			if (newDeliveryRequest != null) {
 				deliveryRequest = newDeliveryRequest;
-				try{
+				try {
 					// Calcul de la tournée
-		        	round = new Round(deliveryRequest);
-		    		round.computePaths(map);
-		    		round.computeRound(map);
-				}
-				catch(NullPointerException e) {
-					displayWarningMessageBox("La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+					round = new Round(deliveryRequest);
+					round.computePaths(map);
+					round.computeRound(map);
+				} catch (NullPointerException e) {
+					displayWarningMessageBox(
+							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
 					return;
 				}
-	    		
-	    		// Ecriture de la feuille de route
-	    		Roadmap.writeRoadmap(round, map);
-	    		
-	    		// Crée la ListView à droite si c'est le premier chargement de demande de livraisons
-	    		if (firstDeliveryLoad) {
-	    			deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
-	    			firstDeliveryLoad = false;
-	    		}
-	    		
-	    		// Met à jour l'interface graphique
-	        	deliveriesListView.createDeliveriesList(round, map);
-	        	loadDeliveryButton.setVisible(false);
-	        	mapDisplayer.setRound(round);
-	        					
+
+				// Ecriture de la feuille de route
+				Roadmap.writeRoadmap(round, map);
+
+				// Crée la ListView à droite si c'est le premier chargement de
+				// demande de livraisons
+				if (firstDeliveryLoad) {
+					deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
+					firstDeliveryLoad = false;
+				}
+
+				// Met à jour l'interface graphique
+				deliveriesListView.createDeliveriesList(round, map);
+				loadDeliveryButton.setVisible(false);
+				mapDisplayer.setRound(round);
+
 			}
 		}
 	}
-	
+
 	/**
-	 *	Remove the round from the list view and clear it's display.
+	 * Remove the round from the list view and clear it's display.
 	 */
-	private void clearPreviousRound()
-	{
+	private void clearPreviousRound() {
 		// On enlève la tournée affichée
 		round = null;
-		if(firstDeliveryLoad == false) {
+		if (firstDeliveryLoad == false) {
 			deliveriesListView.clear();
 			loadDeliveryButton.setVisible(true);
 			firstDeliveryLoad = true;
 		}
 	}
 
-	
 	/**
-	 *	Open an explorer to select a file and return it.
+	 * Open an explorer to select a file and return it.
 	 **/
 	private File getFileFromExplorer() {
 
@@ -208,27 +207,30 @@ public class MainWindowController implements Initializable {
 		if (lastFolderExplored != null) {
 			try {
 				explorer.setInitialDirectory(new File(lastFolderExplored));
-			} catch (Exception e) {}
+			} catch (Exception e) {
+			}
 		}
 
 		File file = explorer.showOpenDialog(null);
 
-		lastFolderExplored = file.getParent();
+		if (lastFolderExplored != null)
+			lastFolderExplored = file.getParent();
 
 		return file;
 	}
-	
+
 	/**
 	 * Display a dialog to display some informations to users.
+	 * 
 	 * @param message
-	 * 			message to display.
+	 *            message to display.
 	 **/
 	private static void displayWarningMessageBox(String message) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Rapport d'erreur");
 		alert.setHeaderText("Une erreur est survenue");
 		alert.setContentText(message);
-		alert.showAndWait();	
+		alert.showAndWait();
 	}
 
 	/**
