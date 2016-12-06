@@ -24,7 +24,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-
+import javafx.stage.FileChooser.ExtensionFilter;
 import model.DeliveryRequest;
 import model.Map;
 import model.Round;
@@ -199,6 +199,7 @@ public class MainWindowController implements Initializable {
 	private File getFileFromExplorer() {
 		FileChooser explorer = new FileChooser();
 		explorer.setTitle("Selectionner un fichier xml");
+		explorer.getExtensionFilters().add(new ExtensionFilter("Fichiers XML", "*.xml"));
 
 		if (lastFolderExplored != null) {
 			try {
@@ -209,7 +210,9 @@ public class MainWindowController implements Initializable {
 
 		File file = explorer.showOpenDialog(null);
 
-		lastFolderExplored = file.getParent();
+		if (file != null) {
+			lastFolderExplored = file.getParent();
+		}
 
 		return file;
 	}
