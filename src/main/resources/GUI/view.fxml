@@ -27,9 +27,11 @@
                     <MenuItem fx:id="menuLoadDelivery" mnemonicParsing="false" text="Charger une demande de livraisons" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Editer">
+                <Menu mnemonicParsing="false" text="Edition">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Delete" />
+                    <MenuItem fx:id="menuAddDelivery" mnemonicParsing="false" text="Ajouter Livraison" />
+                        <MenuItem fx:id="menuRemoveDelivery" mnemonicParsing="false" text="Supprimer Livraison" />
+                        <MenuItem fx:id="menuModifyDelivery" mnemonicParsing="false" text="Modifier Livraison" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Aide">

@@ -4,7 +4,6 @@ import model.Checkpoint;
 import model.DeliveryTime;
 import model.Round;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Deletion extends Command {

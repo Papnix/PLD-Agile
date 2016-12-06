@@ -33,6 +33,12 @@ public class MainWindowController implements Initializable {
 	@FXML
 	private MenuItem menuLoadMap;
 	@FXML
+	private MenuItem menuAddDelivery;
+	@FXML
+	private MenuItem menuRemoveDelivery;
+	@FXML
+	private MenuItem menuModifyDelivery;
+	@FXML
 	private Button loadDeliveryButton;
 	@FXML
 	private Button loadMapButton;
@@ -49,17 +55,7 @@ public class MainWindowController implements Initializable {
 
 		controller = new Controller(this);
 
-		assert menuLoadMap != null : "fx:id=\"menuLoadMap\" was not injected: check your FXML file 'view.fxml'.";
-		menuLoadMap.setOnAction((event) -> {
-			handleLoadMap();
-		});
-
-		assert menuLoadDelivery != null : "fx:id=\"menuLoadDelivery\" was not injected: check your FXML file"
-				+ " 'view.fxml'.";
-		menuLoadDelivery.setOnAction((event) -> {
-			handleLoadDelivery();
-		});
-		menuLoadDelivery.setDisable(true);
+		initializeMenu();
 
 		assert loadDeliveryButton != null : "fx:id=\"loadDeliveryButton\" was not injected: check your FXML"
 				+ " file 'view.fxml'.";
@@ -108,6 +104,9 @@ public class MainWindowController implements Initializable {
 		// Met à jour l'interface graphique
 		deliveriesListView.createDeliveriesList(controller.getCurrentRound(), controller.getCurrentMap());
 		loadDeliveryButton.setVisible(false);
+		menuAddDelivery.setVisible(true);
+		menuModifyDelivery.setVisible(true);
+		menuModifyDelivery.setVisible(true);
 		mapDisplayer.setRound(controller.getCurrentRound());
 	}
 	
@@ -179,6 +178,42 @@ public class MainWindowController implements Initializable {
 		AnchorPane.setRightAnchor(mapDisplayer, 0d);
 		AnchorPane.setLeftAnchor(mapDisplayer, 0d);
 		mapDisplayer.setVisible(false);
+	}
+	
+	
+	private void initializeMenu() {
+		assert menuLoadMap != null : "fx:id=\"menuLoadMap\" was not injected: check your FXML file 'view.fxml'.";
+		menuLoadMap.setOnAction((event) -> {
+			handleLoadMap();
+		});
+
+		assert menuLoadDelivery != null : "fx:id=\"menuLoadDelivery\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
+		menuLoadDelivery.setOnAction((event) -> {
+			handleLoadDelivery();
+		});
+		menuLoadDelivery.setDisable(true);
+		
+		assert menuAddDelivery != null : "fx:id=\"menuAddDelivery\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
+		menuLoadDelivery.setOnAction((event) -> {
+			System.out.println("not implemented");
+		});
+		menuAddDelivery.setDisable(true);
+		
+		assert menuRemoveDelivery != null : "fx:id=\"menuRemoveDelivery\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
+		menuRemoveDelivery.setOnAction((event) -> {
+			System.out.println("not implemented");
+		});
+		menuRemoveDelivery.setDisable(true);
+		
+		assert menuModifyDelivery != null : "fx:id=\"menuModifyDelivery\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
+		menuModifyDelivery.setOnAction((event) -> {
+			System.out.println("not implemented");
+		});
+		menuModifyDelivery.setDisable(true);
 	}
 
 }
