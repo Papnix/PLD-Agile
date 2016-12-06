@@ -2,9 +2,11 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import model.Checkpoint;
+import model.DeliveryTime;
 import model.Map;
 import model.Round;
 import model.Section;
@@ -17,29 +19,22 @@ public class Roadmap {
 	/**
 	 * Writes the roadmap of the given round on a text file
 	 * @param round
-	 * 		Round to describe on the roadmap
+	 * 		Round to be described on the roadmap
 	 * @param map
 	 * 		City's map
 	 */
 	public static void writeRoadmap(Round round, Map map) {
 		try {
 			PrintWriter writer = new PrintWriter("roadmap.txt", "UTF-8");
-			List<Checkpoint> checkpointsList = round.getRequest().getDeliveryPointList();
+			List<DeliveryTime> deliveriesList = round.getRoundTimeOrder(0); // Liste des livraisons dans l'ordre chronologique
 			
-			for (int i = 0; i < checkpointsList.size() - 1; i++) {
-				writer.println("De l'adresse " + checkpointsList.get(i).getAssociatedWaypoint().getId()
-							   + " à l'adresse " + checkpointsList.get(i+1).getAssociatedWaypoint().getId() + " :");
-				writer.println(Roadmap.routeToDelivery(round.getPath(checkpointsList.get(i).getAssociatedWaypoint().getId(),
-																	 checkpointsList.get(i+1).getAssociatedWaypoint().getId()),
-													   map));
+			Roadmap.writeRouteToDelivery(deliveriesList.get(0).getCheckpoint(), deliveriesList.get(1).getCheckpoint(),
+										 null, round, map, writer);
+			for (int i = 1; i < deliveriesList.size() - 1; i++) {
+				Roadmap.writeRouteToDelivery(deliveriesList.get(i).getCheckpoint(), deliveriesList.get(i+1).getCheckpoint(),
+						deliveriesList.get(i-1).getCheckpoint(), round, map, writer);
 			}
 			
-			// Description du parcours du dernier point de livraison jusqu'à l'entrepôt
-			writer.println("De l'adresse " + checkpointsList.get(checkpointsList.size() - 1).getAssociatedWaypoint().getId()
-					   	   + " à l'adresse " + checkpointsList.get(0).getAssociatedWaypoint().getId() + " :");
-			writer.println(Roadmap.routeToDelivery(round.getPath(checkpointsList.get(checkpointsList.size() - 1).getAssociatedWaypoint().getId(),
-																 checkpointsList.get(0).getAssociatedWaypoint().getId()),
-												   map));
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -55,13 +50,28 @@ public class Roadmap {
 	 * @return
 	 * 		Description of the route
 	 */
-	public static String routeToDelivery(List<Integer> routeWithWaypointsID, Map map) {
+	
+	/**
+	 * Writes a string containing the description corresponding to the given route.
+	 * The route goes from one delivery point to another.
+	 * @param routeWithWaypointsID
+	 * 		Route to follow. This consists in a list of Waypoints' ID
+	 * @param startsFromWarehouse
+	 * 		Indicates whether the route starts from the warehouse or not
+	 * @param map
+	 * 		City's map
+	 * @return
+	 * 		Description of the route
+	 */
+	public static String routeToDelivery(List<Integer> routeWithWaypointsID, boolean startsFromWarehouse, Map map) {
 		String text = "";
-    	
-		// Pour le premier tronçon, on n'indique pas s'il faut tourner à droite, à gauche...
 		Section nextSection = map.getSection(routeWithWaypointsID.get(0), routeWithWaypointsID.get(1));
-		text += "Prendre le tronçon " + nextSection.getStreetName() + " entre " + nextSection.getOrigin().getId()
-				+ " et " + nextSection.getDestination().getId() + "\r\n";
+    	
+		// Pour le premier tronçon, on indique s'il faut tourner à droite, à gauche... sauf si on part de l'entrepôt
+		if (startsFromWarehouse) {
+			text += "Prendre le tronçon " + nextSection.getStreetName() + " entre " + nextSection.getOrigin().getId()
+					+ " et " + nextSection.getDestination().getId() + "\r\n";
+		}
 		
 		Section prevSection;
     	for (int i = 1; i < routeWithWaypointsID.size() - 1; i++) {
@@ -105,5 +115,45 @@ public class Roadmap {
 		}
 		
 		return text;
+	}
+	
+	/**
+	 * Writes the full route from a delivery point to another on a text file
+	 * @param origin
+	 * 		Start of the route, last delivery point reached
+	 * @param destination
+	 * 		End of the route, next delivery point to reach
+	 * @param previousOrigin
+	 * 		Previous delivery point reached (before the current one)
+	 * @param round
+	 * 		Round to be described on the roadmap
+	 * @param map
+	 * 		City's map
+	 * @param writer
+	 * 		File writer
+	 */
+	private static void writeRouteToDelivery(Checkpoint origin, Checkpoint destination, Checkpoint previousOrigin,
+											 Round round, Map map, PrintWriter writer) {
+		// Itinéraire pour aller de la dernière livraison effectuée à la prochaine
+		List<Integer> routeWithWaypointsID = new ArrayList<Integer>();
+		
+		// Itinéraire pour aller à la dernière livraison effectuée (itinéraire qui vient d'être parcouru)
+		List<Integer> previousRoute;
+		
+		writer.println("De l'adresse " + origin.getId()
+					   + " à l'adresse " + destination.getId() + " :");
+		
+		routeWithWaypointsID.clear();
+		
+		// Si on ne vient pas de sortir de l'entrepôt, on ajoute le noeud avant la dernière livraison. Ceci permet
+		// de savoir d'où l'on vient et d'indiquer où tourner pour parcourir le premier tronçon de la prochaine livraison
+		boolean startsFromWarehouse = (origin == round.getRequest().getDeliveryPoint(0));
+		if (!startsFromWarehouse && previousOrigin != null) {
+			previousRoute = round.getPath(previousOrigin.getId(), origin.getId());
+			routeWithWaypointsID.add(previousRoute.get(previousRoute.size() - 2));
+		}
+		routeWithWaypointsID.addAll(round.getPath(origin.getId(), destination.getId()));
+		
+		writer.println(Roadmap.routeToDelivery(routeWithWaypointsID, startsFromWarehouse, map));
 	}
 }

@@ -2,6 +2,7 @@ package view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -140,7 +141,8 @@ public class Graph extends Pane {
 		node.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent t) {
-				if (node.getState() == GraphNode.State.DELIVERYPOINT) {
+				if (node.getState() == GraphNode.State.DELIVERYPOINT 
+						|| node.getState() == GraphNode.State.WAREHOUSE) {
 
 					lightUpPath(waypoint.getId());
 				} else {
@@ -235,7 +237,7 @@ public class Graph extends Pane {
 
 		// On récupère tous les points de la tournée
 		ArrayList<Integer> allPoints = new ArrayList<>();
-		List<Section> points = round.getRoute();
+		List<Section> points = round.getRoute(0);
 		for (Section section : points) {
 			allPoints.add(section.getOrigin().getId());
 		}
@@ -243,7 +245,7 @@ public class Graph extends Pane {
 
 		// On récupère les points de livraisons
 		ArrayList<Integer> deliveryPoints = new ArrayList<>();
-		List<DeliveryTime> deliveries = round.getArrivalTimes();
+		List<DeliveryTime> deliveries = round.getRoundTimeOrder(0);
 		for (DeliveryTime delivery : deliveries) {
 			deliveryPoints.add(delivery.getCheckpoint().getId());
 		}
@@ -274,7 +276,7 @@ public class Graph extends Pane {
 	 */
 	private void displayRoundRoads(Round round) {
 
-		List<Section> roads = round.getRoute();
+		List<Section> roads = round.getRoute(0);
 
 		for (Section line : roads) {
 			String key = getSectionKey(line.getOrigin(), line.getDestination());
@@ -333,7 +335,7 @@ public class Graph extends Pane {
 	 * Add an enlightment of roads of the round.
 	 */
 	private void lightUpRoads(int idLastPoint) {
-		
+
 		// On récupère l'ordres des points à livrer.
 		LinkedList<Integer> pointsToDeliver = getIdOfPointsToDeliver(idLastPoint);
 
@@ -353,7 +355,7 @@ public class Graph extends Pane {
 			}
 		}
 	}
-	
+
 	/*
 	 * Remove the enlightment of waypoint of the round.
 	 */
@@ -375,20 +377,23 @@ public class Graph extends Pane {
 	}
 
 	/**
-	 *  Return a list of id of the one given in parameter and id of points which be delivered before this certain point.
-	 * @param idLastPoint The id of the ending point.
+	 * Return a list of id of the one given in parameter and id of points which
+	 * be delivered before this certain point.
+	 * 
+	 * @param idLastPoint
+	 *            The id of the ending point.
 	 * @return List of id of points delivered on the path.
 	 */
 	private LinkedList<Integer> getIdOfPointsToDeliver(int idLastPoint) {
 		// On récupère l'ordres des points à livrer.
 		LinkedList<Integer> pointsToDeliver = new LinkedList<>();
 
-		ArrayList<DeliveryTime> listDeliveries =  (ArrayList<DeliveryTime>) round.getArrivalTimes();
-		for(int i = 0; i < listDeliveries.size(); i++) {
-			
+		List<DeliveryTime> listDeliveries = round.getRoundTimeOrder(0);
+		for (int i = 0; i < listDeliveries.size(); i++) {
+
 			int id = listDeliveries.get(i).getCheckpoint().getId();
 			pointsToDeliver.add(id);
-			
+
 			if (id == idLastPoint) {
 				break;
 			}

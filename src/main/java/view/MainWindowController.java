@@ -64,13 +64,15 @@ public class MainWindowController implements Initializable {
 			handleLoadMap();
 		});
 
-		assert menuLoadDelivery != null : "fx:id=\"menuLoadDelivery\" was not injected: check your FXML file 'view.fxml'.";
+		assert menuLoadDelivery != null : "fx:id=\"menuLoadDelivery\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
 		menuLoadDelivery.setOnAction((event) -> {
 			handleLoadDelivery();
 		});
 		menuLoadDelivery.setDisable(true);
 
-		assert loadDeliveryButton != null : "fx:id=\"loadDeliveryButton\" was not injected: check your FXML file 'view.fxml'.";
+		assert loadDeliveryButton != null : "fx:id=\"loadDeliveryButton\" was not injected: check your FXML"
+				+ " file 'view.fxml'.";
 		loadDeliveryButton.setOnAction((event) -> {
 			handleLoadDelivery();
 		});
@@ -85,7 +87,7 @@ public class MainWindowController implements Initializable {
 		assert deliveryPane != null : "fx:id=\"deliveryPane\" was not injected: check your FXML file 'view.fxml'.";
 		assert mapPane != null : "fx:id=\"mapPane\" was not injected: check your FXML file 'view.fxml'.";
 
-		firstDeliveryLoad = true;
+		firstDeliveryLoad = true;		
 		setupGraphDisplayer();
 
 	}
@@ -94,7 +96,6 @@ public class MainWindowController implements Initializable {
 	 * Load a map from an xml source chosen by the user in an explorer.
 	 */
 	private void handleLoadMap() {
-
 		File mapFile = getFileFromExplorer();
 
 		Map newMap;
@@ -103,8 +104,8 @@ public class MainWindowController implements Initializable {
 			try {
 				newMap = XMLDeserializer.loadMap(mapFile.getAbsolutePath().toString());
 			} catch (XMLException e) {
-				displayWarningMessageBox(
-						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException e) {
 				e.printStackTrace();
@@ -131,10 +132,9 @@ public class MainWindowController implements Initializable {
 	 * explorer
 	 */
 	private void handleLoadDelivery() {
-		// Demande à l'utilisateur de sélectionner un fichier à charger
-		FileChooser filechooser = new FileChooser();
-		File deliveryRequestFile = filechooser.showOpenDialog(null);
-		deliveryRequest = new DeliveryRequest();
+
+    	// Demande à l'utilisateur de sélectionner un fichier à charger
+    	File deliveryRequestFile = getFileFromExplorer();
 
 		if (deliveryRequestFile != null) {
 			DeliveryRequest newDeliveryRequest;
@@ -142,8 +142,10 @@ public class MainWindowController implements Initializable {
 				newDeliveryRequest = XMLDeserializer
 						.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString(), map);
 			} catch (XMLException e) {
-				displayWarningMessageBox(
-						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une demande de livraison valide.");
+
+				displayWarningMessageBox("Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
+						+ " demande de livraison valide.");
+				
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
 				e.printStackTrace();
@@ -200,7 +202,6 @@ public class MainWindowController implements Initializable {
 	 * Open an explorer to select a file and return it.
 	 **/
 	private File getFileFromExplorer() {
-
 		FileChooser explorer = new FileChooser();
 		explorer.setTitle("Selectionner un fichier xml");
 
@@ -225,7 +226,7 @@ public class MainWindowController implements Initializable {
 	 * @param message
 	 *            message to display.
 	 **/
-	private static void displayWarningMessageBox(String message) {
+	public static void displayWarningMessageBox(String message) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Rapport d'erreur");
 		alert.setHeaderText("Une erreur est survenue");

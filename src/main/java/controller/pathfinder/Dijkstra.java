@@ -15,6 +15,9 @@ import model.Section;
  */
 public class Dijkstra {
 
+	
+	private final int MILLIS_TO_SEC = 1000;
+	
 	/**
 	 * The current map instance.
 	 */
@@ -126,7 +129,7 @@ public class Dijkstra {
 	public double computeCost(int idOrigin, int idDestination) {
 		Section section = map.getSection(idOrigin, idDestination);
 
-		return ((double) section.getLength()) / ((double) section.getSpeed());
+		return ((double) section.getLength()) / ((double) section.getSpeed())*MILLIS_TO_SEC;
 	}
 
 	/**

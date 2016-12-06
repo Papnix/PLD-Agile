@@ -2,8 +2,7 @@ package model;
 
 import java.util.Date;
 
-public class Checkpoint
-{
+public class Checkpoint implements Cloneable{
 	
 	private Waypoint associatedWaypoint;
 	private int duration;
@@ -51,6 +50,23 @@ public class Checkpoint
 
 	public String toString() {
 		return "Delivery : { waypoint:" + this.associatedWaypoint.getId() + ", duree:" + this.duration + " }";
+	}
+	
+	public Checkpoint clone() {
+		Checkpoint ck = null;
+		try {
+			// On récupère l'instance à renvoyer par l'appel de la 
+			// méthode super.clone()
+			ck = (Checkpoint) super.clone();
+		} catch(CloneNotSupportedException cnse) {
+			// Ne devrait jamais arriver car nous implémentons 
+			// l'interface Cloneable
+			cnse.printStackTrace(System.err);
+		}
+		
+		ck.associatedWaypoint = (Waypoint) associatedWaypoint.clone();
+		// on renvoie le clone
+		return ck;
 	}
 	
 }

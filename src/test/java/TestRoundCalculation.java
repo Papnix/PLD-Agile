@@ -114,7 +114,7 @@ public class TestRoundCalculation {
 		expectedRound.add(21);
 
 		List<Integer> CheckpointId = new ArrayList<Integer>();
-		for (DeliveryTime deliveryTime : round.getArrivalTimes()) {
+		for (DeliveryTime deliveryTime : round.getRoundTimeOrder(0)) {
 			CheckpointId.add(deliveryTime.getCheckpoint().getId());
 		}
 
