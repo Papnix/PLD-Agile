@@ -1,8 +1,13 @@
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 
 import controller.Roadmap;
+import controller.xml.XMLDeserializer;
+import model.Map;
 import model.Section;
 import model.Waypoint;
 
@@ -12,6 +17,9 @@ import model.Waypoint;
 public class TestRoadmap {
 	
 	@Test
+	/**
+	 * Tests the method Roadmap.getDescriptionForBend
+	 */
 	public void testDescriptionForBend() {
 		// Waypoints correspondants à ceux du fichier "plan5x5.xml", sauf le 8
 		Waypoint w0 = new Waypoint(0, 134, 193);
@@ -47,5 +55,38 @@ public class TestRoadmap {
 		assertEquals("Tourner à droite", Roadmap.getDescriptionForBend(s16_21, s21_22));
 		assertEquals("Faire demi-tour", Roadmap.getDescriptionForBend(s6_7, s7_6));
 		assertEquals("Continuer tout droit", Roadmap.getDescriptionForBend(s6_7, s7_8));
+	}
+	
+	@Test
+	/**
+	 * Tests the method Roadmap.routeToDelivery
+	 */
+	public void testDescriptionRouteToDelivery() {
+		// Création du contexte
+		Map map = new Map();
+		try {
+			map = XMLDeserializer.loadMap("src/test/resources/testMap.xml");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// Création des parcours correspondant à la demande de livraisons du fichier de test testLivraisons.xml
+		List<Integer> route0to2 = Arrays.asList(0, 1, 2);
+		List<Integer> route2to1 = Arrays.asList(1, 2, 1);
+		List<Integer> route1to0 = Arrays.asList(2, 1, 0);
+
+		// Test de la méthode
+		String strRoute0to2 = Roadmap.routeToDelivery(route0to2, true, map);
+		String strRoute2to1 = Roadmap.routeToDelivery(route2to1, false, map);
+		String strRoute1to0 = Roadmap.routeToDelivery(route1to0, false, map);
+
+		// Résultats attendus
+		String expectedRoute0to2 = "Prendre le tronçon v0 entre 0 et 1\r\nTourner à droite et prendre le tronçon v0 entre 1 et 2\r\n";
+		String expectedRoute2to1 = "Faire demi-tour et prendre le tronçon v0 entre 2 et 1\r\n";
+		String expectedRoute1to0 = "Tourner à gauche et prendre le tronçon v0 entre 1 et 0\r\n";
+
+		assertEquals(expectedRoute0to2, strRoute0to2);
+		assertEquals(expectedRoute2to1, strRoute2to1);
+		assertEquals(expectedRoute1to0, strRoute1to0);
 	}
 }

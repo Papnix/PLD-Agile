@@ -95,7 +95,6 @@ public class MainWindowController implements Initializable {
 	 * Load a map from an xml source chosen by the user in an explorer.
 	 */
 	private void handleLoadMap() {
-
 		File mapFile = getFileFromExplorer();
 
 		Map newMap;
@@ -133,9 +132,7 @@ public class MainWindowController implements Initializable {
 	 */
 	private void handleLoadDelivery() {
     	// Demande à l'utilisateur de sélectionner un fichier à charger
-    	FileChooser filechooser = new FileChooser();
-    	File deliveryRequestFile = filechooser.showOpenDialog(null);
-        deliveryRequest = new DeliveryRequest();
+    	File deliveryRequestFile = getFileFromExplorer();
         
 		if (deliveryRequestFile != null) {
 			DeliveryRequest newDeliveryRequest;
@@ -200,7 +197,6 @@ public class MainWindowController implements Initializable {
 	 * Open an explorer to select a file and return it.
 	 **/
 	private File getFileFromExplorer() {
-
 		FileChooser explorer = new FileChooser();
 		explorer.setTitle("Selectionner un fichier xml");
 

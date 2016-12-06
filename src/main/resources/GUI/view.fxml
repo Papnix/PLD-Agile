@@ -24,7 +24,7 @@
                     <MenuItem fx:id="menuLoadMap" mnemonicParsing="false" text="Charger une carte" />
                   </items>
                   <items>
-                    <MenuItem fx:id="menuLoadDelivery" mnemonicParsing="false" text="Charger une demande de livraison" />
+                    <MenuItem fx:id="menuLoadDelivery" mnemonicParsing="false" text="Charger une demande de livraisons" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Editer">
@@ -57,7 +57,7 @@
                   </AnchorPane>
                   <AnchorPane fx:id="deliveryPane" maxHeight="1.7976931348623157E308" styleClass="pane">
                      <children>
-                        <Button fx:id="loadDeliveryButton" graphicTextGap="0.0" mnemonicParsing="false" text="Charger demande de livraison" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <Button fx:id="loadDeliveryButton" graphicTextGap="0.0" mnemonicParsing="false" text="Charger demande de livraisons" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <font>
                               <Font name="Arial" size="12.0" />
                            </font>
