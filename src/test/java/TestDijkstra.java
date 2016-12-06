@@ -8,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import controller.Controller;
 import controller.pathfinder.Dijkstra;
 import controller.xml.XMLDeserializer;
 import controller.xml.XMLException;
@@ -31,10 +30,7 @@ public class TestDijkstra {
 	@Test
 	public void evaluateGetSuccessors() throws ParserConfigurationException, SAXException, IOException, XMLException {
 		
-		Controller controller = new Controller(null);
-		controller.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
-		
-		Map map = controller.getCurrentMap();
+		Map map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
 
 		Dijkstra dj = new Dijkstra(map);
 
@@ -80,19 +76,19 @@ public class TestDijkstra {
 		double costS2S3Estimated;
 
 		// Calcul et test cout de l'"arrete" s1-s2.
-		costS1S2Estimated = 9082.0 / 29.0;
+		costS1S2Estimated = 9082.0 / 29.0 * 1000;
 		Assert.assertEquals(costS1S2Estimated, dj.computeCost(s1, s2), 0.01);
 
 		// Calcul et test cout de l'"arrete" s2-s1.
-		costS2S1Estimated = 9082.0 / 26.0;
+		costS2S1Estimated = 9082.0 / 26.0 * 1000;
 		Assert.assertEquals(costS2S1Estimated, dj.computeCost(s2, s1), 0.01);
 
 		// Calcul et test cout de l'"arrete" s1-s3.
-		costS1S3Estimated = 10257.0 / 38.0;
+		costS1S3Estimated = 10257.0 / 38.0 * 1000;
 		Assert.assertEquals(costS1S3Estimated, dj.computeCost(s1, s3), 0.01);
 
 		// Calcul et test cout de l'"arrete" s2-s3.
-		costS2S3Estimated = 5440.0 / 43.0;
+		costS2S3Estimated = 5440.0 / 43.0 * 1000;
 		Assert.assertEquals(costS2S3Estimated, dj.computeCost(s2, s3), 0.01);
 	}
 
@@ -121,7 +117,7 @@ public class TestDijkstra {
 		result.push(1);
 
 		Assert.assertTrue(result.equals(dj.getPath(target)));
-		Assert.assertEquals(227, dj.getTargetPathCost(target));
+		Assert.assertEquals(227, dj.getTargetPathCost(target)/1000, 1);
 
 		source = 2;
 		target = 6;
@@ -131,6 +127,6 @@ public class TestDijkstra {
 		result.push(2);
 
 		Assert.assertTrue(result.equals(dj.getPath(target)));
-		Assert.assertEquals(313, dj.getTargetPathCost(target));
+		Assert.assertEquals(313, dj.getTargetPathCost(target)/1000, 1);
 	}
 }

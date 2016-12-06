@@ -128,15 +128,16 @@ public class MainWindowController implements Initializable {
 		// Demande à l'utilisateur de sélectionner un fichier à charger
 		File deliveryRequestFile = getFileFromExplorer();
 		controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
-
 	}
 
 	/**
 	 * Remove the round from the list view and clear it's display.
 	 */
 	private void clearPreviousRound() {
+
 		// On enlève la tournée affichée
 		controller.clearRound();
+
 		if (firstDeliveryLoad == false) {
 			deliveriesListView.clear();
 			loadDeliveryButton.setVisible(true);

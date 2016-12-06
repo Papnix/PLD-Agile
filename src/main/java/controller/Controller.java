@@ -5,6 +5,11 @@ import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import controller.command.Addition;
+import controller.command.CommandManager;
+import controller.command.Deletion;
+import controller.command.TimeChange;
+import model.Checkpoint;
 import org.xml.sax.SAXException;
 
 import controller.xml.XMLDeserializer;
@@ -21,9 +26,11 @@ public class Controller {
 	private Round currentRound;
 	private Map currentMap;
 	private DeliveryRequest currentDeliveryRequest;
+	private CommandManager commandManager;
 
 	public Controller(MainWindowController mainwindow) {
 		this.window = mainwindow;
+		this.commandManager = new CommandManager();
 		currentRound = null;
 		currentMap = null;
 		currentDeliveryRequest = null;
@@ -106,10 +113,38 @@ public class Controller {
 	public Map getCurrentMap() {
 		return currentMap;
 	}
+	
+	public DeliveryRequest getCurrentDeliveryRequest() {
+		return currentDeliveryRequest;
+	}
+	
+	public Round deleteCheckpoint(Checkpoint checkpoint, Round round) {
+        return this.commandManager.doCommand(new Deletion(round), checkpoint);
+    }
 
+    public Round addCheckpoint(Checkpoint checkpoint, Round round) {
+        return this.commandManager.doCommand(new Addition(round), checkpoint);
+    }
+
+    public Round changeCheckpointTime(Checkpoint checkpoint, Round round) {
+        return this.commandManager.doCommand(new TimeChange(round), checkpoint);
+    }
+
+    public Round undoLastCommand(Round round) {
+        return this.commandManager.undoCommand(round);
+    }
+
+    public Round redoLastCommand(Round round) {
+        return this.commandManager.redoCommand(round);
+    }
+
+    // -- PRIVATES ------------------------------------------------------------
+    
 	private void handleSucessfulLoadDelivery() {
 		// Ecriture de la feuille de route
 		Roadmap.writeRoadmap(currentRound, currentMap);
 	}
 	
+    
+
 }
