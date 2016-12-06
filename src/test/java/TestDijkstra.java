@@ -30,7 +30,11 @@ public class TestDijkstra {
 	 */
 	@Test
 	public void evaluateGetSuccessors() throws ParserConfigurationException, SAXException, IOException, XMLException {
-		Map map = Controller.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+		
+		Controller controller = new Controller(null);
+		controller.loadMap("src/main/resources/archivePLD2016/plan2x2.xml");
+		
+		Map map = controller.getCurrentMap();
 
 		Dijkstra dj = new Dijkstra(map);
 

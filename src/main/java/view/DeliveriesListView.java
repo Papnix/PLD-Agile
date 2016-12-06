@@ -9,7 +9,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import model.Checkpoint;
 import model.DeliveryTime;
@@ -31,6 +33,7 @@ public class DeliveriesListView {
 
 	public DeliveriesListView(AnchorPane deliveryPane, Graph graph) {
 		deliveryList = new ListView<String>();
+		
 		idDeliveryPoints = new ArrayList<>();
 
 		this.deliveryPane = deliveryPane;

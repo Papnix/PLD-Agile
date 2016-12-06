@@ -12,21 +12,104 @@ import controller.xml.XMLException;
 import model.DeliveryRequest;
 import model.Map;
 import model.Round;
+import view.MainWindowController;
+import view.errorDisplayer;
 
-public class Controller {	
-	
-	public Round computeRound(DeliveryRequest request, Map map){
-		Round round = new Round(request);
-		round.computeRound(map);
-		return round;
+public class Controller {
+
+	private MainWindowController window;
+	private Round currentRound;
+	private Map currentMap;
+	private DeliveryRequest currentDeliveryRequest;
+
+	public Controller(MainWindowController mainwindow) {
+		this.window = mainwindow;
+		currentRound = null;
+		currentMap = null;
+		currentDeliveryRequest = null;
+	}
+
+	public void loadMap(String path) {
+		Map newMap;
+
+		if (path != null) {
+			try {
+				newMap = XMLDeserializer.loadMap(path);
+			} catch (XMLException e) {
+				errorDisplayer.displayWarningMessageBox(
+						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+
+				return;
+			} catch (IOException | SAXException | ParserConfigurationException e) {
+				e.printStackTrace();
+				errorDisplayer.displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
+				return;
+			}
+
+			if (newMap != null) {
+				currentMap = newMap;
+
+				window.updateAfterLoadMap();
+			}
+		}
+	}
+
+	public void loadDeliveryRequest(String path) {
+
+		if (path != null && currentMap != null) {
+			DeliveryRequest newDeliveryRequest;
+			try {
+				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(path, currentMap);
+			} catch (XMLException e) {
+
+				errorDisplayer.displayWarningMessageBox(
+						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
+								+ " demande de livraison valide.");
+
+				return;
+			} catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
+				e.printStackTrace();
+				errorDisplayer.displayWarningMessageBox("Oups, une erreur dans la lecture du fichier de livraison est survenue.");
+				return;
+			}
+
+			if (newDeliveryRequest != null) {
+				currentDeliveryRequest = newDeliveryRequest;
+				try {
+					// Calcul de la tournée
+					currentRound = new Round(currentDeliveryRequest);
+					currentRound.computePaths(currentMap);
+					currentRound.computeRound(currentMap);
+				} catch (NullPointerException e) {
+					errorDisplayer.displayWarningMessageBox(
+							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+					return;
+				}
+
+				handleSucessfulLoadDelivery();
+				
+				// update graphique
+				window.updateAfterLoadDelivery();
+			}
+		}
 	}
 	
-	public static Map loadMap(String path) throws ParserConfigurationException, SAXException, IOException, XMLException{	
-		return XMLDeserializer.loadMap(path);
+	public void clearRound() {
+		this.currentRound = null;
 	}
-	
-	public static DeliveryRequest loadDeliveryRequest(String path, Map map) throws ParserConfigurationException, SAXException, IOException, XMLException, ParseException{
-		return XMLDeserializer.loadDeliveryRequest(path, map);
+
+	// GETTERS and SETTERS
+	public Round getCurrentRound() {
+		return currentRound;
+	}
+
+	public Map getCurrentMap() {
+		return currentMap;
+	}
+
+	private void handleSucessfulLoadDelivery() {
+		// Ecriture de la feuille de route
+		Roadmap.writeRoadmap(currentRound, currentMap);
 	}
 	
 }
