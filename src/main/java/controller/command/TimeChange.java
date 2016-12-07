@@ -23,34 +23,35 @@ public class TimeChange extends Command {
         this.deliveryTime = deliveryTime;
     }
 
+
+    // Cas à traiter : si on change une plage horaire qui fait qu'il faut enlever de l'attente sans changer l'heure d'arrivée
     public Round doCommand() {
         this.modifiedRound = new Round(this.previousRound);
         // Si la plage horaire a été retirée, aucun changement n'est nécessaire
         if (this.start == null && this.end == null) {
             return this.modifiedRound;
         }
-        for (List<DeliveryTime> arrivalTimes : this.modifiedRound.getRoundTimeOrders()) {
+        int count = 0;
+        for (List<DeliveryTime> deliveryTimes : this.modifiedRound.getRoundTimeOrders()) {
+            count++;
             // Indices des DeliveryTiems les plus proches du début et de la fin de la nouvelle plage (mais non compris)
             // Permet de définir un intervalle sur lequel placer la livraison si la nouvelle plage demande un changement
             int startIndex = -1, endIndex = -1, index = -1;
 
             DeliveryTime deliveryTime = null;
 
-            for (int i = 0; i < arrivalTimes.size(); i++) {
-                deliveryTime = arrivalTimes.get(i);
-                List<DeliveryTime> intervalTimes = new ArrayList<>();
-                if (deliveryTime.getDepartureTime().before(this.start)) {
+            for (int i = 0; i < deliveryTimes.size(); i++) {
+                deliveryTime = deliveryTimes.get(i);
+                if (deliveryTime.getDepartureTime() != null && deliveryTime.getDepartureTime().before(this.start)) {
                     startIndex = i;
-                } else if (deliveryTime.getArrivalTime().after(this.end)) {
+                } else if (deliveryTime.getArrivalTime() != null && deliveryTime.getArrivalTime().after(this.end)) {
                     endIndex = endIndex == -1 ? i : endIndex;
-                } else {
-                    intervalTimes.add(i, deliveryTime);
                 }
                 if (deliveryTime.getCheckpoint().getId() == this.deliveryTime.getCheckpoint().getId()) {
-                    deliveryTime.getCheckpoint().setTimeRangeStart(this.start);
-                    deliveryTime.getCheckpoint().setTimeRangeEnd(this.end);
                     // Si la livraison est toujours à l'heure après le changement, aucune autre modif à faire
                     if (deliveryTime.getArrivalTime().after(this.start) && deliveryTime.getArrivalTime().before(this.end)) {
+                        this.deliveryTime.getCheckpoint().setTimeRangeStart(this.start);
+                        this.deliveryTime.getCheckpoint().setTimeRangeEnd(this.end);
                         return this.modifiedRound;
                     }
                     index = i;
@@ -59,18 +60,16 @@ public class TimeChange extends Command {
             // On cherche s'il est possible d'insérer la livraison quelque part
             for (int j = startIndex; j < endIndex; j++) {
 
-                DeliveryTime previousDelivery = arrivalTimes.get(j);
-                DeliveryTime nextDelivery = arrivalTimes.get(j+1);
-
-                long timeTo = 0, timeFrom = 0;
+                DeliveryTime previousDelivery = deliveryTimes.get(j);
+                DeliveryTime nextDelivery = deliveryTimes.get(j+1);
 
                 Dijkstra dj = new Dijkstra(this.map);
                 dj.execute(previousDelivery.getCheckpoint().getId());
-                timeTo = dj.getTargetPathCost(this.deliveryTime.getCheckpoint().getId());
+                long timeTo = dj.getTargetPathCost(this.deliveryTime.getCheckpoint().getId());
                 dj.execute(this.deliveryTime.getCheckpoint().getId());
-                timeFrom = dj.getTargetPathCost(nextDelivery.getCheckpoint().getId());
+                long timeFrom = dj.getTargetPathCost(nextDelivery.getCheckpoint().getId());
 
-                Date arrivalTime = new Date(previousDelivery.getDepartureTime().getTime() + timeTo * 1000);
+                Date arrivalTime = new Date(previousDelivery.getDepartureTime().getTime() + timeTo);
                 if (arrivalTime.after(this.end)) {
                     continue;
                 }
@@ -83,13 +82,17 @@ public class TimeChange extends Command {
                 }
                 // Attribution des nouvelles valeurs
                 // Temps d'attente = ancien temps - différence entre la nouvelle heure d'arrivée et l'ancienne
+                this.deliveryTime.getCheckpoint().setTimeRangeStart(this.start);
+                this.deliveryTime.getCheckpoint().setTimeRangeEnd(this.end);
                 nextDelivery.setWaitingTime(nextDelivery.getWaitingTime() - (nextPointArrivalTime.getTime() - nextDelivery.getArrivalTime().getTime()));
                 nextDelivery.setArrivalTime(nextPointArrivalTime);
                 this.deliveryTime.setArrivalTime(arrivalTime);
                 this.deliveryTime.setWaitingTime(waitingTime);
                 this.deliveryTime.setDepartureTime(departureTime);
-                arrivalTimes.remove(index);
-                arrivalTimes.add(j+1, this.deliveryTime);
+                deliveryTimes.remove(index);
+                deliveryTimes.add(j+1, this.deliveryTime);
+
+                break;
             }
         }
         return this.modifiedRound;
