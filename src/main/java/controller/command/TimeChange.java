@@ -24,9 +24,7 @@ public class TimeChange extends Command {
     }
 
 
-    // Cas à traiter : si on change une plage horaire qui fait qu'il faut enlever de l'attente sans changer l'heure d'arrivée
     public Round doCommand() {
-        this.modifiedRound = new Round(this.previousRound);
         // Si la plage horaire a été retirée, aucun changement n'est nécessaire
         if (this.start == null && this.end == null) {
             return this.modifiedRound;
@@ -50,6 +48,14 @@ public class TimeChange extends Command {
                 if (deliveryTime.getCheckpoint().getId() == this.deliveryTime.getCheckpoint().getId()) {
                     // Si la livraison est toujours à l'heure après le changement, aucune autre modif à faire
                     if (deliveryTime.getArrivalTime().after(this.start) && deliveryTime.getArrivalTime().before(this.end)) {
+                        // Si on arrive à temps mais qu'on attend trop avant de livrer, on réduit l'attente
+                        if (this.start.after(new Date(deliveryTime.getArrivalTime().getTime() + deliveryTime.getWaitingTime()))) {
+                            long waitingTime = this.deliveryTime.getWaitingTime();
+                            this.deliveryTime.setWaitingTime(0);
+                            this.deliveryTime.setDepartureTime(new Date(this.deliveryTime.getDepartureTime().getTime() - waitingTime));
+                            deliveryTimes.get(i + 1).setWaitingTime(deliveryTimes.get(i + 1).getWaitingTime() + waitingTime);
+                            deliveryTimes.get(i + 1).setArrivalTime(new Date(deliveryTimes.get(i + 1).getArrivalTime().getTime() - waitingTime));
+                        }
                         this.deliveryTime.getCheckpoint().setTimeRangeStart(this.start);
                         this.deliveryTime.getCheckpoint().setTimeRangeEnd(this.end);
                         return this.modifiedRound;
@@ -61,7 +67,7 @@ public class TimeChange extends Command {
             for (int j = startIndex; j < endIndex; j++) {
 
                 DeliveryTime previousDelivery = deliveryTimes.get(j);
-                DeliveryTime nextDelivery = deliveryTimes.get(j+1);
+                DeliveryTime nextDelivery = deliveryTimes.get(j + 1);
 
                 Dijkstra dj = new Dijkstra(this.map);
                 dj.execute(previousDelivery.getCheckpoint().getId());
@@ -77,7 +83,7 @@ public class TimeChange extends Command {
                 Date departureTime = new Date(arrivalTime.getTime() + waitingTime + this.deliveryTime.getCheckpoint().getDuration());
                 // Calcul timeFrom
                 Date nextPointArrivalTime = new Date(departureTime.getTime() + timeFrom);
-                if(nextPointArrivalTime.after(new Date(nextDelivery.getArrivalTime().getTime() + nextDelivery.getWaitingTime()))) {
+                if (nextPointArrivalTime.after(new Date(nextDelivery.getArrivalTime().getTime() + nextDelivery.getWaitingTime()))) {
                     continue;
                 }
                 // Attribution des nouvelles valeurs
@@ -90,7 +96,7 @@ public class TimeChange extends Command {
                 this.deliveryTime.setWaitingTime(waitingTime);
                 this.deliveryTime.setDepartureTime(departureTime);
                 deliveryTimes.remove(index);
-                deliveryTimes.add(j+1, this.deliveryTime);
+                deliveryTimes.add(j + 1, this.deliveryTime);
 
                 break;
             }
