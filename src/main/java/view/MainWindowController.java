@@ -6,20 +6,24 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import controller.Controller;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-
+import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * MainWindowController : the main window of the application
  */
 public class MainWindowController implements Initializable {
+	Alert waitingDialog;
+	
 	private boolean firstDeliveryLoad;
 	private DeliveriesListView deliveriesListView;
 
@@ -48,11 +52,21 @@ public class MainWindowController implements Initializable {
 	private ScrollPane mapPane;
 
 	/**
-	 * Constructor of the main window, initialize links with fxml file for GUI
-	 * components.
+	 * Constructor of the main window, initializes links with fxml file for GUI components.
 	 */
 	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-
+		waitingDialog = new Alert(AlertType.INFORMATION);
+		waitingDialog.setTitle("Calcul en cours");
+		waitingDialog.setHeaderText("Patientez...");
+		waitingDialog.setContentText("La tournée est en cours de calcul.");
+		
+		// On cache tous les boutons pour empêcher l'utilisateur de fermer la fenêtre
+		for (ButtonType bt : waitingDialog.getDialogPane().getButtonTypes()) {
+			Button b = (Button)(waitingDialog.getDialogPane().lookupButton(bt));
+			b.setVisible(false);
+		}
+		
+		firstDeliveryLoad = true;
 		controller = new Controller(this);
 
 		initializeMenu();
@@ -73,19 +87,35 @@ public class MainWindowController implements Initializable {
 		assert deliveryPane != null : "fx:id=\"deliveryPane\" was not injected: check your FXML file 'view.fxml'.";
 		assert mapPane != null : "fx:id=\"mapPane\" was not injected: check your FXML file 'view.fxml'.";
 
-		firstDeliveryLoad = true;
-		setupGraphDisplayer();
 
+		firstDeliveryLoad = true;
+		
+		deliveriesListView = new DeliveriesListView(controller);
+		deliveryPane.getChildren().add(deliveriesListView);
+		deliveriesListView.setVisible(false);
+		
+
+		setupGraphDisplayer();
 	}
 
 	public DeliveriesListView getDeliveriesListView(){
 		return deliveriesListView;
 	}
 
+	public void showWaitingDialog() {
+		waitingDialog.show();
+	}
+	
+	public void closeWaitingDialog() {
+		waitingDialog.close();
+	}
+	
 	public void updateAfterLoadMap() {
-
 		loadMapButton.setVisible(false);
 		menuLoadDelivery.setDisable(false);
+		menuAddDelivery.setDisable(true);
+		menuRemoveDelivery.setDisable(true);
+		menuModifyDelivery.setDisable(true);
 		loadDeliveryButton.setDisable(false);
 		loadDeliveryButton.setText("Charger demande de livraisons");
 		clearPreviousRound();
@@ -99,7 +129,7 @@ public class MainWindowController implements Initializable {
 		// Crée la ListView à droite si c'est le premier chargement de
 				// demande de livraisons
 				if (firstDeliveryLoad) {
-					deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
+					deliveriesListView.setVisible(true);
 					firstDeliveryLoad = false;
 				}
 
@@ -110,54 +140,72 @@ public class MainWindowController implements Initializable {
 		updateDeliveriesListView();
 		
 		// Met à jour l'interface graphique
-		deliveriesListView.createDeliveriesList(controller.getCurrentRound(), controller.getCurrentMap());
-		
+
+		deliveriesListView.loadDeliveriesList();
+
 		loadDeliveryButton.setVisible(false);
-		menuAddDelivery.setVisible(true);
-		menuModifyDelivery.setVisible(true);
-		menuModifyDelivery.setVisible(true);
+		menuAddDelivery.setDisable(false);
+		menuRemoveDelivery.setDisable(false);
+		menuModifyDelivery.setDisable(false);
 		mapDisplayer.setRound(controller.getCurrentRound());
 	}
 	
-	/**
-	 * Load a map from an xml source chosen by the user in an explorer.
-	 */
-	private void handleLoadMap() {
-		File mapFile = getFileFromExplorer();
-		controller.loadMap(mapFile.getAbsolutePath().toString());
+	public Graph getMapDisplayer() {
+		return mapDisplayer;
 	}
 	
 	/**
-	 * Load a delivery request from an xml source chosen by the user in an
-	 * explorer
+	 * Loads a map from an xml source chosen by the user in an explorer.
+	 */
+	private void handleLoadMap() {
+		
+		// Demande à l'utilisateur de sélectionner un fichier à charger
+		File mapFile = getFileFromExplorer();
+		if (mapFile != null) {
+			controller.loadMap(mapFile.getAbsolutePath().toString());
+		}
+	}
+	
+	/**
+	 * Loads a delivery request from an xml source chosen by the user in an explorer
 	 */
 	private void handleLoadDelivery() {
+
 		// Demande à l'utilisateur de sélectionner un fichier à charger
 		File deliveryRequestFile = getFileFromExplorer();
-		controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
+		if(deliveryRequestFile != null) {
+			
+			if (lastFolderExplored != null) {
+				lastFolderExplored = deliveryRequestFile.getParent();
+			}
+
+			controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
+		}
 	}
 
 	/**
-	 * Remove the round from the list view and clear it's display.
+	 * Removes the round from the list view and clear its display.
 	 */
 	private void clearPreviousRound() {
-
+		
 		// On enlève la tournée affichée
 		controller.clearRound();
 
 		if (firstDeliveryLoad == false) {
 			deliveriesListView.clear();
+			deliveriesListView.setVisible(false);
 			loadDeliveryButton.setVisible(true);
 			firstDeliveryLoad = true;
 		}
 	}
 
 	/**
-	 * Open an explorer to select a file and return it.
+	 * Opens an explorer to select a file and return it.
 	 **/
 	private File getFileFromExplorer() {
 		FileChooser explorer = new FileChooser();
 		explorer.setTitle("Selectionner un fichier xml");
+		explorer.getExtensionFilters().add(new ExtensionFilter("Fichiers XML", "*.xml"));
 
 		if (lastFolderExplored != null) {
 			try {
@@ -168,14 +216,11 @@ public class MainWindowController implements Initializable {
 
 		File file = explorer.showOpenDialog(null);
 
-		if (lastFolderExplored != null)
-			lastFolderExplored = file.getParent();
-
 		return file;
 	}
 
 	/**
-	 * Initialize the map displayer system
+	 * Initializes the map displayer system
 	 */
 	private void setupGraphDisplayer() {
 		mapDisplayer = new Graph();
@@ -203,7 +248,7 @@ public class MainWindowController implements Initializable {
 		
 		assert menuAddDelivery != null : "fx:id=\"menuAddDelivery\" was not injected: check your FXML file"
 				+ " 'view.fxml'.";
-		menuLoadDelivery.setOnAction((event) -> {
+		menuAddDelivery.setOnAction((event) -> {
 			System.out.println("not implemented");
 		});
 		menuAddDelivery.setDisable(true);
@@ -222,5 +267,4 @@ public class MainWindowController implements Initializable {
 		});
 		menuModifyDelivery.setDisable(true);
 	}
-
 }

@@ -2,6 +2,9 @@ package model;
 
 import java.util.Date;
 
+/**
+ * Corresponds to a delivery that is planned
+ */
 public class DeliveryTime implements Cloneable {
 
 	private Checkpoint checkpoint;
@@ -9,6 +12,17 @@ public class DeliveryTime implements Cloneable {
 	private Date departureTime;
 	private long waitingTime;
 
+	/**
+	 * Buids a DeliveryTime, given all the parameters it needs
+	 * @param checkpoint
+	 * 		Location to deliver
+	 * @param arrivalTime
+	 * 		Time of arrival of the deliverer
+	 * @param departureTime
+	 * 		Time of departure of the deliverer
+	 * @param waitingTime
+	 * 		Waiting time of the deliver before delivering when he has arrived to the location
+	 */
 	public DeliveryTime(Checkpoint checkpoint, Date arrivalTime, Date departureTime, long waitingTime) {
 		super();
 		this.checkpoint = checkpoint;
@@ -17,9 +31,14 @@ public class DeliveryTime implements Cloneable {
 		this.waitingTime = waitingTime;
 	}
 
+	/**
+	 * Copy constructor
+	 * @param deliveryTime
+	 * 		DeliveryTime to copy
+	 */
 	public DeliveryTime(DeliveryTime deliveryTime) {
 		super();
-		this.checkpoint = deliveryTime.checkpoint;
+		this.checkpoint = new Checkpoint(deliveryTime.checkpoint);
 		this.arrivalTime = deliveryTime.arrivalTime == null ? null : new Date(deliveryTime.arrivalTime.getTime());
 		this.departureTime = deliveryTime.departureTime == null ? null : new Date(deliveryTime.departureTime.getTime());
 		this.waitingTime = deliveryTime.waitingTime;
@@ -42,12 +61,10 @@ public class DeliveryTime implements Cloneable {
 	}
 
 	public void setArrivalTime(Date arrivalTime) {
-		this.arrivalTime = null;
 		this.arrivalTime = arrivalTime;
 	}
 
 	public void setDepartureTime(Date departureTime) {
-		this.departureTime = null;
 		this.departureTime = departureTime;
 	}
 
@@ -58,12 +75,10 @@ public class DeliveryTime implements Cloneable {
 	public DeliveryTime clone() {
 		DeliveryTime dt = null;
 		try {
-			// On rï¿½cupï¿½re l'instance ï¿½ renvoyer par l'appel de la
-			// mï¿½thode super.clone()
+			// On récupère l'instance à renvoyer par l'appel de la méthode super.clone()
 			dt = (DeliveryTime) super.clone();
 		} catch(CloneNotSupportedException cnse) {
-			// Ne devrait jamais arriver car nous implï¿½mentons
-			// l'interface Cloneable
+			// Ne devrait jamais arriver car nous implémentons l'interface Cloneable
 			cnse.printStackTrace(System.err);
 		}
 		dt.checkpoint = (Checkpoint) checkpoint.clone();

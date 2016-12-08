@@ -11,7 +11,7 @@ import javafx.scene.control.Alert.AlertType;
 import model.Checkpoint;
 import model.Round;
 
-public class errorHandler {
+public class ErrorHandler {
 
 	
 	/**
@@ -30,7 +30,7 @@ public class errorHandler {
 	
 	public static void impossibleRound(Round round, MainWindowController window){
 		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
-		errorDisplayer.displayWarningMessageBox("Aucune tournée n'est calculable avec les contraintes que vous demandez !");
+		ErrorDisplayer.displayWarningMessageBox("Aucune tournée n'est calculable avec les contraintes que vous demandez !");
 		
 		window.updateDeliveriesListView();
 		

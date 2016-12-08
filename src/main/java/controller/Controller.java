@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -9,7 +10,7 @@ import controller.command.Addition;
 import controller.command.CommandManager;
 import controller.command.Deletion;
 import controller.command.TimeChange;
-import model.Checkpoint;
+import model.*;
 import org.xml.sax.SAXException;
 
 import controller.xml.XMLDeserializer;
@@ -18,8 +19,8 @@ import model.DeliveryRequest;
 import model.Map;
 import model.Round;
 import view.MainWindowController;
-import view.errorDisplayer;
-import view.errorHandler;
+import view.ErrorDisplayer;
+import view.ErrorHandler;
 
 public class Controller {
 
@@ -44,13 +45,13 @@ public class Controller {
 			try {
 				newMap = XMLDeserializer.loadMap(path);
 			} catch (XMLException e) {
-				errorDisplayer.displayWarningMessageBox(
-						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+				ErrorDisplayer.displayWarningMessageBox(
+						"Oups, il semble que le fichier que vous avez spï¿½cifiï¿½ ne soit pas une carte valide.");
 
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException e) {
 				e.printStackTrace();
-				errorDisplayer.displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
+				ErrorDisplayer.displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
 				return;
 			}
 
@@ -62,45 +63,53 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Loads a deliveries request and computes the corresponding round. Updates the display when it's done.
+	 * @param path
+	 * 		Path of the deliveries request's XML file
+	 */
 	public void loadDeliveryRequest(String path) {
-
 		if (path != null && currentMap != null) {
 			DeliveryRequest newDeliveryRequest;
 			try {
 				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(path, currentMap);
 			} catch (XMLException e) {
 
-				errorDisplayer.displayWarningMessageBox(
-						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
+				ErrorDisplayer.displayWarningMessageBox(
+						"Oups, il semble que le fichier que vous avez spï¿½cifiï¿½ ne soit pas une"
 								+ " demande de livraison valide.");
 
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
 				e.printStackTrace();
-				errorDisplayer.displayWarningMessageBox("Oups, une erreur dans la lecture du fichier de livraison est survenue.");
+				ErrorDisplayer.displayWarningMessageBox("Oups, une erreur dans la lecture du fichier de livraison est survenue.");
 				return;
 			}
 
 			if (newDeliveryRequest != null) {
+				window.showWaitingDialog();
+				
 				currentDeliveryRequest = newDeliveryRequest;
 				try {
-					// Calcul de la tournée
+					// Calcul de la tournï¿½e
 					currentRound = new Round(currentDeliveryRequest);
 					currentRound.computePaths(currentMap);
 					currentRound.computeRound(currentMap);
 					handleSucessfulLoadDelivery();
 				} catch (NullPointerException e) {
 					if(currentRound.getNumOfRound() == 0){
-						errorHandler.impossibleRound(currentRound, window);
+						ErrorHandler.impossibleRound(currentRound, window);
 					}else{
-						errorDisplayer.displayWarningMessageBox(
+						ErrorDisplayer.displayWarningMessageBox(
 							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
 					}
 					return;
 				}
+				
+				window.closeWaitingDialog();
+				handleSucessfulLoadDelivery();
+				window.updateAfterLoadDelivery(); // update graphique
 
-				// update graphique
-				window.updateAfterLoadDelivery();
 			}
 		}
 	}
@@ -108,30 +117,17 @@ public class Controller {
 	public void clearRound() {
 		this.currentRound = null;
 	}
-
-	// GETTERS and SETTERS
-	public Round getCurrentRound() {
-		return currentRound;
-	}
-
-	public Map getCurrentMap() {
-		return currentMap;
-	}
-	
-	public DeliveryRequest getCurrentDeliveryRequest() {
-		return currentDeliveryRequest;
-	}
 	
 	public Round deleteCheckpoint(Checkpoint checkpoint, Round round) {
-        return this.commandManager.doCommand(new Deletion(round), checkpoint);
+        return this.commandManager.doCommand(new Deletion(round, checkpoint));
     }
 
-    public Round addCheckpoint(Checkpoint checkpoint, Round round) {
-        return this.commandManager.doCommand(new Addition(round), checkpoint);
+    public Round addCheckpoint(Checkpoint checkpoint, Round round, Map map) {
+        return this.commandManager.doCommand(new Addition(round, map,checkpoint));
     }
 
-    public Round changeCheckpointTime(Checkpoint checkpoint, Round round) {
-        return this.commandManager.doCommand(new TimeChange(round), checkpoint);
+    public Round changeCheckpointTime(Checkpoint checkpoint, Round round, Date start, Date end, Map map) {
+        return this.commandManager.doCommand(new TimeChange(checkpoint, round, start, end, map));
     }
 
     public Round undoLastCommand(Round round) {
@@ -142,13 +138,28 @@ public class Controller {
         return this.commandManager.redoCommand(round);
     }
 
+	// GETTERS and SETTERS
+	public Round getCurrentRound() {
+		return currentRound;
+	}
+
+	public Map getCurrentMap() {
+		return currentMap;
+	}
+	
+	public MainWindowController getWindow() {
+		return window;
+	}
+	
+	public DeliveryRequest getCurrentDeliveryRequest() {
+		return currentDeliveryRequest;
+	}
+    
     // -- PRIVATES ------------------------------------------------------------
     
 	private void handleSucessfulLoadDelivery(){
 		// Ecriture de la feuille de route
 		Roadmap.writeRoadmap(currentRound, currentMap);
 	}
-	
-    
 
 }

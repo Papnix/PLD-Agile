@@ -1,5 +1,7 @@
 package view;
 
+import java.util.Date;
+
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
@@ -42,10 +44,22 @@ public class GraphNode extends Group {
 	public void setState(State state) {
 		this.state = state;
 		setStateColor();
+		
+		if (state == State.WAREHOUSE) {
+			infobox.addWarehouseText();
+		}
 	}
 	
 	public State getState() {
 		return state;
+	}
+	
+	public void addDepartureTime(Date departureTime) {
+		infobox.addDepartureTime(departureTime);
+	}
+	
+	public void addArrivalTime(Date arrivalTime) {
+		infobox.addArrivalTime(arrivalTime);
 	}
 
 	public void lightUp() {

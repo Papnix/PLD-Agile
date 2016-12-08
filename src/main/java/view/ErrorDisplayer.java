@@ -10,11 +10,10 @@ import javafx.scene.control.Alert.AlertType;
 import model.Checkpoint;
 import model.Round;
 
-public class errorDisplayer {
-
+public class ErrorDisplayer {
 	
 	/**
-	 * Display a dialog to display some informations to users.
+	 * Displays a dialog to display some informations to users.
 	 * 
 	 * @param message
 	 *            message to display.
@@ -56,5 +55,4 @@ public class errorDisplayer {
 			deliveriesTexts.add(text);
 		}
 	}
-	
 }

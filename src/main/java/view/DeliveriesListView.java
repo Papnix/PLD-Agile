@@ -5,16 +5,21 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import controller.Controller;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
-import model.Checkpoint;
+
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+
 import model.DeliveryTime;
-import model.Map;
-import model.Round;
 
 /**
  * Corresponds to the ListView on the right containing the deliveries of a
@@ -23,52 +28,54 @@ import model.Round;
  * is not necessary to create a new insytance of this class, calling the
  * 'createDeliveriesList' method is sufficient.
  */
-public class DeliveriesListView {
-	private  ListView<String> deliveryList;
+
+public class DeliveriesListView extends VBox {
+
+	private ComboBox<String> roundCombo;
+	private ListView<String> deliveryList;
 	private List<Integer> idDeliveryPoints;
-	private AnchorPane deliveryPane;
-	private Graph graph;
-
-	public DeliveriesListView(AnchorPane deliveryPane, Graph graph) {
-		deliveryList = new ListView<String>();
-		
-		idDeliveryPoints = new ArrayList<>();
-
-		this.deliveryPane = deliveryPane;
-		this.graph = graph;
-
-		AnchorPane.setTopAnchor(deliveryList, 0d);
-		AnchorPane.setBottomAnchor(deliveryList, 0d);
-		AnchorPane.setRightAnchor(deliveryList, 0d);
-		AnchorPane.setLeftAnchor(deliveryList, 0d);
-		this.deliveryPane.getChildren().add(deliveryList);
-	}
+	private Controller controller;
 
 	/**
-	 * Extracts a delivery's information and returns the text to display in the
-	 * ListView
-	 * 
-	 * @param c
-	 *            Delivery's checkpoint
-	 * @return Text to display directly in a ListView's cell
+	 * Only one constructor of the widget
+	 * @param controller A reference to the controller of the application.
 	 */
-	public static String deliveryToText(Checkpoint c) {
-		String text = "Adresse : " + c.getId() + "\n";
+	public DeliveriesListView(Controller controller) {
+		super();
 
-		int hours = c.getDuration() / 3600;
-		int minutes = (c.getDuration() % 3600) / 60;
-		String duration = "";
-		if (hours < 10) {
-			duration = "0";
-		}
-		duration += Integer.toString(hours) + "h";
-		if (minutes < 10) {
-			duration += "0";
-		}
-		duration += Integer.toString(minutes);
-		text += "Durée : " + duration;
+		roundCombo = new ComboBox<String>();
+		deliveryList = new ListView<String>();
+		idDeliveryPoints = new ArrayList<>();
+		this.controller = controller;
 
-		return text;
+		AnchorPane.setTopAnchor(this, 0d);
+		AnchorPane.setBottomAnchor(this, 0d);
+		AnchorPane.setRightAnchor(this, 0d);
+		AnchorPane.setLeftAnchor(this, 0d);
+
+		roundCombo.setMaxWidth(Double.MAX_VALUE);
+		roundCombo.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
+
+				int index = roundCombo.getSelectionModel().getSelectedIndex();
+				if (index >= 0 && index < controller.getCurrentRound().getRoundTimeOrders().size()) {
+					setupSelectedDeliveryOrder(controller.getCurrentRound().getRoundTimeOrder(index));
+				}
+			}
+		});
+		deliveryList.setMaxHeight(Double.MAX_VALUE);
+		addItemAction();
+
+		this.setPadding(new Insets(10, 5, 10, 5));
+		this.setSpacing(10);
+		DeliveriesListView.setVgrow(deliveryList, Priority.ALWAYS);
+
+		this.getChildren().add(new Label("Liste des différents itinéraire possibles :"));
+		this.getChildren().add(roundCombo);
+		this.getChildren().add(new Label("Liste des points de livraison : "));
+		this.getChildren().add(deliveryList);
+
 	}
 	
 	public void setObservableListInDeliveryList(ObservableList<String> deliveriesTexts){
@@ -85,40 +92,24 @@ public class DeliveriesListView {
 	 * @param map
 	 *            City's map
 	 */
-	public void createDeliveriesList(Round round, Map map) {
-		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
+	public void loadDeliveriesList() {
 
-		List<DeliveryTime> roundChosen = round.getRoundTimeOrder(0);
+		deliveryList.getItems().clear();
+		idDeliveryPoints.clear();
+		roundCombo.getItems().clear();
 
-		displayStartRoundMessage(deliveriesTexts, roundChosen);
-		idDeliveryPoints.add(roundChosen.get(0).getCheckpoint().getId());
-
-		for (int i = 1; i < roundChosen.size() - 1; i++) {
-			displayCheckpointRoundMessage(deliveriesTexts, roundChosen.get(i));
-			idDeliveryPoints.add(roundChosen.get(i).getCheckpoint().getId());
+		for (int index = 0; index < controller.getCurrentRound().getRoundTimeOrders().size(); ++index) {
+			roundCombo.getItems().add("Possibilité de livraison n : " + (index + 1));
 		}
-
-		displayEndRoundMessage(deliveriesTexts, roundChosen);
-		idDeliveryPoints.add(roundChosen.get(0).getCheckpoint().getId());
-
-		setObservableListInDeliveryList(deliveriesTexts);
-		addItemAction();
-	}
-
-	private String millisToText(long millis) {
-		return String.format("%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
-				TimeUnit.MILLISECONDS.toMinutes(millis)
-						- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), 
-				TimeUnit.MILLISECONDS.toSeconds(millis)
-						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+		roundCombo.getSelectionModel().selectFirst();
 	}
 
 	/*
 	 * Reset all containers to erase tracks of the previous delivery request.
 	 */
 	public void clear() {
+		roundCombo.getItems().clear();
 		deliveryList.getItems().clear();
-		deliveryPane.getChildren().remove(deliveryList);
 		idDeliveryPoints.clear();
 	}
 
@@ -135,27 +126,37 @@ public class DeliveriesListView {
 				if (newValue != null) {
 					int idCheckpoint = idDeliveryPoints.get(deliveryList.getItems().indexOf(newValue));
 
-					if(deliveryList.getItems().indexOf(newValue) == deliveryList.getItems().size()-1)
-					{
-						graph.lightUpPath(-1); // Allume toute la map, gère le retour à l'entrepot.
+					if (idCheckpoint != -1) {
+						if (deliveryList.getItems().indexOf(newValue) == deliveryList.getItems().size() - 1) {
+							// Allume toute la map, gère le retour à l'entrepot.
+							controller.getWindow().getMapDisplayer().lightUpPath(-1);
+						} else {
+							controller.getWindow().getMapDisplayer().lightUpPath(idCheckpoint);
+						}
+
+					} else {
+						controller.getWindow().getMapDisplayer().lightDownPath();
 					}
-					else if (idCheckpoint != -1) {
-						graph.lightUpPath(idCheckpoint);
-					}
-					else {
-						graph.lightDownPath();
-					}
+				}
+				else {
+					controller.getWindow().getMapDisplayer().lightDownPath();
 				}
 			}
 		});
 	}
 	
+	/**
+	 * Create a message with informations about a delivery point and add it to the list of texts to display.
+	 * @param deliveriesTexts The list of texts diplayed by the widget.
+	 * @param delivery The delivery with which will be created the message.
+	 */
 	private void displayCheckpointRoundMessage(ObservableList<String> deliveriesTexts, DeliveryTime delivery) {
-		
+
 		String text = "Adresse : " + delivery.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
 		if (delivery.getCheckpoint().getTimeRangeStart() != null
 				&& delivery.getCheckpoint().getTimeRangeEnd() != null) {
-			text += "ouvert de "
+
+			text += "Ouvert de "
 					+ new SimpleDateFormat("HH:mm")
 							.format(delivery.getCheckpoint().getTimeRangeStart().getTime())
 					+ " à " + new SimpleDateFormat("HH:mm")
@@ -163,29 +164,76 @@ public class DeliveriesListView {
 					+ "\n";
 		}
 		text += "Temps d'attente : " + millisToText(delivery.getWaitingTime()) + "\n";
-	
-		text += "Heure d'arrivée : "
-				+ new SimpleDateFormat("HH:mm").format(delivery.getArrivalTime().getTime()) + "		";
-		text += "Heure de depart : "
-				+ new SimpleDateFormat("HH:mm").format(delivery.getDepartureTime().getTime());
-	
+
+		text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(delivery.getArrivalTime().getTime())
+				+ "		";
+		text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(delivery.getDepartureTime().getTime());
+
 		deliveriesTexts.add(text);
 	}
-	
+
+	/**
+	 * Create a message with informations on the start of the round add it to the list of texts to display.
+	 * @param deliveriesTexts The list of texts diplayed by the widget.
+	 * @param delivery The delivery with which will be created the message.
+	 */
 	private void displayStartRoundMessage(ObservableList<String> deliveriesTexts, List<DeliveryTime> roundChosen) {
-		
+
 		String text = "Adresse : " + roundChosen.get(0).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
 		text += "Heure de debut de tournée : "
 				+ new SimpleDateFormat("HH:mm").format(roundChosen.get(0).getDepartureTime().getTime());
 		deliveriesTexts.add(text);
-		
+
 	}
-	
+
+	/**
+	 * Create a message with informations on the end of the round add it to the list of texts to display.
+	 * @param deliveriesTexts The list of texts diplayed by the widget.
+	 * @param delivery The delivery with which will be created the message.
+	 */
 	private void displayEndRoundMessage(ObservableList<String> deliveriesTexts, List<DeliveryTime> roundChosen) {
-		String text = "Adresse : " + roundChosen.get(roundChosen.size() - 1).getCheckpoint().getAssociatedWaypoint().getId()
-				+ "\n";
+		String text = "Adresse : "
+				+ roundChosen.get(roundChosen.size() - 1).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
 		text += "Heure de fin de tournée : " + new SimpleDateFormat("HH:mm")
 				.format(roundChosen.get(roundChosen.size() - 1).getArrivalTime().getTime());
 		deliveriesTexts.add(text);
+	}
+
+	/**
+	 * Load a deliveryOrder in the differents containers to display it and allow usability;
+	 * @param deliveryOrder
+	 */
+	private void setupSelectedDeliveryOrder(List<DeliveryTime> deliveryOrder) {
+
+		idDeliveryPoints.clear();
+		deliveryList.getItems().clear();
+
+		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
+		displayStartRoundMessage(deliveriesTexts, deliveryOrder);
+		idDeliveryPoints.add(deliveryOrder.get(0).getCheckpoint().getId());
+
+		for (int i = 1; i < deliveryOrder.size() - 1; i++) {
+			displayCheckpointRoundMessage(deliveriesTexts, deliveryOrder.get(i));
+			idDeliveryPoints.add(deliveryOrder.get(i).getCheckpoint().getId());
+		}
+
+		displayEndRoundMessage(deliveriesTexts, deliveryOrder);
+		idDeliveryPoints.add(deliveryOrder.get(0).getCheckpoint().getId());
+
+		deliveryList.setItems(deliveriesTexts);
+	}
+
+	/**
+	 * Convert a time in millisecond into a text to display
+	 * 
+	 * @param millis
+	 * @return a string with the time o display
+	 */
+	private String millisToText(long millis) {
+		return String.format("%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
+				TimeUnit.MILLISECONDS.toMinutes(millis)
+						- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+				TimeUnit.MILLISECONDS.toSeconds(millis)
+						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
 	}
 }
