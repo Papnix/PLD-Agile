@@ -23,11 +23,33 @@ import model.Round;
  * 'createDeliveriesList' method is sufficient.
  */
 public class DeliveriesListView {
+	/**
+	 * ListView that is displayed
+	 */
 	private ListView<String> deliveryList;
+	
+	/**
+	 * List of the delivery points ID, in the chronological order
+	 */
 	private List<Integer> idDeliveryPoints;
+	
+	/**
+	 * Pane where the ListView is displayed
+	 */
 	private AnchorPane deliveryPane;
+	
+	/**
+	 * Graph corresponding to the map of the delivery request
+	 */
 	private Graph graph;
 
+	/**
+	 * Creates a new DeliveriesListView that is empty
+	 * @param deliveryPane
+	 * 		Pane where the ListView is displayed
+	 * @param graph
+	 * 		Graph corresponding to the city's map
+	 */
 	public DeliveriesListView(AnchorPane deliveryPane, Graph graph) {
 		deliveryList = new ListView<String>();
 		
@@ -41,6 +63,8 @@ public class DeliveriesListView {
 		AnchorPane.setRightAnchor(deliveryList, 0d);
 		AnchorPane.setLeftAnchor(deliveryList, 0d);
 		this.deliveryPane.getChildren().add(deliveryList);
+		
+		Graph.setDeliveriesListView(this);
 	}
 
 	/**
@@ -74,6 +98,37 @@ public class DeliveriesListView {
 		deliveryList.setItems(deliveriesTexts);
 		addItemAction();
 	}
+	
+	/**
+	 * Selects the item corresponding to the given checkpoint's id
+	 * @param idCheckpoint
+	 * 		Checkpoint's ID to select
+	 */
+	public void selectItem(int idCheckpoint) {
+		ObservableList<String> items = deliveryList.getItems();
+		for (int i = 0; i < idDeliveryPoints.size(); i++) {
+			if (items.get(i).contains("Adresse : " + idCheckpoint)) {
+				deliveryList.getSelectionModel().select(i);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Clears the current item's selection
+	 */
+	public void clearSelectedItems() {
+		deliveryList.getSelectionModel().clearSelection();
+	}
+
+	/**
+	 * Reset all containers to erase tracks of the previous delivery request.
+	 */
+	public void clear() {
+		deliveryList.getItems().clear();
+		deliveryPane.getChildren().remove(deliveryList);
+		idDeliveryPoints.clear();
+	}
 
 	private String millisToText(long millis) {
 		return String.format("%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
@@ -81,15 +136,6 @@ public class DeliveriesListView {
 						- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), 
 				TimeUnit.MILLISECONDS.toSeconds(millis)
 						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-	}
-
-	/*
-	 * Reset all containers to erase tracks of the previous delivery request.
-	 */
-	public void clear() {
-		deliveryList.getItems().clear();
-		deliveryPane.getChildren().remove(deliveryList);
-		idDeliveryPoints.clear();
 	}
 
 	/**

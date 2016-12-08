@@ -29,6 +29,12 @@ public class Graph extends Pane {
 
 	public final static Color BORDERNORMALCOLOR = new Color(0.1, 0.1, 0.1, 1);
 	public final static Color BORDERLIGHTEDCOLOR = Color.BLANCHEDALMOND;
+	
+	/**
+	 * DeliveriesListView that is displayed. It is needed so that when the user clicks on a graph node,
+	 * the corresponding item from the ListView is selected.
+	 */
+	private static DeliveriesListView listView;
 
 	private Map map;
 	private Round round;
@@ -53,6 +59,16 @@ public class Graph extends Pane {
 		lightedRoads = new LinkedList<>();
 		lightedWaypoints = new LinkedList<>();
 
+	}
+	
+	/**
+	 * Sets the DeliveriesListView that is displayed for all the graph nodes.
+	 * It is needed so that when the user clicks on a graph node, the corresponding item from the ListView is selected.
+	 * @param listView
+	 * 		DeliveriesListView that is displayed
+	 */
+	public static void setDeliveriesListView(DeliveriesListView listView) {
+		Graph.listView = listView;
 	}
 
 	/**
@@ -143,10 +159,12 @@ public class Graph extends Pane {
 			public void handle(MouseEvent t) {
 				if (node.getState() == GraphNode.State.DELIVERYPOINT 
 						|| node.getState() == GraphNode.State.WAREHOUSE) {
-
-					lightUpPath(waypoint.getId());
+					int waypointId = waypoint.getId();
+					lightUpPath(waypointId);
+					listView.selectItem(waypointId);
 				} else {
 					lightDownPath();
+					listView.clearSelectedItems();
 				}
 
 			}
