@@ -2,10 +2,7 @@ import controller.Controller;
 import controller.command.Deletion;
 import controller.command.TimeChange;
 import controller.xml.XMLException;
-import model.DeliveryRequest;
-import model.DeliveryTime;
-import model.Map;
-import model.Round;
+import model.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -33,13 +30,13 @@ public class TestTimeChange {
         Round round = new Round(deliveryRequest);
         round.computeRound(map);
 
-        DeliveryTime deliveryTime = round.getRoundTimeOrder(0).get(8);
+        Checkpoint checkpoint = round.getRoundTimeOrder(0).get(8).getCheckpoint();
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
         Date start = dateFormat.parse("10:0:0");
         Date end = dateFormat.parse("12:0:0");
 
-        TimeChange timeChange = new TimeChange(deliveryTime, round, start, end, map);
+        TimeChange timeChange = new TimeChange(checkpoint, round, start, end, map);
 
         Round newRound = timeChange.doCommand();
         Round undoRound = timeChange.undoCommand();

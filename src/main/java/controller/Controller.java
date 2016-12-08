@@ -126,8 +126,8 @@ public class Controller {
         return this.commandManager.doCommand(new Addition(round));
     }
 
-    public Round changeCheckpointTime(DeliveryTime deliveryTime, Round round, Date start, Date end, Map map) {
-        return this.commandManager.doCommand(new TimeChange(deliveryTime, round, start, end, map));
+    public Round changeCheckpointTime(Checkpoint checkpoint, Round round, Date start, Date end, Map map) {
+        return this.commandManager.doCommand(new TimeChange(checkpoint, round, start, end, map));
     }
 
     public Round undoLastCommand(Round round) {
