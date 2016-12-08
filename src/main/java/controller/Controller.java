@@ -61,6 +61,11 @@ public class Controller {
 		}
 	}
 
+	/**
+	 * Loads a deliveries request and computes the corresponding round. Updates the display when it's done.
+	 * @param path
+	 * 		Path of the deliveries request's XML file
+	 */
 	public void loadDeliveryRequest(String path) {
 		if (path != null && currentMap != null) {
 			DeliveryRequest newDeliveryRequest;
@@ -80,6 +85,8 @@ public class Controller {
 			}
 
 			if (newDeliveryRequest != null) {
+				window.showWaitingDialog();
+				
 				currentDeliveryRequest = newDeliveryRequest;
 				try {
 					// Calcul de la tournée
@@ -89,13 +96,11 @@ public class Controller {
 				} catch (NullPointerException e) {
 					ErrorDisplayer.displayWarningMessageBox(
 							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
-					return;
 				}
-
-				handleSucessfulLoadDelivery();
 				
-				// update graphique
-				window.updateAfterLoadDelivery();
+				window.closeWaitingDialog();
+				handleSucessfulLoadDelivery();
+				window.updateAfterLoadDelivery(); // update graphique
 			}
 		}
 	}
