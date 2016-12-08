@@ -1,7 +1,9 @@
 package controller.command;
 
+import controller.pathfinder.Dijkstra;
 import model.Checkpoint;
 import model.DeliveryTime;
+import model.Map;
 import model.Round;
 
 import java.util.Date;
@@ -12,7 +14,15 @@ import java.util.List;
  */
 public class Deletion extends Command {
 
+    /**
+     * Checkpoint to delete
+     */
     private Checkpoint checkpoint;
+
+    /**
+     * Map used to calculate the new path
+     */
+    private Map map;
 
     /**
      * Build a Deletion
@@ -20,9 +30,10 @@ public class Deletion extends Command {
      * @param round      Round to modify
      * @param checkpoint Checkpoint to delete
      */
-    public Deletion(Round round, Checkpoint checkpoint) {
+    public Deletion(Round round, Checkpoint checkpoint, Map map) {
         super(round);
         this.checkpoint = checkpoint;
+        this.map = map;
     }
 
     /**
@@ -35,14 +46,21 @@ public class Deletion extends Command {
             for (int i = 0; i < deliveryTimes.size(); i++) {
                 DeliveryTime deliveryTime = deliveryTimes.get(i);
                 if (deliveryTime.getCheckpoint().getId() == this.checkpoint.getId()) {
-                    // Add waiting time to the next deliveryTime to compensate for the removal of a delivery
+
+                    // Recalculate root not necessarily reaching the deleted checkpoint
+                    DeliveryTime previousDeliveryTime = deliveryTimes.get(i-1);
                     DeliveryTime nextDeliveryTime = deliveryTimes.get(i + 1);
-                    long waitingTime = deliveryTime.getWaitingTime() + this.checkpoint.getDuration();
-                    nextDeliveryTime.setArrivalTime(new Date(nextDeliveryTime.getArrivalTime().getTime() - waitingTime));
-                    nextDeliveryTime.setWaitingTime(nextDeliveryTime.getWaitingTime() + waitingTime);
+
+                    Dijkstra dj = new Dijkstra(this.map);
+                    dj.execute(previousDeliveryTime.getCheckpoint().getId());
+                    long timeToNext = dj.getTargetPathCost(nextDeliveryTime.getCheckpoint().getId());
+                    Date nextArrivalTime = new Date(previousDeliveryTime.getDepartureTime().getTime() + timeToNext);
+                    long diffWaitingTime = nextDeliveryTime.getArrivalTime().getTime() - nextArrivalTime.getTime();
+
+                    nextDeliveryTime.setArrivalTime(nextArrivalTime);
+                    nextDeliveryTime.setWaitingTime(nextDeliveryTime.getWaitingTime() + diffWaitingTime);
                     // Remove the targeted delivery from the list
                     deliveryTimes.remove(i);
-
                 }
             }
         }

@@ -28,7 +28,7 @@ public class TestDeletion {
         Round round = new Round(deliveryRequest);
         round.computeRound(map);
 
-        Deletion deletion = new Deletion(round, round.getRoundTimeOrder(0).get(1).getCheckpoint());
+        Deletion deletion = new Deletion(round, round.getRoundTimeOrder(0).get(1).getCheckpoint(), map);
 
         Round newRound = deletion.doCommand();
 

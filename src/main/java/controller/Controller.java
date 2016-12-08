@@ -111,8 +111,8 @@ public class Controller {
 		this.currentRound = null;
 	}
 	
-	public Round deleteCheckpoint(Checkpoint checkpoint, Round round) {
-        return this.commandManager.doCommand(new Deletion(round, checkpoint));
+	public Round deleteCheckpoint(Checkpoint checkpoint, Round round, Map map) {
+        return this.commandManager.doCommand(new Deletion(round, checkpoint, map));
     }
 
     public Round addCheckpoint(Checkpoint checkpoint, Round round, Map map) {
