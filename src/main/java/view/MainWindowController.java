@@ -78,7 +78,9 @@ public class MainWindowController implements Initializable {
 
 	}
 
-	
+	public DeliveriesListView getDeliveriesListView(){
+		return deliveriesListView;
+	}
 
 	public void updateAfterLoadMap() {
 
@@ -93,17 +95,23 @@ public class MainWindowController implements Initializable {
 		mapDisplayer.setVisible(true);
 	}
 
+	public void updateDeliveriesListView(){
+		// Crée la ListView à droite si c'est le premier chargement de
+				// demande de livraisons
+				if (firstDeliveryLoad) {
+					deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
+					firstDeliveryLoad = false;
+				}
+
+	}
+	
 	public void updateAfterLoadDelivery() {
 
-		// Crée la ListView à droite si c'est le premier chargement de
-		// demande de livraisons
-		if (firstDeliveryLoad) {
-			deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
-			firstDeliveryLoad = false;
-		}
-
+		updateDeliveriesListView();
+		
 		// Met à jour l'interface graphique
 		deliveriesListView.createDeliveriesList(controller.getCurrentRound(), controller.getCurrentMap());
+		
 		loadDeliveryButton.setVisible(false);
 		menuAddDelivery.setVisible(true);
 		menuModifyDelivery.setVisible(true);

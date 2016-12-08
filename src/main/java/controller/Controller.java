@@ -1,8 +1,6 @@
 package controller;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -93,7 +91,7 @@ public class Controller {
 					handleSucessfulLoadDelivery();
 				} catch (NullPointerException e) {
 					if(currentRound.getNumOfRound() == 0){
-						errorHandler.impossibleRound(currentRound);
+						errorHandler.impossibleRound(currentRound, window);
 					}else{
 						errorDisplayer.displayWarningMessageBox(
 							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");

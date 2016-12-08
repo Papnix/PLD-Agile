@@ -24,7 +24,7 @@ import model.Round;
  * 'createDeliveriesList' method is sufficient.
  */
 public class DeliveriesListView {
-	private static ListView<String> deliveryList;
+	private  ListView<String> deliveryList;
 	private List<Integer> idDeliveryPoints;
 	private AnchorPane deliveryPane;
 	private Graph graph;
@@ -71,7 +71,7 @@ public class DeliveriesListView {
 		return text;
 	}
 	
-	public static void setObservableListInDeliveryList(ObservableList<String> deliveriesTexts){
+	public void setObservableListInDeliveryList(ObservableList<String> deliveriesTexts){
 		deliveryList.setItems(deliveriesTexts);
 	}
 

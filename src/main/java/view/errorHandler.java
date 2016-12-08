@@ -28,11 +28,13 @@ public class errorHandler {
 		alert.showAndWait();
 	}
 	
-	public static void impossibleRound(Round round){
+	public static void impossibleRound(Round round, MainWindowController window){
 		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
 		errorDisplayer.displayWarningMessageBox("Aucune tournée n'est calculable avec les contraintes que vous demandez !");
 		
-		deliveriesTexts.add("les horaires d'ouverture des lieux de livraison suivant sont trop petit, les augmenter permettrait peut-être d'avoir une tournée calculable");
+		window.updateDeliveriesListView();
+		
+		deliveriesTexts.add("Les horaires d'ouverture des lieux de livraison suivant sont trop serré. \nLes augmenter permettrait peut-être d'avoir une tournée calculable.");
 		List<Checkpoint> shortTimeRangeCheckpoint = new ArrayList<Checkpoint>();
 		long minTimeRange = Long.MAX_VALUE;
 		for(Checkpoint ck:round.getRequest().getDeliveryPointList()){
@@ -49,7 +51,7 @@ public class errorHandler {
 		}
 		
 		for(Checkpoint ck:shortTimeRangeCheckpoint){
-			String text = "Adresse : " + ck.getId() +"\n";
+			String text = "Adresse : " + ck.getId() +"\n ";
 			text += "ouvert de "
 					+ new SimpleDateFormat("HH:mm").format(ck.getTimeRangeStart().getTime())
 					+ " à "
@@ -58,7 +60,7 @@ public class errorHandler {
 			deliveriesTexts.add(text);
 		}
 		
-		DeliveriesListView.setObservableListInDeliveryList(deliveriesTexts);
+		window.getDeliveriesListView().setObservableListInDeliveryList(deliveriesTexts);
 	}
 	
 }
