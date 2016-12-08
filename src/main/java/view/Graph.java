@@ -249,6 +249,7 @@ public class Graph extends Pane {
 		for (DeliveryTime delivery : deliveries) {
 			deliveryPoints.add(delivery.getCheckpoint().getId());
 		}
+		int idWarehouse = points.get(0).getOrigin().getId();
 
 		// Cela nous permet d'avoir deux ensemble (les livraions et les points
 		// de passage)
@@ -259,13 +260,19 @@ public class Graph extends Pane {
 			nodes.get(id).setState(GraphNode.State.WAYPOINT);
 		}
 
-		for (Integer id : deliveryPoints) {
+		for (DeliveryTime delivery : deliveries) {
+			int id = delivery.getCheckpoint().getId();
 			nodes.get(id).setState(GraphNode.State.DELIVERYPOINT);
+			if (id != idWarehouse) {
+				nodes.get(id).addArrivalTime(delivery.getArrivalTime());
+			}
+			
 		}
 
 		// On paint l'entrepôt
-		int id = points.get(0).getOrigin().getId();
-		nodes.get(id).setState(GraphNode.State.WAREHOUSE);
+		nodes.get(idWarehouse).setState(GraphNode.State.WAREHOUSE);
+		nodes.get(idWarehouse).addDepartureTime(deliveries.get(0).getDepartureTime());
+		nodes.get(idWarehouse).addArrivalTime(deliveries.get(deliveries.size()-1).getArrivalTime());
 	}
 
 	/**

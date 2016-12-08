@@ -11,7 +11,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
-import model.Checkpoint;
 import model.DeliveryTime;
 import model.Map;
 import model.Round;
@@ -42,33 +41,6 @@ public class DeliveriesListView {
 		AnchorPane.setRightAnchor(deliveryList, 0d);
 		AnchorPane.setLeftAnchor(deliveryList, 0d);
 		this.deliveryPane.getChildren().add(deliveryList);
-	}
-
-	/**
-	 * Extracts a delivery's information and returns the text to display in the
-	 * ListView
-	 * 
-	 * @param c
-	 *            Delivery's checkpoint
-	 * @return Text to display directly in a ListView's cell
-	 */
-	public static String deliveryToText(Checkpoint c) {
-		String text = "Adresse : " + c.getId() + "\n";
-
-		int hours = c.getDuration() / 3600;
-		int minutes = (c.getDuration() % 3600) / 60;
-		String duration = "";
-		if (hours < 10) {
-			duration = "0";
-		}
-		duration += Integer.toString(hours) + "h";
-		if (minutes < 10) {
-			duration += "0";
-		}
-		duration += Integer.toString(minutes);
-		text += "Durée : " + duration;
-
-		return text;
 	}
 
 	/**
@@ -153,7 +125,7 @@ public class DeliveriesListView {
 		String text = "Adresse : " + delivery.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
 		if (delivery.getCheckpoint().getTimeRangeStart() != null
 				&& delivery.getCheckpoint().getTimeRangeEnd() != null) {
-			text += "ouvert de "
+			text += "Ouvert de "
 					+ new SimpleDateFormat("HH:mm")
 							.format(delivery.getCheckpoint().getTimeRangeStart().getTime())
 					+ " à " + new SimpleDateFormat("HH:mm")

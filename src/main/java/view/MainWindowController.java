@@ -113,8 +113,7 @@ public class MainWindowController implements Initializable {
 
 	public void updateAfterLoadDelivery() {
 		
-		// Crée la ListView à droite si c'est le premier chargement de
-		// demande de livraisons
+		// Crée la ListView à droite si c'est le premier chargement de demande de livraisons
 		if (firstDeliveryLoad) {
 			deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
 			firstDeliveryLoad = false;
