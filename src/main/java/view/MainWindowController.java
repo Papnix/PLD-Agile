@@ -75,13 +75,11 @@ public class MainWindowController implements Initializable {
 
 		firstDeliveryLoad = true;
 		setupGraphDisplayer();
-
 	}
 
 	
 
 	public void updateAfterLoadMap() {
-
 		loadMapButton.setVisible(false);
 		menuLoadDelivery.setDisable(false);
 		loadDeliveryButton.setDisable(false);
@@ -93,7 +91,6 @@ public class MainWindowController implements Initializable {
 	}
 
 	public void updateAfterLoadDelivery() {
-
 		// Crée la ListView à droite si c'est le premier chargement de
 		// demande de livraisons
 		if (firstDeliveryLoad) {
@@ -115,7 +112,9 @@ public class MainWindowController implements Initializable {
 	 */
 	private void handleLoadMap() {
 		File mapFile = getFileFromExplorer();
-		controller.loadMap(mapFile.getAbsolutePath().toString());
+		if (mapFile != null) {
+			controller.loadMap(mapFile.getAbsolutePath().toString());
+		}
 	}
 	
 	/**
@@ -138,7 +137,6 @@ public class MainWindowController implements Initializable {
 	 * Remove the round from the list view and clear it's display.
 	 */
 	private void clearPreviousRound() {
-
 		// On enlève la tournée affichée
 		controller.clearRound();
 
