@@ -1,5 +1,8 @@
 package view;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /*
  * Tooltip to display waypoint information
  * 
@@ -33,5 +36,16 @@ public class InfoBox extends VBox {
 		info.setStroke(Color.WHITE);
 		getChildren().addAll(info);
 	}
-
+	
+	public void addWarehouseText() {
+		info.setText(info.getText() + "\nEntrepôt");
+	}
+	
+	public void addDepartureTime(Date departureTime) {
+		info.setText(info.getText() + "\nHeure de départ : " + new SimpleDateFormat("HH:mm").format(departureTime.getTime()));
+	}
+	
+	public void addArrivalTime(Date arrivalTime) {
+		info.setText(info.getText() + "\nHeure d'arrivée : " + new SimpleDateFormat("HH:mm").format(arrivalTime.getTime()));
+	}
 }

@@ -15,9 +15,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.AnchorPane;
+
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import model.Checkpoint;
+
 import model.DeliveryTime;
 
 /**
@@ -74,33 +75,6 @@ public class DeliveriesListView extends VBox {
 		this.getChildren().add(new Label("Liste des points de livraison : "));
 		this.getChildren().add(deliveryList);
 
-	}
-
-	/**
-	 * Extracts a delivery's information and returns the text to display in the
-	 * ListView
-	 * 
-	 * @param c
-	 *            Delivery's checkpoint
-	 * @return Text to display directly in a ListView's cell
-	 */
-	public static String deliveryToText(Checkpoint c) {
-		String text = "Adresse : " + c.getId() + "\n";
-
-		int hours = c.getDuration() / 3600;
-		int minutes = (c.getDuration() % 3600) / 60;
-		String duration = "";
-		if (hours < 10) {
-			duration = "0";
-		}
-		duration += Integer.toString(hours) + "h";
-		if (minutes < 10) {
-			duration += "0";
-		}
-		duration += Integer.toString(minutes);
-		text += "Durée : " + duration;
-
-		return text;
 	}
 
 	/**
@@ -177,9 +151,12 @@ public class DeliveriesListView extends VBox {
 		String text = "Adresse : " + delivery.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
 		if (delivery.getCheckpoint().getTimeRangeStart() != null
 				&& delivery.getCheckpoint().getTimeRangeEnd() != null) {
-			text += "ouvert de "
-					+ new SimpleDateFormat("HH:mm").format(delivery.getCheckpoint().getTimeRangeStart().getTime())
-					+ " à " + new SimpleDateFormat("HH:mm").format(delivery.getCheckpoint().getTimeRangeEnd().getTime())
+
+			text += "Ouvert de "
+					+ new SimpleDateFormat("HH:mm")
+							.format(delivery.getCheckpoint().getTimeRangeStart().getTime())
+					+ " à " + new SimpleDateFormat("HH:mm")
+							.format(delivery.getCheckpoint().getTimeRangeEnd().getTime())
 					+ "\n";
 		}
 		text += "Temps d'attente : " + millisToText(delivery.getWaitingTime()) + "\n";

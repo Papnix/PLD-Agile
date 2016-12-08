@@ -6,10 +6,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import controller.Controller;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
@@ -20,6 +22,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
  * MainWindowController : the main window of the application
  */
 public class MainWindowController implements Initializable {
+	Alert waitingDialog;
+	
 	private boolean firstDeliveryLoad;
 	private DeliveriesListView deliveriesListView;
 
@@ -51,7 +55,18 @@ public class MainWindowController implements Initializable {
 	 * Constructor of the main window, initializes links with fxml file for GUI components.
 	 */
 	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
-
+		waitingDialog = new Alert(AlertType.INFORMATION);
+		waitingDialog.setTitle("Calcul en cours");
+		waitingDialog.setHeaderText("Patientez...");
+		waitingDialog.setContentText("La tournée est en cours de calcul.");
+		
+		// On cache tous les boutons pour empêcher l'utilisateur de fermer la fenêtre
+		for (ButtonType bt : waitingDialog.getDialogPane().getButtonTypes()) {
+			Button b = (Button)(waitingDialog.getDialogPane().lookupButton(bt));
+			b.setVisible(false);
+		}
+		
+		firstDeliveryLoad = true;
 		controller = new Controller(this);
 
 		initializeMenu();
@@ -72,17 +87,27 @@ public class MainWindowController implements Initializable {
 		assert deliveryPane != null : "fx:id=\"deliveryPane\" was not injected: check your FXML file 'view.fxml'.";
 		assert mapPane != null : "fx:id=\"mapPane\" was not injected: check your FXML file 'view.fxml'.";
 
+
 		firstDeliveryLoad = true;
 		
 		deliveriesListView = new DeliveriesListView(controller);
 		deliveryPane.getChildren().add(deliveriesListView);
 		deliveriesListView.setVisible(false);
 		
+
 		setupGraphDisplayer();
 	}
 
 	
 
+	public void showWaitingDialog() {
+		waitingDialog.show();
+	}
+	
+	public void closeWaitingDialog() {
+		waitingDialog.close();
+	}
+	
 	public void updateAfterLoadMap() {
 		loadMapButton.setVisible(false);
 		menuLoadDelivery.setDisable(false);
@@ -99,8 +124,7 @@ public class MainWindowController implements Initializable {
 
 	public void updateAfterLoadDelivery() {
 		
-		// Crée la ListView à droite si c'est le premier chargement de
-		// demande de livraisons
+		// Crée la ListView à droite si c'est le premier chargement de demande de livraisons
 		if (firstDeliveryLoad) {
 			deliveriesListView.setVisible(true);
 			firstDeliveryLoad = false;

@@ -43,16 +43,6 @@ public class Roadmap {
 	
 	/**
 	 * Writes a string containing the description corresponding to the given route.
-	 * @param routeWithWaypointsID
-	 * 		Route to follow. This consists in a list of Waypoints' ID
-	 * @param map
-	 * 		City's map
-	 * @return
-	 * 		Description of the route
-	 */
-	
-	/**
-	 * Writes a string containing the description corresponding to the given route.
 	 * The route goes from one delivery point to another.
 	 * @param routeWithWaypointsID
 	 * 		Route to follow. This consists in a list of Waypoints' ID

@@ -2,6 +2,9 @@ package model;
 
 import java.util.Date;
 
+/**
+ * Represents a place where there is a delivery to be done
+ */
 public class Checkpoint implements Cloneable{
 
 	private Waypoint associatedWaypoint;
@@ -9,6 +12,17 @@ public class Checkpoint implements Cloneable{
 	private Date timeRangeStart;
 	private Date timeRangeEnd;
 
+	/**
+	 * Builds a Checkpoint, given all the parameters it needs
+	 * @param associatedWaypoint
+	 * 		Waypoint that is associated to this Checkpoint
+	 * @param duration
+	 * 		Duration of the delivery
+	 * @param timeRangeStart
+	 * 		Start of the time range when the delivery can be done
+	 * @param timeRangeEnd
+	 * 		End of the time range when the delivery can be done
+	 */
 	public Checkpoint(Waypoint associatedWaypoint, int duration, Date timeRangeStart, Date timeRangeEnd) {
 		this.associatedWaypoint = associatedWaypoint;
 		this.duration = duration;
@@ -16,6 +30,11 @@ public class Checkpoint implements Cloneable{
 		this.timeRangeEnd = timeRangeEnd;
 	}
 
+	/**
+	 * Copy constructor
+	 * @param checkpoint
+	 * 		Checkpoint to copy
+	 */
 	public Checkpoint(Checkpoint checkpoint) {
 		this.associatedWaypoint = checkpoint.associatedWaypoint;
 		this.duration = checkpoint.duration;
@@ -62,12 +81,10 @@ public class Checkpoint implements Cloneable{
 	public Checkpoint clone() {
 		Checkpoint ck = null;
 		try {
-			// On rï¿½cupï¿½re l'instance ï¿½ renvoyer par l'appel de la
-			// mï¿½thode super.clone()
+			// On récupère l'instance à renvoyer par l'appel de la méthode super.clone()
 			ck = (Checkpoint) super.clone();
 		} catch(CloneNotSupportedException cnse) {
-			// Ne devrait jamais arriver car nous implï¿½mentons
-			// l'interface Cloneable
+			// Ne devrait jamais arriver car nous implémentons l'interface Cloneable
 			cnse.printStackTrace(System.err);
 		}
 
