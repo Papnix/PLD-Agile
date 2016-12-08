@@ -90,12 +90,16 @@ public class MainWindowController implements Initializable {
 		setupGraphDisplayer();
 	}
 
-	
-
+	/**
+	 * Displays a waiting dialog for when the application is computing a round
+	 */
 	public void showWaitingDialog() {
 		waitingDialog.show();
 	}
 	
+	/**
+	 * Closes the waiting dialog for when the application is computing a round
+	 */
 	public void closeWaitingDialog() {
 		waitingDialog.close();
 	}

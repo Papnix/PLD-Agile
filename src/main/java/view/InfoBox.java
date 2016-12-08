@@ -37,14 +37,27 @@ public class InfoBox extends VBox {
 		getChildren().addAll(info);
 	}
 	
+	/**
+	 * Adds a line saying that this location is a warehouse
+	 */
 	public void addWarehouseText() {
 		info.setText(info.getText() + "\nEntrepôt");
 	}
 	
+	/**
+	 * Adds a line saying the departure time from this location
+	 * @param departureTime
+	 * 		Departure time from this location
+	 */
 	public void addDepartureTime(Date departureTime) {
 		info.setText(info.getText() + "\nHeure de départ : " + new SimpleDateFormat("HH:mm").format(departureTime.getTime()));
 	}
 	
+	/**
+	 * Adds a line saying the arrival time to this location
+	 * @param arrivalTime
+	 * 		Arrival time to this location
+	 */
 	public void addArrivalTime(Date arrivalTime) {
 		info.setText(info.getText() + "\nHeure d'arrivée : " + new SimpleDateFormat("HH:mm").format(arrivalTime.getTime()));
 	}

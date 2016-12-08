@@ -54,10 +54,20 @@ public class GraphNode extends Group {
 		return state;
 	}
 	
+	/**
+	 * Adds a line in the tooltip saying the departure time from this location
+	 * @param departureTime
+	 * 		Departure time from this location
+	 */
 	public void addDepartureTime(Date departureTime) {
 		infobox.addDepartureTime(departureTime);
 	}
 	
+	/**
+	 * Adds a line in the tooltip saying the arrival time to this location
+	 * @param arrivalTime
+	 * 		Arrival time to this location
+	 */
 	public void addArrivalTime(Date arrivalTime) {
 		infobox.addArrivalTime(arrivalTime);
 	}
