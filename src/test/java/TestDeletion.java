@@ -32,6 +32,7 @@ public class TestDeletion {
 		round.computeRound(map);
 
 		Deletion deletion = new Deletion(round, round.getRoundTimeOrder(0).get(1).getCheckpoint());
+
 		Round newRound = deletion.doCommand();
 
 		Assert.assertEquals(3, newRound.getRoundTimeOrder(0).size());

@@ -28,7 +28,7 @@ public class Deletion extends Command {
                     nextDeliveryTime.setWaitingTime(nextDeliveryTime.getWaitingTime() + waitingTime);
                     // Remove the targeted delivery from the list
                     deliveryTimes.remove(i);
-                    break;
+
                 }
             }
         }
