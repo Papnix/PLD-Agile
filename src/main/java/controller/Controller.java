@@ -128,8 +128,8 @@ public class Controller {
         return this.commandManager.doCommand(new Deletion(round, checkpoint));
     }
 
-    public Round addCheckpoint(Checkpoint checkpoint, Round round) {
-        return this.commandManager.doCommand(new Addition(round));
+    public Round addCheckpoint(Checkpoint checkpoint, Round round, Map map) {
+        return this.commandManager.doCommand(new Addition(round, map,checkpoint));
     }
 
     public Round changeCheckpointTime(Checkpoint checkpoint, Round round, Date start, Date end, Map map) {
