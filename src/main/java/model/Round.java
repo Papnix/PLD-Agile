@@ -61,7 +61,6 @@ public class Round {
         this.duration = round.duration;
         // Copy arrival times : new deliveryTimes must be created
         this.roundTimeOrder = new ArrayList<>();
-        this.roundTimeOrder.add(0, new ArrayList<>());
         for (int k = 0; k < round.roundTimeOrder.size(); k++) {
             this.roundTimeOrder.add(k, new ArrayList<>());
             for (int i = 0; i < round.roundTimeOrder.get(k).size(); i++) {

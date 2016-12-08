@@ -99,5 +99,6 @@ public class TestTimeChange {
         Assert.assertEquals(newRound.getRoundTimeOrder(0).get(8).getCheckpoint().getId(), redoRound.getRoundTimeOrder(0).get(8).getCheckpoint().getId());
         Assert.assertEquals(newRound.getRoundTimeOrder(0).get(9).getCheckpoint().getId(), redoRound.getRoundTimeOrder(0).get(9).getCheckpoint().getId());
         Assert.assertEquals(newRound.getRoundTimeOrder(0).get(10).getCheckpoint().getId(), redoRound.getRoundTimeOrder(0).get(10).getCheckpoint().getId());
+
     }
 }

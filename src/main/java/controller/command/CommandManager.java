@@ -22,7 +22,7 @@ public class CommandManager {
     }
 
     public Round undoCommand(Round round) {
-        if(!done.empty()) {
+        if (!done.empty()) {
             Command command = done.pop();
             Round returnValue = command.undoCommand();
             undone.push(command);
@@ -32,7 +32,7 @@ public class CommandManager {
     }
 
     public Round redoCommand(Round round) {
-        if(!undone.empty()) {
+        if (!undone.empty()) {
             Command command = undone.pop();
             Round returnValue = command.redoCommand();
             done.push(command);

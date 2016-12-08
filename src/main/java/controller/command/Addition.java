@@ -22,7 +22,12 @@ public class Addition extends Command {
 
         boolean noTimeRange = this.checkpoint.getTimeRangeStart() == null && this.checkpoint.getTimeRangeEnd() == null;
 
-        for (List<DeliveryTime> deliveryTimes : this.modifiedRound.getRoundTimeOrders()) {
+        int k = 0;
+        int size = this.modifiedRound.getRoundTimeOrders().size();
+
+        while (k < size) {
+
+            List<DeliveryTime> deliveryTimes = this.modifiedRound.getRoundTimeOrders().get(k);
 
             int startIndex = -1, endIndex = -1;
 
@@ -48,8 +53,9 @@ public class Addition extends Command {
                 }
             }
 
-            // On cherche s'il est possible d'insérer la livraison quelque part
+            boolean success = false;
 
+            // On cherche s'il est possible d'insérer la livraison quelque part
             for (int j = startIndex; j < endIndex; j++) {
 
 
@@ -89,6 +95,7 @@ public class Addition extends Command {
                     continue;
                 }
 
+                success = true;
                 // Attribution des nouvelles valeurs
 
                 // Temps d'attente = ancien temps - différence entre la nouvelle heure d'arrivée et l'ancienne
@@ -103,6 +110,12 @@ public class Addition extends Command {
 
                 break;
 
+            }
+            if (success) {
+                k++;
+            } else {
+                this.modifiedRound.getRoundTimeOrders().remove(k);
+                size--;
             }
 
         }

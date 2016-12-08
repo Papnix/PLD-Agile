@@ -25,15 +25,17 @@ public class TimeChange extends Command {
 
     public Round doCommand() {
 
+        int k = 0;
+        int size = this.modifiedRound.getRoundTimeOrders().size();
+
         roundTimeorders:
-        for (List<DeliveryTime> deliveryTimes : this.modifiedRound.getRoundTimeOrders()) {
+        while (k < size) {
+
+            List<DeliveryTime> deliveryTimes = this.modifiedRound.getRoundTimeOrders().get(k);
+
             // Indices des DeliveryTiems les plus proches du début et de la fin de la nouvelle plage (mais non compris)
             // Permet de définir un intervalle sur lequel placer la livraison si la nouvelle plage demande un changement
             int startIndex = -1, endIndex = -1, index = -1;
-
-            if(deliveryTimes.size() == 0) {
-                break;
-            }
 
             for (int i = 0; i < deliveryTimes.size(); i++) {
                 DeliveryTime currentDeliveryTime = deliveryTimes.get(i);
@@ -42,6 +44,7 @@ public class TimeChange extends Command {
                     index = i;
                     // If a simple solution exists, apply it and go to next roundTimeOrder
                     if (checkForSimpleSolution(currentDeliveryTime, deliveryTimes.get(i + 1))) {
+                        k++;
                         continue roundTimeorders;
                     }
                 } else if (currentDeliveryTime.getDepartureTime() != null && currentDeliveryTime.getDepartureTime().before(this.start)) {
@@ -53,6 +56,8 @@ public class TimeChange extends Command {
 
             // At this point, the deliveryTime needs to be moved
             DeliveryTime deliveryTime = deliveryTimes.get(index);
+            boolean success = false;
+
             for (int j = startIndex; j < endIndex; j++) {
 
                 DeliveryTime previousDelivery = deliveryTimes.get(j);
@@ -79,6 +84,7 @@ public class TimeChange extends Command {
                     continue;
                 }
 
+                success = true;
                 // At this point, we have found a suitable position for the delivery
 
                 deliveryTime.getCheckpoint().setTimeRangeStart(this.start);
@@ -95,6 +101,13 @@ public class TimeChange extends Command {
                 deliveryTimes.add(j + 1, deliveryTime);
 
                 break;
+            }
+
+            if(success) {
+                k++;
+            } else {
+                this.modifiedRound.getRoundTimeOrders().remove(k);
+                size--;
             }
         }
         return this.modifiedRound;
