@@ -16,9 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author fmacerouss
- *         <p>
- *         This is a test class to validate the TimeChange Command.
+ * @author Nicolas Sorin
  */
 public class TestTimeChange {
     /**

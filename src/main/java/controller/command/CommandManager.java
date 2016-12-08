@@ -1,28 +1,39 @@
 package controller.command;
 
-import model.Checkpoint;
 import model.Round;
 
 import java.util.Stack;
 
+/**
+ * @author Nicolas Sorin
+ */
 public class CommandManager {
 
+    /**
+     * LIFO containing all the commands that have been done and can be undone.
+     */
     private Stack<Command> done;
+    /**
+     * LIFO containing all the commands that have been undone and can be redone.
+     */
     private Stack<Command> undone;
 
+    /**
+     * Build a CommandManager
+     */
     public CommandManager() {
-
     }
 
     /**
      * Execute a given command. In case of success, the command is added to the done LIFO to be undone if needed. Clear
      * the undone LIFO to avoid conflicts in case of redo.
+     *
      * @param command Command to execute
      * @return The round after the command has been executed, or null if the command failed
      */
     public Round doCommand(Command command) {
         Round returnValue = command.doCommand();
-        if(!returnValue.getRoundTimeOrders().isEmpty()) {
+        if (!returnValue.getRoundTimeOrders().isEmpty()) {
             done.push(command);
             undone.clear();
             return returnValue;
@@ -32,6 +43,7 @@ public class CommandManager {
 
     /**
      * Undo a previous command and add it to the undone LIFO to be redone if needed.
+     *
      * @return The round after the command has been undone, or null if there is no command to undo
      */
     public Round undoCommand() {
@@ -46,6 +58,7 @@ public class CommandManager {
 
     /**
      * Redo a previously undone command and add it back to the done LIFO to be undone again if needed.
+     *
      * @return The round after the command has been redone, or null if there is no command to redo
      */
     public Round redoCommand() {

@@ -7,15 +7,29 @@ import model.Round;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author Nicolas Sorin
+ */
 public class Deletion extends Command {
 
     private Checkpoint checkpoint;
 
+    /**
+     * Build a Deletion
+     *
+     * @param round      Round to modify
+     * @param checkpoint Checkpoint to delete
+     */
     public Deletion(Round round, Checkpoint checkpoint) {
         super(round);
         this.checkpoint = checkpoint;
     }
 
+    /**
+     * Delete the DeliveryTime associated to the targeted Checkpoint and adjust waiting and arrival times accordingly.
+     *
+     * @return The round after the deletion
+     */
     public Round doCommand() {
         for (List<DeliveryTime> deliveryTimes : this.modifiedRound.getRoundTimeOrders()) {
             for (int i = 0; i < deliveryTimes.size(); i++) {

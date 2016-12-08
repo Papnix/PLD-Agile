@@ -7,13 +7,37 @@ import model.*;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author Nicolas Sorin
+ */
 public class TimeChange extends Command {
 
+    /**
+     * Starting date for the new time range
+     */
     private Date start;
+    /**
+     * Ending date for the new time range
+     */
     private Date end;
+    /**
+     * Map used to recalculate paths
+     */
     private Map map;
+    /**
+     * Checkpoint to modify
+     */
     private Checkpoint checkpoint;
 
+    /**
+     * Build a TimeChange
+     *
+     * @param checkpoint Checkpoint to modify
+     * @param round      Round to modify
+     * @param start      Starting date for the new time range
+     * @param end        Ending date for the new time range
+     * @param map        Map used to recalculate paths
+     */
     public TimeChange(Checkpoint checkpoint, Round round, Date start, Date end, Map map) {
         super(round);
         this.start = start;
@@ -22,7 +46,11 @@ public class TimeChange extends Command {
         this.checkpoint = checkpoint;
     }
 
-
+    /**
+     * Change the time range of the Checkpoint and move it if needed.
+     *
+     * @return The round after the modification
+     */
     public Round doCommand() {
 
         int k = 0;
@@ -103,7 +131,7 @@ public class TimeChange extends Command {
                 break;
             }
 
-            if(success) {
+            if (success) {
                 k++;
             } else {
                 this.modifiedRound.getRoundTimeOrders().remove(k);
@@ -115,7 +143,8 @@ public class TimeChange extends Command {
 
     /**
      * Check if the modification can be applied without moving the targeted DeliveryTime, and apply it if it can
-     * @param deliveryTime The DeliveryTime that may be modified
+     *
+     * @param deliveryTime     The DeliveryTime that may be modified
      * @param nextDeliveryTime The DeliveryTime right after the one that may be modified
      * @return True if there is a quick solution that doesn't require complex calculations, false otherwise
      */

@@ -7,16 +7,39 @@ import java.util.List;
 
 import controller.pathfinder.Dijkstra;
 
+/**
+ * @author Hugo Humbert
+ */
 public class Addition extends Command {
+
+    /**
+     * Map used to recalculate paths
+     */
     private Map map;
+
+    /**
+     * Checkpoint to add
+     */
     private Checkpoint checkpoint;
 
+    /**
+     * Build an Addition
+     *
+     * @param round      Round to modify
+     * @param map        Map used to recalculate paths
+     * @param checkpoint Checkpoint to add
+     */
     public Addition(Round round, Map map, Checkpoint checkpoint) {
         super(round);
         this.map = map;
         this.checkpoint = checkpoint;
     }
 
+    /**
+     * Add the Checkpoint in the round if possible.
+     *
+     * @return The round after the addition
+     */
     public Round doCommand() {
         // Si la plage horaire a été retirée, aucun changement n'est nécessaire
 
