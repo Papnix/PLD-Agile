@@ -1,7 +1,6 @@
 package controller.command;
 
 import model.Round;
-
 import java.util.Stack;
 
 /**
@@ -22,6 +21,8 @@ public class CommandManager {
      * Build a CommandManager
      */
     public CommandManager() {
+    	done = new Stack<>();
+    	undone = new Stack<>();
     }
 
     /**

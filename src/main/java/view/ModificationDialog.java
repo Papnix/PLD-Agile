@@ -5,13 +5,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import controller.Controller;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import model.Checkpoint;
 import model.DeliveryTime;
 
-public class ModificationDialog extends Dialog<Object>{
+public abstract class ModificationDialog extends Dialog<Object>{
 	
 	protected GridPane grid;
 	protected ComboBox<Checkpoint> deliveryCombo;
@@ -19,16 +20,20 @@ public class ModificationDialog extends Dialog<Object>{
 	protected ButtonType buttonCancel;
 	protected ButtonType buttonOk;
 	
+	protected abstract void onComboValueChanged();
+	protected abstract void defineOnCloseAction(Controller controller);
+	
 	public ModificationDialog(Controller controller) {
 		super();
 		
 		setTitle("Modification de la tournée");
 		setResizable(true);
 		grid = new GridPane();
+		grid.setPadding(new Insets(5));
+		grid.setHgap(5);
 		deliveryCombo = new ComboBox<Checkpoint>();
 		
 		Label label1 = new Label("Liste des points de livraison : ");
-				
 		grid.add(label1, 1, 1);
 		grid.add(deliveryCombo, 1, 2);
 
@@ -53,35 +58,7 @@ public class ModificationDialog extends Dialog<Object>{
 			deliveryCombo.getItems().add(delivery.getCheckpoint());
 		}
 	}
+	
+	
 }
 
-/*
- * super();
-		
-		setTitle("Modification de la tournée");
-		setResizable(true);
-
-		layout = new VBox();
-		
-		grid = new GridPane();
-		layout.getChildren().add(grid);
-		
-		deliveryCombo = new ComboBox<Checkpoint>();
-		
-		Label label1 = new Label("Liste des points de livraison : ");
-				
-		grid.add(label1, 1, 1);
-		grid.add(deliveryCombo, 1, 2);
-
-		loadCombo(controller);
-		
-		getDialogPane().setContent(layout);	
-
-		buttonCancel = new Button("Annuler");
-		buttonOk = new Button("Modifier");
-		HBox buttonLayout = new HBox();
-		buttonLayout.getChildren().add(buttonOk);
-		buttonLayout.getChildren().add(buttonCancel);
-		layout.getChildren().add(buttonLayout);
-		
-*/

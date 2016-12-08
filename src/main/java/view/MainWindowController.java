@@ -123,7 +123,9 @@ public class MainWindowController implements Initializable {
 		mapDisplayer.setVisible(true);
 	}
 
-	public void updateAfterLoadDelivery() {
+	public void updateAfterLoadNewRound() {
+		
+		System.out.println("Update hud !");
 		
 		// Crée la ListView à droite si c'est le premier chargement de demande de livraisons
 		if (firstDeliveryLoad) {
@@ -241,7 +243,7 @@ public class MainWindowController implements Initializable {
 				+ " 'view.fxml'.";
 		menuAddDelivery.setOnAction((event) -> {
 			AdditionDeliveryDialog dialog = new AdditionDeliveryDialog(controller);
-			dialog.showAndWait();
+			dialog.show();
 		});
 		menuAddDelivery.setDisable(true);
 		
@@ -249,7 +251,7 @@ public class MainWindowController implements Initializable {
 				+ " 'view.fxml'.";
 		menuRemoveDelivery.setOnAction((event) -> {
 			SuppressionDeliveryDialog dialog = new SuppressionDeliveryDialog(controller);
-			dialog.showAndWait();
+			dialog.show();
 		});
 		menuRemoveDelivery.setDisable(true);
 		
@@ -257,7 +259,7 @@ public class MainWindowController implements Initializable {
 				+ " 'view.fxml'.";
 		menuModifyDelivery.setOnAction((event) -> {
 			ModifyDateDeliveryDialog dialog = new ModifyDateDeliveryDialog(controller);
-			dialog.showAndWait();
+			dialog.show();
 		});
 		menuModifyDelivery.setDisable(true);
 	}

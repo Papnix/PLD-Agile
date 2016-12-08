@@ -104,7 +104,7 @@ public class Controller {
 				
 				window.closeWaitingDialog();
 				handleSucessfulLoadDelivery();
-				window.updateAfterLoadDelivery(); // update graphique
+				window.updateAfterLoadNewRound(); // update graphique
 			}
 		}
 	}
@@ -112,25 +112,48 @@ public class Controller {
 	public void clearRound() {
 		this.currentRound = null;
 	}
-	
-	public Round deleteCheckpoint(Checkpoint checkpoint, Round round, Map map) {
-        return this.commandManager.doCommand(new Deletion(round, checkpoint, map));
+
+	public void deleteCheckpoint(Checkpoint checkpoint) {
+		Round round = this.commandManager.doCommand(new Deletion(currentRound, checkpoint, currentMap));
+		if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
+		else {
+			System.out.println("Echec");
+		}
     }
 
-    public Round addCheckpoint(Checkpoint checkpoint, Round round, Map map) {
-        return this.commandManager.doCommand(new Addition(round, map,checkpoint));
+    public void addCheckpoint(Checkpoint checkpoint) {
+    	Round round = this.commandManager.doCommand(new Addition(currentRound, currentMap,checkpoint));
+    	if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
     }
 
-    public Round changeCheckpointTime(Checkpoint checkpoint, Round round, Date start, Date end, Map map) {
-        return this.commandManager.doCommand(new TimeChange(checkpoint, round, start, end, map));
+    public void changeCheckpointTime(Checkpoint checkpoint, Date start, Date end) {
+    	Round round = this.commandManager.doCommand(new TimeChange(checkpoint, currentRound, start, end, currentMap));
+    	if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
     }
 
-    public Round undoLastCommand() {
-        return this.commandManager.undoCommand();
+    public void undoLastCommand() {
+    	Round round = this.commandManager.undoCommand();
+    	if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
     }
 
-    public Round redoLastCommand() {
-        return this.commandManager.redoCommand();
+    public void redoLastCommand() {
+    	Round round = this.commandManager.redoCommand();
+    	if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
     }
 
 	// GETTERS and SETTERS
