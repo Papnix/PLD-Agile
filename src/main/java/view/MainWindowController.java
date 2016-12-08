@@ -14,7 +14,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
-
+import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * MainWindowController : the main window of the application
@@ -48,8 +48,7 @@ public class MainWindowController implements Initializable {
 	private ScrollPane mapPane;
 
 	/**
-	 * Constructor of the main window, initialize links with fxml file for GUI
-	 * components.
+	 * Constructor of the main window, initializes links with fxml file for GUI components.
 	 */
 	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
@@ -80,13 +79,11 @@ public class MainWindowController implements Initializable {
 		deliveriesListView.setVisible(false);
 		
 		setupGraphDisplayer();
-
 	}
 
 	
 
 	public void updateAfterLoadMap() {
-
 		loadMapButton.setVisible(false);
 		menuLoadDelivery.setDisable(false);
 		menuAddDelivery.setDisable(true);
@@ -101,7 +98,7 @@ public class MainWindowController implements Initializable {
 	}
 
 	public void updateAfterLoadDelivery() {
-
+		
 		// Crée la ListView à droite si c'est le premier chargement de
 		// demande de livraisons
 		if (firstDeliveryLoad) {
@@ -123,34 +120,39 @@ public class MainWindowController implements Initializable {
 	}
 	
 	/**
-	 * Load a map from an xml source chosen by the user in an explorer.
+	 * Loads a map from an xml source chosen by the user in an explorer.
 	 */
 	private void handleLoadMap() {
+		
+		// Demande à l'utilisateur de sélectionner un fichier à charger
 		File mapFile = getFileFromExplorer();
-		controller.loadMap(mapFile.getAbsolutePath().toString());
+		if (mapFile != null) {
+			controller.loadMap(mapFile.getAbsolutePath().toString());
+		}
 	}
 	
 	/**
-	 * Load a delivery request from an xml source chosen by the user in an
-	 * explorer
+	 * Loads a delivery request from an xml source chosen by the user in an explorer
 	 */
 	private void handleLoadDelivery() {
-
+		
 		// Demande à l'utilisateur de sélectionner un fichier à charger
 		File deliveryRequestFile = getFileFromExplorer();
 		if(deliveryRequestFile != null) {
+			
 			if (lastFolderExplored != null) {
 				lastFolderExplored = deliveryRequestFile.getParent();
 			}
+
 			controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
 		}
 	}
 
 	/**
-	 * Remove the round from the list view and clear it's display.
+	 * Removes the round from the list view and clear its display.
 	 */
 	private void clearPreviousRound() {
-
+		
 		// On enlève la tournée affichée
 		controller.clearRound();
 
@@ -163,11 +165,12 @@ public class MainWindowController implements Initializable {
 	}
 
 	/**
-	 * Open an explorer to select a file and return it.
+	 * Opens an explorer to select a file and return it.
 	 **/
 	private File getFileFromExplorer() {
 		FileChooser explorer = new FileChooser();
 		explorer.setTitle("Selectionner un fichier xml");
+		explorer.getExtensionFilters().add(new ExtensionFilter("Fichiers XML", "*.xml"));
 
 		if (lastFolderExplored != null) {
 			try {
@@ -177,12 +180,13 @@ public class MainWindowController implements Initializable {
 		}
 
 		File file = explorer.showOpenDialog(null);
+
 		return file;
 	}
 
 
 	/**
-	 * Initialize the map displayer system
+	 * Initializes the map displayer system
 	 */
 	private void setupGraphDisplayer() {
 		mapDisplayer = new Graph();
@@ -229,5 +233,4 @@ public class MainWindowController implements Initializable {
 		});
 		menuModifyDelivery.setDisable(true);
 	}
-
 }

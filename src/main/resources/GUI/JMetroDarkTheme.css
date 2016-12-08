@@ -481,7 +481,7 @@
 .combo-box-base  {
     -fx-background-color: black;
     -fx-border-color: white;
-    -fx-border-width: 2pt;
+    -fx-border-width: 1pt;
     -fx-border-style: solid;
     -fx-padding: 0.166667em; /* 2 */
 }

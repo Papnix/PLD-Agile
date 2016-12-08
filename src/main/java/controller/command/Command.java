@@ -14,7 +14,7 @@ public abstract class Command {
         this.modifiedRound = new Round(round);
     }
 
-    public abstract Round doCommand(Checkpoint checkpoint);
+    public abstract Round doCommand();
 
     public Round undoCommand() {
         return this.previousRound;
