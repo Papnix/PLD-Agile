@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
+/**
+ * City's map loaded from a file
+ */
 public class Map {
 
+	// Map des lieux avec leur ID comme clé
     private TreeMap<Integer, Waypoint> waypoints;
+    // Map des routes avec une première clé correspondant à l'origine et une seconde à la destination
     private TreeMap<Integer, TreeMap<Integer, Section>> sections;
 
     public Map() {

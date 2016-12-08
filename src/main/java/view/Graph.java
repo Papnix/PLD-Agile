@@ -229,7 +229,7 @@ public class Graph extends Pane {
 	}
 
 	/**
-	 * Color paypoint of a round
+	 * Colors the waypoints of a round
 	 * 
 	 * @param round
 	 */
@@ -251,11 +251,10 @@ public class Graph extends Pane {
 		}
 		int idWarehouse = points.get(0).getOrigin().getId();
 
-		// Cela nous permet d'avoir deux ensemble (les livraions et les points
-		// de passage)
+		// Cela nous permet d'avoir deux ensembles (les livraions et les points de passage)
 		allPoints.removeAll(deliveries);
 
-		// Paint the points !
+		// Peint les points
 		for (Integer id : allPoints) {
 			nodes.get(id).setState(GraphNode.State.WAYPOINT);
 		}
@@ -266,17 +265,16 @@ public class Graph extends Pane {
 			if (id != idWarehouse) {
 				nodes.get(id).addArrivalTime(delivery.getArrivalTime());
 			}
-			
 		}
 
-		// On paint l'entrepôt
+		// On peint l'entrepôt
 		nodes.get(idWarehouse).setState(GraphNode.State.WAREHOUSE);
 		nodes.get(idWarehouse).addDepartureTime(deliveries.get(0).getDepartureTime());
 		nodes.get(idWarehouse).addArrivalTime(deliveries.get(deliveries.size()-1).getArrivalTime());
 	}
 
 	/**
-	 * Color section of a round
+	 * Colors the sections of a round
 	 * 
 	 * @param round
 	 *            the round to display
@@ -293,7 +291,7 @@ public class Graph extends Pane {
 	}
 
 	/**
-	 * Light down the points of the previous round
+	 * Lights down the points of the previous round
 	 */
 	private void clearDisplayWaypoint() {
 		lightDownWaypoint();
@@ -304,7 +302,7 @@ public class Graph extends Pane {
 	}
 
 	/**
-	 * Light down the sections of the previous roads
+	 * Lights down the sections of the previous roads
 	 */
 	private void clearDisplayRoads() {
 		lightDownRoads();
@@ -315,7 +313,7 @@ public class Graph extends Pane {
 	}
 
 	/*
-	 * Add an enlightment of waypoints of the round.
+	 * Adds an enlightment of waypoints of the round.
 	 */
 	private void lightUpWaypoint(int idLastPoint) {
 
@@ -363,8 +361,8 @@ public class Graph extends Pane {
 		}
 	}
 
-	/*
-	 * Remove the enlightment of waypoint of the round.
+	/**
+	 * Removes the enlightment of waypoint of the round.
 	 */
 	private void lightDownWaypoint() {
 		for (Integer id : lightedWaypoints) {
@@ -373,8 +371,8 @@ public class Graph extends Pane {
 		lightedWaypoints.clear();
 	}
 
-	/*
-	 * Remove the enlightment of roads of the round.
+	/**
+	 * Removes the enlightment of roads of the round.
 	 */
 	private void lightDownRoads() {
 		for (String key : lightedRoads) {
@@ -407,5 +405,4 @@ public class Graph extends Pane {
 		}
 		return pointsToDeliver;
 	}
-
 }
