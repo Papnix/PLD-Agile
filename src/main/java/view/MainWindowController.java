@@ -48,8 +48,7 @@ public class MainWindowController implements Initializable {
 	private ScrollPane mapPane;
 
 	/**
-	 * Constructor of the main window, initialize links with fxml file for GUI
-	 * components.
+	 * Constructor of the main window, initializes links with fxml file for GUI components.
 	 */
 	public void initialize(URL fxmlFileLocation, ResourceBundle resources) {
 
@@ -91,6 +90,7 @@ public class MainWindowController implements Initializable {
 	}
 
 	public void updateAfterLoadDelivery() {
+		
 		// Crée la ListView à droite si c'est le premier chargement de
 		// demande de livraisons
 		if (firstDeliveryLoad) {
@@ -108,9 +108,11 @@ public class MainWindowController implements Initializable {
 	}
 	
 	/**
-	 * Load a map from an xml source chosen by the user in an explorer.
+	 * Loads a map from an xml source chosen by the user in an explorer.
 	 */
 	private void handleLoadMap() {
+		
+		// Demande à l'utilisateur de sélectionner un fichier à charger
 		File mapFile = getFileFromExplorer();
 		if (mapFile != null) {
 			controller.loadMap(mapFile.getAbsolutePath().toString());
@@ -118,25 +120,22 @@ public class MainWindowController implements Initializable {
 	}
 	
 	/**
-	 * Load a delivery request from an xml source chosen by the user in an
-	 * explorer
+	 * Loads a delivery request from an xml source chosen by the user in an explorer
 	 */
 	private void handleLoadDelivery() {
-
+		
 		// Demande à l'utilisateur de sélectionner un fichier à charger
 		File deliveryRequestFile = getFileFromExplorer();
 		if(deliveryRequestFile != null) {
-			if (lastFolderExplored != null)
-				lastFolderExplored = deliveryRequestFile.getParent();
-			
 			controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
 		}
 	}
 
 	/**
-	 * Remove the round from the list view and clear it's display.
+	 * Removes the round from the list view and clear its display.
 	 */
 	private void clearPreviousRound() {
+		
 		// On enlève la tournée affichée
 		controller.clearRound();
 
@@ -148,7 +147,7 @@ public class MainWindowController implements Initializable {
 	}
 
 	/**
-	 * Open an explorer to select a file and return it.
+	 * Opens an explorer to select a file and return it.
 	 **/
 	private File getFileFromExplorer() {
 		FileChooser explorer = new FileChooser();
@@ -173,7 +172,7 @@ public class MainWindowController implements Initializable {
 
 
 	/**
-	 * Initialize the map displayer system
+	 * Initializes the map displayer system
 	 */
 	private void setupGraphDisplayer() {
 		mapDisplayer = new Graph();

@@ -17,8 +17,8 @@ import controller.xml.XMLException;
 import model.DeliveryRequest;
 import model.Map;
 import model.Round;
+import view.ErrorDisplayer;
 import view.MainWindowController;
-import view.errorDisplayer;
 
 public class Controller {
 
@@ -43,13 +43,13 @@ public class Controller {
 			try {
 				newMap = XMLDeserializer.loadMap(path);
 			} catch (XMLException e) {
-				errorDisplayer.displayWarningMessageBox(
+				ErrorDisplayer.displayWarningMessageBox(
 						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
 
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException e) {
 				e.printStackTrace();
-				errorDisplayer.displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
+				ErrorDisplayer.displayWarningMessageBox("Oups, une erreur non attendue est survenue.");
 				return;
 			}
 
@@ -62,21 +62,20 @@ public class Controller {
 	}
 
 	public void loadDeliveryRequest(String path) {
-
 		if (path != null && currentMap != null) {
 			DeliveryRequest newDeliveryRequest;
 			try {
 				newDeliveryRequest = XMLDeserializer.loadDeliveryRequest(path, currentMap);
 			} catch (XMLException e) {
 
-				errorDisplayer.displayWarningMessageBox(
+				ErrorDisplayer.displayWarningMessageBox(
 						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
 								+ " demande de livraison valide.");
 
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException | ParseException e) {
 				e.printStackTrace();
-				errorDisplayer.displayWarningMessageBox("Oups, une erreur dans la lecture du fichier de livraison est survenue.");
+				ErrorDisplayer.displayWarningMessageBox("Oups, une erreur dans la lecture du fichier de livraison est survenue.");
 				return;
 			}
 
@@ -88,7 +87,7 @@ public class Controller {
 					currentRound.computePaths(currentMap);
 					currentRound.computeRound(currentMap);
 				} catch (NullPointerException e) {
-					errorDisplayer.displayWarningMessageBox(
+					ErrorDisplayer.displayWarningMessageBox(
 							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
 					return;
 				}
