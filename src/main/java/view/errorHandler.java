@@ -28,7 +28,7 @@ public class errorHandler {
 	}
 	
 	public static void impossibleRound(Round round, ObservableList<String> deliveriesTexts){
-		displayWarningMessageBox("Aucune tournée n'est calculable avec les contraintes que vous demandez !");
+		errorDisplayer.displayWarningMessageBox("Aucune tournée n'est calculable avec les contraintes que vous demandez !");
 		
 		deliveriesTexts.add("les horaires d'ouverture des lieux de livraison suivant sont trop petit, les augmenter permettrait peut-être d'avoir une tournée calculable");
 		List<Checkpoint> shortTimeRangeCheckpoint = new ArrayList<Checkpoint>();

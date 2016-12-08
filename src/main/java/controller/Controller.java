@@ -19,6 +19,7 @@ import model.Map;
 import model.Round;
 import view.MainWindowController;
 import view.errorDisplayer;
+import view.errorHandler;
 
 public class Controller {
 
@@ -88,8 +89,12 @@ public class Controller {
 					currentRound.computePaths(currentMap);
 					currentRound.computeRound(currentMap);
 				} catch (NullPointerException e) {
-					errorDisplayer.displayWarningMessageBox(
+					if(currentRound.getNumOfRound() == 0){
+						errorHandler.impossibleRound(currentRound, null);
+					}else{
+						errorDisplayer.displayWarningMessageBox(
 							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+					}
 					return;
 				}
 
