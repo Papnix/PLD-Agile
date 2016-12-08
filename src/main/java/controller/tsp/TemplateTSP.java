@@ -13,10 +13,10 @@ import model.DeliveryTime;
 public abstract class TemplateTSP implements TSP {
 
 	private DeliveryTime[] bestSolution;
-	private long BestSolutionCost = 0;
+	private long bestSolutionCost;
 	private List<DeliveryTime[]> roundList;
-	private Boolean limiteTimeReached;
-	private HashMap<Integer, Integer> indexValues;
+	private Boolean limitTimeReached;
+	protected HashMap<Integer, Integer> indexValues;
 
 	private DeliveryTime[] copyOf(DeliveryTime[] dt) {
 		DeliveryTime[] newDt = new DeliveryTime[dt.length];
@@ -65,12 +65,12 @@ public abstract class TemplateTSP implements TSP {
 	}
 
 	public Boolean getLimitTimeReached() {
-		return limiteTimeReached;
+		return limitTimeReached;
 	}
 
 	public int findSolution(int tpsLimite, int nbSommets, int[][] cout, int[] duree, List<Checkpoint> checkpointList) {
-		limiteTimeReached = false;
-		BestSolutionCost = Long.MAX_VALUE;
+		limitTimeReached = false;
+		bestSolutionCost = Long.MAX_VALUE;
 		bestSolution = new DeliveryTime[nbSommets + 1];
 		roundList = new ArrayList<DeliveryTime[]>();
 		// buildIndex(checkpointList);
@@ -89,6 +89,7 @@ public abstract class TemplateTSP implements TSP {
 																												// 0
 		branchAndBound(seen.get(0), unseen, seen, 0, cout, duree, checkpointList.get(0).getTimeRangeStart().getTime(),
 				tpsLimite);
+		
 		completeRound(cout);
 		return roundList.size();
 	}
@@ -115,7 +116,7 @@ public abstract class TemplateTSP implements TSP {
 	}
 
 	public long getBestSolutionCost() {
-		return BestSolutionCost;
+		return bestSolutionCost;
 	}
 
 	/**
@@ -190,22 +191,23 @@ public abstract class TemplateTSP implements TSP {
 			currentVertice.setWaitingTime(waitingTime);
 			if (unseen.size() == 0) { // tous les sommets ont ete visites
 				seenCost += cost[indexValues.get(currentVertice.getCheckpoint().getId())][0];
-				if (seenCost < BestSolutionCost) { // on a trouve une
+				if (seenCost < bestSolutionCost) { // on a trouve une
 													// solution meilleure
-													// que meilleureSolution
+													// que bestSolution
 					roundList.clear();
 					seen.toArray(bestSolution);
 					roundList.add(copyOf(bestSolution));
-					BestSolutionCost = seenCost;
-				} else if (seenCost == BestSolutionCost) {
+					bestSolutionCost = seenCost;
+				} else if (seenCost == bestSolutionCost) {
 					seen.toArray(bestSolution);
 					if (!contains(bestSolution)) {
 						roundList.add(copyOf(bestSolution));
 					}
 				}
 			} else if (seenCost + waitingTime
-					+ bound(currentVertice.getCheckpoint(), unseen, cost, duration) < BestSolutionCost) {
+					+ bound(currentVertice.getCheckpoint(), unseen, cost, duration) < bestSolutionCost) {
 				Iterator<DeliveryTime> it = iterator(currentVertice, unseen, cost, duration);
+				
 				while (it.hasNext()) {
 					DeliveryTime nextVertice = it.next();
 					seen.add(nextVertice);
@@ -216,10 +218,6 @@ public abstract class TemplateTSP implements TSP {
 											.get(nextVertice.getCheckpoint().getId())]
 									- startTime,
 							cost, duration, startTime, timeLimit);
-					// coutVus + waitingTime +
-					// cout[indexValues.get(sommetCrt.getCheckpoint().getId())][indexValues.get(prochainSommet.getCheckpoint().getId())]
-					// +
-					// duree[indexValues.get(prochainSommet.getCheckpoint().getId())]
 					seen.remove(nextVertice);
 					unseen.add(nextVertice);
 				}
