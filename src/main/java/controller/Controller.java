@@ -104,19 +104,6 @@ public class Controller {
 	public void clearRound() {
 		this.currentRound = null;
 	}
-
-	// GETTERS and SETTERS
-	public Round getCurrentRound() {
-		return currentRound;
-	}
-
-	public Map getCurrentMap() {
-		return currentMap;
-	}
-	
-	public DeliveryRequest getCurrentDeliveryRequest() {
-		return currentDeliveryRequest;
-	}
 	
 	public Round deleteCheckpoint(Checkpoint checkpoint, Round round) {
         return this.commandManager.doCommand(new Deletion(round), checkpoint);
@@ -138,13 +125,28 @@ public class Controller {
         return this.commandManager.redoCommand(round);
     }
 
+	// GETTERS and SETTERS
+	public Round getCurrentRound() {
+		return currentRound;
+	}
+
+	public Map getCurrentMap() {
+		return currentMap;
+	}
+	
+	public MainWindowController getWindow() {
+		return window;
+	}
+	
+	public DeliveryRequest getCurrentDeliveryRequest() {
+		return currentDeliveryRequest;
+	}
+    
     // -- PRIVATES ------------------------------------------------------------
     
 	private void handleSucessfulLoadDelivery() {
 		// Ecriture de la feuille de route
 		Roadmap.writeRoadmap(currentRound, currentMap);
 	}
-	
-    
 
 }

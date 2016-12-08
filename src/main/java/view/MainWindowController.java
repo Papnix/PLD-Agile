@@ -74,6 +74,11 @@ public class MainWindowController implements Initializable {
 		assert mapPane != null : "fx:id=\"mapPane\" was not injected: check your FXML file 'view.fxml'.";
 
 		firstDeliveryLoad = true;
+		
+		deliveriesListView = new DeliveriesListView(controller);
+		deliveryPane.getChildren().add(deliveriesListView);
+		deliveriesListView.setVisible(false);
+		
 		setupGraphDisplayer();
 
 	}
@@ -100,17 +105,21 @@ public class MainWindowController implements Initializable {
 		// Crée la ListView à droite si c'est le premier chargement de
 		// demande de livraisons
 		if (firstDeliveryLoad) {
-			deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
+			deliveriesListView.setVisible(true);
 			firstDeliveryLoad = false;
 		}
 
 		// Met à jour l'interface graphique
-		deliveriesListView.createDeliveriesList(controller.getCurrentRound(), controller.getCurrentMap());
+		deliveriesListView.loadDeliveriesList();
 		loadDeliveryButton.setVisible(false);
 		menuAddDelivery.setDisable(false);
 		menuRemoveDelivery.setDisable(false);
 		menuModifyDelivery.setDisable(false);
 		mapDisplayer.setRound(controller.getCurrentRound());
+	}
+	
+	public Graph getMapDisplayer() {
+		return mapDisplayer;
 	}
 	
 	/**
@@ -147,6 +156,7 @@ public class MainWindowController implements Initializable {
 
 		if (firstDeliveryLoad == false) {
 			deliveriesListView.clear();
+			deliveriesListView.setVisible(false);
 			loadDeliveryButton.setVisible(true);
 			firstDeliveryLoad = true;
 		}
