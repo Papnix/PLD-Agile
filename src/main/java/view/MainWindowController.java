@@ -18,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+
 /**
  * MainWindowController : the main window of the application
  */
@@ -239,21 +240,24 @@ public class MainWindowController implements Initializable {
 		assert menuAddDelivery != null : "fx:id=\"menuAddDelivery\" was not injected: check your FXML file"
 				+ " 'view.fxml'.";
 		menuAddDelivery.setOnAction((event) -> {
-			System.out.println("not implemented");
+			AdditionDeliveryDialog dialog = new AdditionDeliveryDialog(controller);
+			dialog.showAndWait();
 		});
 		menuAddDelivery.setDisable(true);
 		
 		assert menuRemoveDelivery != null : "fx:id=\"menuRemoveDelivery\" was not injected: check your FXML file"
 				+ " 'view.fxml'.";
 		menuRemoveDelivery.setOnAction((event) -> {
-			System.out.println("not implemented");
+			SuppressionDeliveryDialog dialog = new SuppressionDeliveryDialog(controller);
+			dialog.showAndWait();
 		});
 		menuRemoveDelivery.setDisable(true);
 		
 		assert menuModifyDelivery != null : "fx:id=\"menuModifyDelivery\" was not injected: check your FXML file"
 				+ " 'view.fxml'.";
 		menuModifyDelivery.setOnAction((event) -> {
-			System.out.println("not implemented");
+			ModifyDateDeliveryDialog dialog = new ModifyDateDeliveryDialog(controller);
+			dialog.showAndWait();
 		});
 		menuModifyDelivery.setDisable(true);
 	}
