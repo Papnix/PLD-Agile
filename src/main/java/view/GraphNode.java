@@ -26,17 +26,23 @@ public class GraphNode extends Group {
 	private final static Color DELIVERYPOINTCOLOR = new Color(0.2, 0.8, 0, 1);
 	private final static Color WAREHOUSECOLOR = new Color(0, 0, 1, 1);
 	
+	/**
+	 * Waypoint that corresponds to this GraphNode
+	 */
+	private Waypoint waypoint;
+	
 	private Polygon icon;
 	private InfoBox infobox;
 	private State state;
 
-	public GraphNode(Waypoint data) {
+	public GraphNode(Waypoint waypoint) {
 		super();
+		this.waypoint = waypoint;
 
 		setupIcon();
 		setupInfobox();
 		setupMouseListener();
-		setInformations(data);
+		setInformations(waypoint);
 
 		state = State.NORMAL;
 	}
@@ -70,6 +76,13 @@ public class GraphNode extends Group {
 	 */
 	public void addArrivalTime(Date arrivalTime) {
 		infobox.addArrivalTime(arrivalTime);
+	}
+	
+	/**
+	 * Clears the infoBox but keeps the first line ("Waypoint ID : X")
+	 */
+	public void clearInfoBox() {
+		setInformations(waypoint);
 	}
 
 	public void lightUp() {

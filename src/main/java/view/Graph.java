@@ -95,10 +95,8 @@ public class Graph extends Pane {
 	 */
 	public void setRound(Round round) {
 		this.round = round;
-		clearDisplay();
 		lightDownPath();
-		clearDisplayWaypoint();
-		clearDisplayRoads();
+		clearDisplay();
 
 		displayRoundWaypoint(round);
 		displayRoundRoads(round);
@@ -315,6 +313,7 @@ public class Graph extends Pane {
 		lightDownWaypoint();
 		for (Integer id : roundWaypoints) {
 			nodes.get(id).setState(State.NORMAL);
+			nodes.get(id).clearInfoBox();
 		}
 		roundWaypoints.clear();
 	}
