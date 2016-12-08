@@ -59,7 +59,8 @@ public class DeliveriesListView extends VBox {
 
 				int index = roundCombo.getSelectionModel().getSelectedIndex();
 				if (index >= 0 && index < controller.getCurrentRound().getRoundTimeOrders().size()) {
-					setupSelectedDeliveryOrder(controller.getCurrentRound().getRoundTimeOrder(index));
+					controller.setCurrentTimeOrder(index);
+					setupSelectedDeliveryOrder(controller.getCurrentRoundTimeOrder());
 				}
 			}
 		});

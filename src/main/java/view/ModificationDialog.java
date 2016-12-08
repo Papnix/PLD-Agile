@@ -10,12 +10,12 @@ import javafx.scene.Node;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import model.Checkpoint;
-import model.DeliveryTime;
 
 public abstract class ModificationDialog extends Dialog<Object>{
 	
 	protected GridPane grid;
 	protected ComboBox<Checkpoint> deliveryCombo;
+	Label labelCombo;
 
 	protected ButtonType buttonCancel;
 	protected ButtonType buttonOk;
@@ -33,8 +33,8 @@ public abstract class ModificationDialog extends Dialog<Object>{
 		grid.setHgap(5);
 		deliveryCombo = new ComboBox<Checkpoint>();
 		
-		Label label1 = new Label("Liste des points de livraison : ");
-		grid.add(label1, 1, 1);
+		labelCombo = new Label("Liste des points de livraison : ");
+		grid.add(labelCombo, 1, 1);
 		grid.add(deliveryCombo, 1, 2);
 
 		loadCombo(controller);
@@ -53,9 +53,8 @@ public abstract class ModificationDialog extends Dialog<Object>{
 	private void loadCombo(Controller controller) {
 		
 		deliveryCombo.getItems().clear();
-		
-		for(DeliveryTime delivery : controller.getCurrentRound().getRoundTimeOrder(0)) {
-			deliveryCombo.getItems().add(delivery.getCheckpoint());
+		for(int index = 1; index < controller.getCurrentRoundTimeOrder().size() - 1; ++index) {
+			deliveryCombo.getItems().add(controller.getCurrentRoundTimeOrder().get(index).getCheckpoint());
 		}
 	}
 	

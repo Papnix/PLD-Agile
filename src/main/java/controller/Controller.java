@@ -3,6 +3,7 @@ package controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -28,6 +29,7 @@ public class Controller {
 	private Map currentMap;
 	private DeliveryRequest currentDeliveryRequest;
 	private CommandManager commandManager;
+	private int currentTimeOrder;
 
 	public Controller(MainWindowController mainwindow) {
 		this.window = mainwindow;
@@ -35,6 +37,7 @@ public class Controller {
 		currentRound = null;
 		currentMap = null;
 		currentDeliveryRequest = null;
+		currentTimeOrder = 0;
 	}
 
 	public void loadMap(String path) {
@@ -111,6 +114,11 @@ public class Controller {
 	
 	public void clearRound() {
 		this.currentRound = null;
+		currentTimeOrder = 0;
+	}
+	
+	public void setCurrentTimeOrder(int value) {
+		currentTimeOrder = value;
 	}
 
 	public void deleteCheckpoint(Checkpoint checkpoint) {
@@ -178,6 +186,11 @@ public class Controller {
 	private void handleSucessfulLoadDelivery() {
 		// Ecriture de la feuille de route
 		Roadmap.writeRoadmap(currentRound, currentMap);
+	}
+
+	public List<DeliveryTime> getCurrentRoundTimeOrder() {
+
+		return currentRound.getRoundTimeOrder(currentTimeOrder);
 	}
 
 }
