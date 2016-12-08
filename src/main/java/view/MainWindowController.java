@@ -126,7 +126,12 @@ public class MainWindowController implements Initializable {
 
 		// Demande à l'utilisateur de sélectionner un fichier à charger
 		File deliveryRequestFile = getFileFromExplorer();
-		controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
+		if(deliveryRequestFile != null) {
+			if (lastFolderExplored != null)
+				lastFolderExplored = deliveryRequestFile.getParent();
+			
+			controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
+		}
 	}
 
 	/**
@@ -160,8 +165,7 @@ public class MainWindowController implements Initializable {
 
 		File file = explorer.showOpenDialog(null);
 
-		if (lastFolderExplored != null)
-			lastFolderExplored = file.getParent();
+		
 
 		return file;
 	}
@@ -196,7 +200,7 @@ public class MainWindowController implements Initializable {
 		
 		assert menuAddDelivery != null : "fx:id=\"menuAddDelivery\" was not injected: check your FXML file"
 				+ " 'view.fxml'.";
-		menuLoadDelivery.setOnAction((event) -> {
+		menuAddDelivery.setOnAction((event) -> {
 			System.out.println("not implemented");
 		});
 		menuAddDelivery.setDisable(true);

@@ -82,8 +82,10 @@ public class DeliveriesListView {
 	 *            City's map
 	 */
 	public void createDeliveriesList(Round round, Map map) {
+		deliveryList.getItems().clear();
+		idDeliveryPoints.clear();
+		
 		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
-
 		List<DeliveryTime> roundChosen = round.getRoundTimeOrder(0);
 
 		displayStartRoundMessage(deliveriesTexts, roundChosen);
