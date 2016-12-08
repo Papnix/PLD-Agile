@@ -113,6 +113,12 @@ public class TimeChange extends Command {
         return this.modifiedRound;
     }
 
+    /**
+     * Check if the modification can be applied without moving the targeted DeliveryTime, and apply it if it can
+     * @param deliveryTime The DeliveryTime that may be modified
+     * @param nextDeliveryTime The DeliveryTime right after the one that may be modified
+     * @return True if there is a quick solution that doesn't require complex calculations, false otherwise
+     */
     private boolean checkForSimpleSolution(DeliveryTime deliveryTime, DeliveryTime nextDeliveryTime) {
         // If the new time range is null, no need to change anything
         if (this.start == null && this.end == null) {

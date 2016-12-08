@@ -96,7 +96,7 @@ public class Controller {
 					currentRound.computeRound(currentMap);
 				} catch (NullPointerException e) {
 					ErrorDisplayer.displayWarningMessageBox(
-							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+							"La demande de livraison ne peut pas ï¿½tre traitï¿½e, elle ne semble pas correspondre ï¿½ la carte actuelle.");
 					return;
 				}
 				
@@ -123,12 +123,12 @@ public class Controller {
         return this.commandManager.doCommand(new TimeChange(checkpoint, round, start, end, map));
     }
 
-    public Round undoLastCommand(Round round) {
-        return this.commandManager.undoCommand(round);
+    public Round undoLastCommand() {
+        return this.commandManager.undoCommand();
     }
 
-    public Round redoLastCommand(Round round) {
-        return this.commandManager.redoCommand(round);
+    public Round redoLastCommand() {
+        return this.commandManager.redoCommand();
     }
 
 	// GETTERS and SETTERS
