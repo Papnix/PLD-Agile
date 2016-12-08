@@ -15,7 +15,7 @@ public abstract class TemplateTSP implements TSP {
 	private DeliveryTime[] bestSolution;
 	private long BestSolutionCost = 0;
 	private List<DeliveryTime[]> roundList;
-	private Boolean limiteTimeReached;
+	private Boolean limitTimeReached;
 	public static HashMap<Integer, Integer> indexValues;
 
 	private DeliveryTime[] copyOf(DeliveryTime[] dt) {
@@ -65,11 +65,11 @@ public abstract class TemplateTSP implements TSP {
 	}
 
 	public Boolean getLimitTimeReached() {
-		return limiteTimeReached;
+		return limitTimeReached;
 	}
 
 	public int findSolution(int tpsLimite, int nbSommets, int[][] cout, int[] duree, List<Checkpoint> checkpointList) {
-		limiteTimeReached = false;
+		limitTimeReached = false;
 		BestSolutionCost = Long.MAX_VALUE;
 		bestSolution = new DeliveryTime[nbSommets + 1];
 		roundList = new ArrayList<DeliveryTime[]>();
