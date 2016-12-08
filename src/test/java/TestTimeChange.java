@@ -1,6 +1,7 @@
 import controller.Controller;
 import controller.command.Deletion;
 import controller.command.TimeChange;
+import controller.xml.XMLDeserializer;
 import controller.xml.XMLException;
 import model.*;
 import org.junit.Assert;
@@ -25,8 +26,8 @@ public class TestTimeChange {
      */
     @Test
     public void evaluateChangeCheckpointTime() throws ParserConfigurationException, SAXException, IOException, XMLException, ParseException {
-        Map map = Controller.loadMap("src/main/resources/archivePLD2016/plan10x10.xml");
-        DeliveryRequest deliveryRequest = Controller.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons10x10-9-TW.xml", map);
+        Map map = XMLDeserializer.loadMap("src/main/resources/archivePLD2016/plan10x10.xml");
+        DeliveryRequest deliveryRequest = XMLDeserializer.loadDeliveryRequest("src/main/resources/archivePLD2016/livraisons10x10-9-TW.xml", map);
         Round round = new Round(deliveryRequest);
         round.computeRound(map);
 
