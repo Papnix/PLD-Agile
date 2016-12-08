@@ -34,6 +34,10 @@ public class DeliveriesListView extends VBox {
 	private List<Integer> idDeliveryPoints;
 	private Controller controller;
 
+	/**
+	 * Only one constructor of the widget
+	 * @param controller A reference to the controller of the application.
+	 */
 	public DeliveriesListView(Controller controller) {
 		super();
 
@@ -162,7 +166,12 @@ public class DeliveriesListView extends VBox {
 			}
 		});
 	}
-
+	
+	/**
+	 * Create a message with informations about a delivery point and add it to the list of texts to display.
+	 * @param deliveriesTexts The list of texts diplayed by the widget.
+	 * @param delivery The delivery with which will be created the message.
+	 */
 	private void displayCheckpointRoundMessage(ObservableList<String> deliveriesTexts, DeliveryTime delivery) {
 
 		String text = "Adresse : " + delivery.getCheckpoint().getAssociatedWaypoint().getId() + "\n";
@@ -182,6 +191,11 @@ public class DeliveriesListView extends VBox {
 		deliveriesTexts.add(text);
 	}
 
+	/**
+	 * Create a message with informations on the start of the round add it to the list of texts to display.
+	 * @param deliveriesTexts The list of texts diplayed by the widget.
+	 * @param delivery The delivery with which will be created the message.
+	 */
 	private void displayStartRoundMessage(ObservableList<String> deliveriesTexts, List<DeliveryTime> roundChosen) {
 
 		String text = "Adresse : " + roundChosen.get(0).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
@@ -191,6 +205,11 @@ public class DeliveriesListView extends VBox {
 
 	}
 
+	/**
+	 * Create a message with informations on the end of the round add it to the list of texts to display.
+	 * @param deliveriesTexts The list of texts diplayed by the widget.
+	 * @param delivery The delivery with which will be created the message.
+	 */
 	private void displayEndRoundMessage(ObservableList<String> deliveriesTexts, List<DeliveryTime> roundChosen) {
 		String text = "Adresse : "
 				+ roundChosen.get(roundChosen.size() - 1).getCheckpoint().getAssociatedWaypoint().getId() + "\n";
@@ -199,6 +218,10 @@ public class DeliveriesListView extends VBox {
 		deliveriesTexts.add(text);
 	}
 
+	/**
+	 * Load a deliveryOrder in the differents containers to display it and allow usability;
+	 * @param deliveryOrder
+	 */
 	private void setupSelectedDeliveryOrder(List<DeliveryTime> deliveryOrder) {
 
 		idDeliveryPoints.clear();
