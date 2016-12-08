@@ -217,7 +217,7 @@ public class Round {
         TSP1 tspAlgorithm = new TSP1();
 
         // The TSP algorithm is used to compute the best round
-        numOfRound = tspAlgorithm.findSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations,
+        numOfRound = tspAlgorithm.findSolution(/*Integer.MAX_VALUE*/ 30000, numberOfDelivery, costTab, durations,
                 request.getDeliveryPointList());
 
         for (int i = 0; i < numOfRound && tspAlgorithm.getBestRound(i) != null; i++) {
