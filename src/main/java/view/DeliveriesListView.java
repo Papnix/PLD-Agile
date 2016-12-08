@@ -24,7 +24,7 @@ import model.Round;
  * 'createDeliveriesList' method is sufficient.
  */
 public class DeliveriesListView {
-	private ListView<String> deliveryList;
+	private static ListView<String> deliveryList;
 	private List<Integer> idDeliveryPoints;
 	private AnchorPane deliveryPane;
 	private Graph graph;
@@ -70,6 +70,10 @@ public class DeliveriesListView {
 
 		return text;
 	}
+	
+	public static void setObservableListInDeliveryList(ObservableList<String> deliveriesTexts){
+		deliveryList.setItems(deliveriesTexts);
+	}
 
 	/**
 	 * Fill the ListView with deliveries' information in the chronological
@@ -97,7 +101,7 @@ public class DeliveriesListView {
 		displayEndRoundMessage(deliveriesTexts, roundChosen);
 		idDeliveryPoints.add(roundChosen.get(0).getCheckpoint().getId());
 
-		deliveryList.setItems(deliveriesTexts);
+		setObservableListInDeliveryList(deliveriesTexts);
 		addItemAction();
 	}
 

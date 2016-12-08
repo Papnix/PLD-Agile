@@ -114,7 +114,11 @@ public class Round {
     }
 
     public List<DeliveryTime> getRoundTimeOrder(int i) {
-        return roundTimeOrder.get(i);
+        if(numOfRound > 0){
+        	return roundTimeOrder.get(i);
+        }else{
+        	return null;
+        }
     }
 
     public List<List<DeliveryTime>> getRoundTimeOrders() {
@@ -213,10 +217,10 @@ public class Round {
         TSP1 tspAlgorithm = new TSP1();
 
         // The TSP algorithm is used to compute the best round
-        int numSolution = tspAlgorithm.findSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations,
+        numOfRound = tspAlgorithm.findSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations,
                 request.getDeliveryPointList());
 
-        for (int i = 0; i < numSolution && tspAlgorithm.getBestRound(i) != null; i++) {
+        for (int i = 0; i < numOfRound && tspAlgorithm.getBestRound(i) != null; i++) {
             roundTimeOrder.add(Arrays.asList(tspAlgorithm.getBestRound(i)));
             route.add(buildRoute(map, Arrays.asList(tspAlgorithm.getBestRound(i))));
         }

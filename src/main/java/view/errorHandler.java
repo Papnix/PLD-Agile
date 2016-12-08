@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -27,7 +28,8 @@ public class errorHandler {
 		alert.showAndWait();
 	}
 	
-	public static void impossibleRound(Round round, ObservableList<String> deliveriesTexts){
+	public static void impossibleRound(Round round){
+		ObservableList<String> deliveriesTexts = FXCollections.observableArrayList();
 		errorDisplayer.displayWarningMessageBox("Aucune tournée n'est calculable avec les contraintes que vous demandez !");
 		
 		deliveriesTexts.add("les horaires d'ouverture des lieux de livraison suivant sont trop petit, les augmenter permettrait peut-être d'avoir une tournée calculable");
@@ -47,7 +49,7 @@ public class errorHandler {
 		}
 		
 		for(Checkpoint ck:shortTimeRangeCheckpoint){
-			String text = "Adresse : " + ck.getId();
+			String text = "Adresse : " + ck.getId() +"\n";
 			text += "ouvert de "
 					+ new SimpleDateFormat("HH:mm").format(ck.getTimeRangeStart().getTime())
 					+ " à "
@@ -55,6 +57,8 @@ public class errorHandler {
 					+ "\n";
 			deliveriesTexts.add(text);
 		}
+		
+		DeliveriesListView.setObservableListInDeliveryList(deliveriesTexts);
 	}
 	
 }

@@ -1,6 +1,8 @@
 package controller;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -88,9 +90,10 @@ public class Controller {
 					currentRound = new Round(currentDeliveryRequest);
 					currentRound.computePaths(currentMap);
 					currentRound.computeRound(currentMap);
+					handleSucessfulLoadDelivery();
 				} catch (NullPointerException e) {
 					if(currentRound.getNumOfRound() == 0){
-						errorHandler.impossibleRound(currentRound, null);
+						errorHandler.impossibleRound(currentRound);
 					}else{
 						errorDisplayer.displayWarningMessageBox(
 							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
@@ -98,8 +101,6 @@ public class Controller {
 					return;
 				}
 
-				handleSucessfulLoadDelivery();
-				
 				// update graphique
 				window.updateAfterLoadDelivery();
 			}
@@ -145,7 +146,7 @@ public class Controller {
 
     // -- PRIVATES ------------------------------------------------------------
     
-	private void handleSucessfulLoadDelivery() {
+	private void handleSucessfulLoadDelivery(){
 		// Ecriture de la feuille de route
 		Roadmap.writeRoadmap(currentRound, currentMap);
 	}

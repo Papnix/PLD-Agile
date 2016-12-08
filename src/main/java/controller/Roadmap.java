@@ -1,7 +1,8 @@
 package controller;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,23 +23,31 @@ public class Roadmap {
 	 * 		Round to be described on the roadmap
 	 * @param map
 	 * 		City's map
+	 * @throws UnsupportedEncodingException 
+	 * @throws FileNotFoundException 
 	 */
-	public static void writeRoadmap(Round round, Map map) {
-		try {
-			PrintWriter writer = new PrintWriter("roadmap.txt", "UTF-8");
-			List<DeliveryTime> deliveriesList = round.getRoundTimeOrder(0); // Liste des livraisons dans l'ordre chronologique
-			
-			Roadmap.writeRouteToDelivery(deliveriesList.get(0).getCheckpoint(), deliveriesList.get(1).getCheckpoint(),
-										 null, round, map, writer);
-			for (int i = 1; i < deliveriesList.size() - 1; i++) {
-				Roadmap.writeRouteToDelivery(deliveriesList.get(i).getCheckpoint(), deliveriesList.get(i+1).getCheckpoint(),
-						deliveriesList.get(i-1).getCheckpoint(), round, map, writer);
+	public static void writeRoadmap(Round round, Map map){
+			PrintWriter writer;
+			try {
+				writer = new PrintWriter("roadmap.txt", "UTF-8");
+				List<DeliveryTime> deliveriesList = round.getRoundTimeOrder(0); // Liste des livraisons dans l'ordre chronologique
+				
+				Roadmap.writeRouteToDelivery(deliveriesList.get(0).getCheckpoint(), deliveriesList.get(1).getCheckpoint(),
+											 null, round, map, writer);
+				for (int i = 1; i < deliveriesList.size() - 1; i++) {
+					Roadmap.writeRouteToDelivery(deliveriesList.get(i).getCheckpoint(), deliveriesList.get(i+1).getCheckpoint(),
+							deliveriesList.get(i-1).getCheckpoint(), round, map, writer);
+				}
+				
+				writer.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
