@@ -19,7 +19,7 @@ public class DeliveryTime implements Cloneable {
 
 	public DeliveryTime(DeliveryTime deliveryTime) {
 		super();
-		this.checkpoint = deliveryTime.checkpoint;
+		this.checkpoint = new Checkpoint(deliveryTime.checkpoint);
 		this.arrivalTime = deliveryTime.arrivalTime == null ? null : new Date(deliveryTime.arrivalTime.getTime());
 		this.departureTime = deliveryTime.departureTime == null ? null : new Date(deliveryTime.departureTime.getTime());
 		this.waitingTime = deliveryTime.waitingTime;

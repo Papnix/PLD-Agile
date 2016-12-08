@@ -31,12 +31,12 @@ public class TestDeletion {
 		Round round = new Round(deliveryRequest);
 		round.computeRound(map);
 
-		Deletion deletion = new Deletion(round);
-		Round newRound = deletion.doCommand(round.getRoundTimeOrder(0).get(1).getCheckpoint());
+		Deletion deletion = new Deletion(round, round.getRoundTimeOrder(0).get(1).getCheckpoint());
+		Round newRound = deletion.doCommand();
 
 		Assert.assertEquals(3, newRound.getRoundTimeOrder(0).size());
 		Assert.assertEquals(0, newRound.getRoundTimeOrder(0).get(0).getCheckpoint().getId());
-		Assert.assertEquals(1, newRound.getRoundTimeOrder(0).get(1).getCheckpoint().getId());
+		Assert.assertEquals(2, newRound.getRoundTimeOrder(0).get(1).getCheckpoint().getId());
 		Assert.assertEquals(0, newRound.getRoundTimeOrder(0).get(2).getCheckpoint().getId());
 
 		Round undoRound = deletion.undoCommand();

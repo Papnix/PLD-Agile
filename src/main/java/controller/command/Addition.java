@@ -9,7 +9,7 @@ public class Addition extends Command {
         super(round);
     }
 
-    public Round doCommand(Checkpoint checkpoint) {
+    public Round doCommand() {
         return this.modifiedRound;
     }
 }

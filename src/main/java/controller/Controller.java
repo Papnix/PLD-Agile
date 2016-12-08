@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -9,7 +10,7 @@ import controller.command.Addition;
 import controller.command.CommandManager;
 import controller.command.Deletion;
 import controller.command.TimeChange;
-import model.Checkpoint;
+import model.*;
 import org.xml.sax.SAXException;
 
 import controller.xml.XMLDeserializer;
@@ -44,7 +45,7 @@ public class Controller {
 				newMap = XMLDeserializer.loadMap(path);
 			} catch (XMLException e) {
 				ErrorDisplayer.displayWarningMessageBox(
-						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une carte valide.");
+						"Oups, il semble que le fichier que vous avez spï¿½cifiï¿½ ne soit pas une carte valide.");
 
 				return;
 			} catch (IOException | SAXException | ParserConfigurationException e) {
@@ -74,7 +75,7 @@ public class Controller {
 			} catch (XMLException e) {
 
 				ErrorDisplayer.displayWarningMessageBox(
-						"Oups, il semble que le fichier que vous avez spécifié ne soit pas une"
+						"Oups, il semble que le fichier que vous avez spï¿½cifiï¿½ ne soit pas une"
 								+ " demande de livraison valide.");
 
 				return;
@@ -89,13 +90,14 @@ public class Controller {
 				
 				currentDeliveryRequest = newDeliveryRequest;
 				try {
-					// Calcul de la tournée
+					// Calcul de la tournï¿½e
 					currentRound = new Round(currentDeliveryRequest);
 					currentRound.computePaths(currentMap);
 					currentRound.computeRound(currentMap);
 				} catch (NullPointerException e) {
 					ErrorDisplayer.displayWarningMessageBox(
 							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+					return;
 				}
 				
 				window.closeWaitingDialog();
@@ -123,15 +125,15 @@ public class Controller {
 	}
 	
 	public Round deleteCheckpoint(Checkpoint checkpoint, Round round) {
-        return this.commandManager.doCommand(new Deletion(round), checkpoint);
+        return this.commandManager.doCommand(new Deletion(round, checkpoint));
     }
 
     public Round addCheckpoint(Checkpoint checkpoint, Round round) {
-        return this.commandManager.doCommand(new Addition(round), checkpoint);
+        return this.commandManager.doCommand(new Addition(round));
     }
 
-    public Round changeCheckpointTime(Checkpoint checkpoint, Round round) {
-        return this.commandManager.doCommand(new TimeChange(round), checkpoint);
+    public Round changeCheckpointTime(Checkpoint checkpoint, Round round, Date start, Date end, Map map) {
+        return this.commandManager.doCommand(new TimeChange(checkpoint, round, start, end, map));
     }
 
     public Round undoLastCommand(Round round) {

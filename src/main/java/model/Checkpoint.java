@@ -3,19 +3,26 @@ package model;
 import java.util.Date;
 
 public class Checkpoint implements Cloneable{
-	
+
 	private Waypoint associatedWaypoint;
 	private int duration;
 	private Date timeRangeStart;
 	private Date timeRangeEnd;
-	
+
 	public Checkpoint(Waypoint associatedWaypoint, int duration, Date timeRangeStart, Date timeRangeEnd) {
 		this.associatedWaypoint = associatedWaypoint;
 		this.duration = duration;
 		this.timeRangeStart = timeRangeStart;
 		this.timeRangeEnd = timeRangeEnd;
 	}
-	
+
+	public Checkpoint(Checkpoint checkpoint) {
+		this.associatedWaypoint = checkpoint.associatedWaypoint;
+		this.duration = checkpoint.duration;
+		this.timeRangeStart = checkpoint.timeRangeStart == null ? null : new Date(checkpoint.timeRangeStart.getTime());
+		this.timeRangeEnd = checkpoint.timeRangeEnd == null ? null : new Date(checkpoint.timeRangeEnd.getTime());
+	}
+
 	public Waypoint getAssociatedWaypoint() {
 		return associatedWaypoint;
 	}
@@ -27,7 +34,7 @@ public class Checkpoint implements Cloneable{
 	public int getId(){
 		return associatedWaypoint.getId();
 	}
-	
+
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
@@ -51,22 +58,22 @@ public class Checkpoint implements Cloneable{
 	public String toString() {
 		return "Delivery : { waypoint:" + this.associatedWaypoint.getId() + ", duree:" + this.duration + " }";
 	}
-	
+
 	public Checkpoint clone() {
 		Checkpoint ck = null;
 		try {
-			// On récupère l'instance à renvoyer par l'appel de la 
-			// méthode super.clone()
+			// On rï¿½cupï¿½re l'instance ï¿½ renvoyer par l'appel de la
+			// mï¿½thode super.clone()
 			ck = (Checkpoint) super.clone();
 		} catch(CloneNotSupportedException cnse) {
-			// Ne devrait jamais arriver car nous implémentons 
+			// Ne devrait jamais arriver car nous implï¿½mentons
 			// l'interface Cloneable
 			cnse.printStackTrace(System.err);
 		}
-		
+
 		ck.associatedWaypoint = (Waypoint) associatedWaypoint.clone();
 		// on renvoie le clone
 		return ck;
 	}
-	
+
 }
