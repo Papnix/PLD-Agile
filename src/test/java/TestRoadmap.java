@@ -65,7 +65,7 @@ public class TestRoadmap {
 		// Création du contexte
 		Map map = new Map();
 		try {
-			map = XMLDeserializer.loadMap("src/test/resources/testMap.xml");
+			map = XMLDeserializer.loadMap("src/test/resources/testMap_descriptionRoute.xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
