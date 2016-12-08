@@ -84,6 +84,9 @@ public class MainWindowController implements Initializable {
 
 		loadMapButton.setVisible(false);
 		menuLoadDelivery.setDisable(false);
+		menuAddDelivery.setDisable(true);
+		menuRemoveDelivery.setDisable(true);
+		menuModifyDelivery.setDisable(true);
 		loadDeliveryButton.setDisable(false);
 		loadDeliveryButton.setText("Charger demande de livraisons");
 		clearPreviousRound();
@@ -104,9 +107,9 @@ public class MainWindowController implements Initializable {
 		// Met à jour l'interface graphique
 		deliveriesListView.createDeliveriesList(controller.getCurrentRound(), controller.getCurrentMap());
 		loadDeliveryButton.setVisible(false);
-		menuAddDelivery.setVisible(true);
-		menuModifyDelivery.setVisible(true);
-		menuModifyDelivery.setVisible(true);
+		menuAddDelivery.setDisable(false);
+		menuRemoveDelivery.setDisable(false);
+		menuModifyDelivery.setDisable(false);
 		mapDisplayer.setRound(controller.getCurrentRound());
 	}
 	
@@ -127,9 +130,9 @@ public class MainWindowController implements Initializable {
 		// Demande à l'utilisateur de sélectionner un fichier à charger
 		File deliveryRequestFile = getFileFromExplorer();
 		if(deliveryRequestFile != null) {
-			if (lastFolderExplored != null)
+			if (lastFolderExplored != null) {
 				lastFolderExplored = deliveryRequestFile.getParent();
-			
+			}
 			controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
 		}
 	}
@@ -164,9 +167,6 @@ public class MainWindowController implements Initializable {
 		}
 
 		File file = explorer.showOpenDialog(null);
-
-		
-
 		return file;
 	}
 
