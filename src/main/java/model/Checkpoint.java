@@ -75,7 +75,7 @@ public class Checkpoint implements Cloneable{
 	}
 
 	public String toString() {
-		return "Delivery : { waypoint:" + this.associatedWaypoint.getId() + ", duree:" + this.duration + " }";
+		return "Adresse de livraison :  " + this.associatedWaypoint.getId();
 	}
 
 	public Checkpoint clone() {
