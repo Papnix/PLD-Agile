@@ -3,6 +3,7 @@ package controller;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -28,6 +29,7 @@ public class Controller {
 	private Map currentMap;
 	private DeliveryRequest currentDeliveryRequest;
 	private CommandManager commandManager;
+	private int currentTimeOrder;
 
 	public Controller(MainWindowController mainwindow) {
 		this.window = mainwindow;
@@ -35,6 +37,7 @@ public class Controller {
 		currentRound = null;
 		currentMap = null;
 		currentDeliveryRequest = null;
+		currentTimeOrder = 0;
 	}
 
 	public void loadMap(String path) {
@@ -59,6 +62,8 @@ public class Controller {
 
 				window.updateAfterLoadMap();
 			}
+			
+			
 		}
 	}
 
@@ -96,20 +101,68 @@ public class Controller {
 					currentRound.computeRound(currentMap);
 				} catch (NullPointerException e) {
 					ErrorDisplayer.displayWarningMessageBox(
-							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+							"La demande de livraison ne peut pas ï¿½tre traitï¿½e, elle ne semble pas correspondre ï¿½ la carte actuelle.");
 					return;
 				}
 				
 				window.closeWaitingDialog();
 				handleSucessfulLoadDelivery();
-				window.updateAfterLoadDelivery(); // update graphique
+				window.updateAfterLoadNewRound(); // update graphique
 			}
 		}
 	}
 	
 	public void clearRound() {
 		this.currentRound = null;
+		currentTimeOrder = 0;
 	}
+	
+	public void setCurrentTimeOrder(int value) {
+		currentTimeOrder = value;
+	}
+
+	public void deleteCheckpoint(Checkpoint checkpoint) {
+		Round round = this.commandManager.doCommand(new Deletion(currentRound, checkpoint, currentMap));
+		if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
+		else {
+			System.out.println("Echec");
+		}
+    }
+
+    public void addCheckpoint(Checkpoint checkpoint) {
+    	Round round = this.commandManager.doCommand(new Addition(currentRound, currentMap,checkpoint));
+    	if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
+    }
+
+    public void changeCheckpointTime(Checkpoint checkpoint, Date start, Date end) {
+    	Round round = this.commandManager.doCommand(new TimeChange(checkpoint, currentRound, start, end, currentMap));
+    	if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
+    }
+
+    public void undoLastCommand() {
+    	Round round = this.commandManager.undoCommand();
+    	if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
+    }
+
+    public void redoLastCommand() {
+    	Round round = this.commandManager.redoCommand();
+    	if( round != null) {
+			currentRound = round;
+			window.updateAfterLoadNewRound();
+		}
+    }
 
 	// GETTERS and SETTERS
 	public Round getCurrentRound() {
@@ -120,37 +173,24 @@ public class Controller {
 		return currentMap;
 	}
 	
+	public MainWindowController getWindow() {
+		return window;
+	}
+	
 	public DeliveryRequest getCurrentDeliveryRequest() {
 		return currentDeliveryRequest;
 	}
-	
-	public Round deleteCheckpoint(Checkpoint checkpoint, Round round) {
-        return this.commandManager.doCommand(new Deletion(round, checkpoint));
-    }
-
-    public Round addCheckpoint(Checkpoint checkpoint, Round round, Map map) {
-        return this.commandManager.doCommand(new Addition(round, map,checkpoint));
-    }
-
-    public Round changeCheckpointTime(Checkpoint checkpoint, Round round, Date start, Date end, Map map) {
-        return this.commandManager.doCommand(new TimeChange(checkpoint, round, start, end, map));
-    }
-
-    public Round undoLastCommand(Round round) {
-        return this.commandManager.undoCommand(round);
-    }
-
-    public Round redoLastCommand(Round round) {
-        return this.commandManager.redoCommand(round);
-    }
-
+    
     // -- PRIVATES ------------------------------------------------------------
     
 	private void handleSucessfulLoadDelivery() {
 		// Ecriture de la feuille de route
 		Roadmap.writeRoadmap(currentRound, currentMap);
 	}
-	
-    
+
+	public List<DeliveryTime> getCurrentRoundTimeOrder() {
+
+		return currentRound.getRoundTimeOrder(currentTimeOrder);
+	}
 
 }
