@@ -28,28 +28,13 @@ public class TSP1 extends TemplateTSP {
 		
 		// In between unseen vertices
 		
+		
 		for (int i = 0; i < indicesToConsider.size() - 1; i++) {
 			
 			int index = indicesToConsider.get(i);
 			bound += getMinCostToVertex(index, cost, indicesToConsider) + duration[index];
 		}
 		
-		/*
-		for (int i = 0; i < indicesToConsider.size() - 1; i++) {
-			
-			int index = indicesToConsider.get(i);
-			
-			int[] outCost = cost[index];
-			
-			int min = getMinimumCost(index, outCost, indicesToConsider);
-			
-			if (outCost.length > 0) {
-				bound += min;
-			}
-			
-			bound += duration[index];
-		}
-		*/
 		// To return to warehouse
 		
 		bound += getMinCostToWarehouse(cost, indicesToConsider);
@@ -86,10 +71,10 @@ public class TSP1 extends TemplateTSP {
 	}
 	
 	/**
-	 * 
-	 * @param cost
-	 * @param indicesToConsider
-	 * @return
+	 * This method returns the cost of the minimum path from the vertices contained in indicesToConsider, to the warehouse.
+	 * @param cost the general cost matrix
+	 * @param indicesToConsider the indices of the vertices that should be considered in the computation of the minimum.
+	 * @return the cost of the minimum path to the warehouse.
 	 */
 	private int getMinCostToWarehouse(int[][] cost, List<Integer> indicesToConsider) {
 		int min = Integer.MAX_VALUE;
@@ -103,24 +88,11 @@ public class TSP1 extends TemplateTSP {
 		return min;
 	}
 	
-	private int getClosestNeighbour(int cur_index, int[] cost, List<Integer> indicesToConsider) {
-		int closest = -1, minCost = Integer.MAX_VALUE;
-		
-		for (int i = 0; i < cost.length; i++) {
-			if (cost[i] < minCost && cur_index != i && indicesToConsider.contains(i)) {
-				minCost = cost[i];
-				closest = i;
-			}
-		}
-		
-		return closest;
-	}
-	
 	/**
-	 * 
-	 * @param vertex
-	 * @param cost
-	 * @param indicesToConsider
+	 * This method gives the minimum cost to a particular vertex, from any vertex contained in indicesToConsider.
+	 * @param vertex the destination vertex
+	 * @param cost the general cost matrix
+	 * @param indicesToConsider the indices of the vertices that should be considered in the computation of the minimum.
 	 * @return
 	 */
 	private int getMinCostToVertex(int vertex, int[][] cost, List<Integer> indicesToConsider) {
