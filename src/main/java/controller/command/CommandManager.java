@@ -24,6 +24,14 @@ public class CommandManager {
     	done = new Stack<>();
     	undone = new Stack<>();
     }
+    
+    public Stack<Command> getDone() {
+        return done;
+    }
+    
+    public Stack<Command> getUndone() {
+        return undone;
+    }
 
     /**
      * Execute a given command. In case of success, the command is added to the done LIFO to be undone if needed. Clear
