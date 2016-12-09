@@ -100,36 +100,37 @@ public class Controller {
 				ErrorDisplayer.displayWarningMessageBox("Oups, une erreur dans la lecture du fichier de livraison est survenue.");
 				return;
 			}
-
-			if (newDeliveryRequest != null) {
-				window.showWaitingDialog();
-				
-				currentDeliveryRequest = newDeliveryRequest;
-				currentRound = new Round(currentDeliveryRequest);
-				computeRound();
-			}
+			
+			computeRound(newDeliveryRequest);
+			
 		}
 	}
 	
-	public void computeRound(){
-		try {
-			// Calcul de la tournï¿½e
-			currentRound.computePaths(currentMap);
-			currentRound.computeRound(currentMap);
-			handleSucessfulLoadDelivery();
-		} catch (NullPointerException e) {
-			if(currentRound.getNumOfRound() == 0){
-				ErrorHandler.impossibleRound(currentRound, window);
-			}else{
-				ErrorDisplayer.displayWarningMessageBox(
-					"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+	public void computeRound(DeliveryRequest newDeliveryRequest){
+		if (newDeliveryRequest != null) {
+			window.showWaitingDialog();
+			
+			currentDeliveryRequest = newDeliveryRequest;
+			currentRound = new Round(currentDeliveryRequest);
+			try {
+				// Calcul de la tournï¿½e
+				currentRound.computePaths(currentMap);
+				currentRound.computeRound(currentMap);
+				handleSucessfulLoadDelivery();
+			} catch (NullPointerException e) {
+				if(currentRound.getNumOfRound() == 0){
+					ErrorHandler.impossibleRound(currentRound, window);
+				}else{
+					ErrorDisplayer.displayWarningMessageBox(
+						"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+				}
+				return;
 			}
-			return;
-		}
-		window.closeWaitingDialog();
-		handleSucessfulLoadDelivery();
+			window.closeWaitingDialog();
+			handleSucessfulLoadDelivery();
 
-		window.updateAfterLoadNewRound(); // update graphique
+			window.updateAfterLoadNewRound(); // update graphique
+		}
 	}
 	
 	public void clearRound() {
@@ -176,25 +177,24 @@ public class Controller {
     		Alert alert = new Alert(AlertType.CONFIRMATION);
     				
 			alert.setTitle("Calcul d'une nouvelle tournée");
-    		alert.setHeaderText("Modification impossible, conflit avec les livraisons en cours");
-    		alert.setContentText("Voulez-vous recalculer une tournée ?");
+    		alert.setHeaderText("Les modifications que vous demandez ne sont pas possible sans impacter le reste de la tournée");
+    		alert.setContentText("Que voulez-vous faire ?");
 
-    		ButtonType buttonTypeOk = new ButtonType("Ok");
-    		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+    		ButtonType buttonTypeOk = new ButtonType("Calculer une nouvelle tournée");
+    		ButtonType buttonTypeCancel = new ButtonType("Faire un nouveau changement", ButtonData.CANCEL_CLOSE);
 
     		alert.getButtonTypes().setAll(buttonTypeOk, buttonTypeCancel);
 
     		Optional<ButtonType> result = alert.showAndWait();
     		if (result.get() == buttonTypeOk ){
 		    	try {
-					currentRound.changeACheckpoint(checkpoint.getId(), start, end);
-					computeRound();
+		    		currentDeliveryRequest.changeACheckpoint(checkpoint.getId(), start, end);
+					computeRound(currentDeliveryRequest);
 				} catch (Exception e) {
 					ErrorDisplayer.displayWarningMessageBox("Modification impossible, conflit avec les livraisons en cours");
 					e.printStackTrace();
 				}
-    		};
-    		
+    		}
     	}
     }
 
