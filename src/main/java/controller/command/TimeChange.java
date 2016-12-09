@@ -124,6 +124,18 @@ public class TimeChange extends Command {
                 deliveryTime.setWaitingTime(waitingTime);
                 deliveryTime.setDepartureTime(departureTime);
 
+                // Recalculate route for the DeliveryTimes that used to be before and after
+                DeliveryTime previousDeliveryTime = deliveryTimes.get(index-1);
+                DeliveryTime nextDeliveryTime = deliveryTimes.get(index+1);
+
+                dj.execute(previousDeliveryTime.getCheckpoint().getId());
+                long timeToNext = dj.getTargetPathCost(nextDeliveryTime.getCheckpoint().getId());
+                Date nextArrivalTime = new Date(previousDeliveryTime.getDepartureTime().getTime() + timeToNext);
+                long diffWaitingTime = nextDeliveryTime.getArrivalTime().getTime() - nextArrivalTime.getTime();
+
+                nextDeliveryTime.setArrivalTime(nextArrivalTime);
+                nextDeliveryTime.setWaitingTime(nextDeliveryTime.getWaitingTime() + diffWaitingTime);
+
                 deliveryTimes.remove(index);
                 deliveryTimes.add(j + 1, deliveryTime);
 

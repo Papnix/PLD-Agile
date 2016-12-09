@@ -47,7 +47,7 @@ public class Deletion extends Command {
                 DeliveryTime deliveryTime = deliveryTimes.get(i);
                 if (deliveryTime.getCheckpoint().getId() == this.checkpoint.getId()) {
 
-                    // Recalculate root not necessarily reaching the deleted checkpoint
+                    // Recalculate route not necessarily reaching the deleted checkpoint
                     DeliveryTime previousDeliveryTime = deliveryTimes.get(i-1);
                     DeliveryTime nextDeliveryTime = deliveryTimes.get(i + 1);
 
