@@ -88,7 +88,7 @@ public abstract class TemplateTSP implements TSP {
 																												// est
 																												// 0
 		branchAndBound(seen.get(0), unseen, seen, 0, cout, duree, checkpointList.get(0).getTimeRangeStart().getTime(),
-				tpsLimite);
+				System.currentTimeMillis(),	tpsLimite);
 		
 		completeRound(cout);
 		return roundList.size();
@@ -179,7 +179,13 @@ public abstract class TemplateTSP implements TSP {
 	 *            : limite de temps pour la resolution
 	 */
 	void branchAndBound(DeliveryTime currentVertice, List<DeliveryTime> unseen, ArrayList<DeliveryTime> seen,
-			long seenCost, int[][] cost, int[] duration, long startTime, int timeLimit) {
+			long seenCost, int[][] cost, int[] duration, long startTime, long computeTimeStart, int timeLimit) {
+		
+		long computeTime = System.currentTimeMillis() - computeTimeStart;
+		if (computeTime > timeLimit){
+			limitTimeReached = true;
+			 return;
+		 }
 
 		Date arrivalDate = new Date(seenCost + startTime);
 		long waitingTime = validTimeRange(currentVertice.getCheckpoint(), arrivalDate);
@@ -217,7 +223,7 @@ public abstract class TemplateTSP implements TSP {
 									+ cost[indexValues.get(currentVertice.getCheckpoint().getId())][indexValues
 											.get(nextVertice.getCheckpoint().getId())]
 									- startTime,
-							cost, duration, startTime, timeLimit);
+							cost, duration, startTime, computeTimeStart, timeLimit);
 					seen.remove(nextVertice);
 					unseen.add(nextVertice);
 				}

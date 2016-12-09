@@ -15,6 +15,7 @@ public class Round {
     // ----------------------------------------------------
 
     private final int MILLIS_TO_SEC = 1000;
+    private final int TIME_LIMIT = 30000;
 
     private int duration;
 
@@ -206,7 +207,7 @@ public class Round {
         TSP1 tspAlgorithm = new TSP1();
 
         // The TSP algorithm is used to compute the best round
-        int numSolution = tspAlgorithm.findSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations,
+        int numSolution = tspAlgorithm.findSolution(TIME_LIMIT, numberOfDelivery, costTab, durations,
                 request.getDeliveryPointList());
 
         roundTimeOrder.clear();
