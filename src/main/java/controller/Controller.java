@@ -16,9 +16,6 @@ import org.xml.sax.SAXException;
 
 import controller.xml.XMLDeserializer;
 import controller.xml.XMLException;
-import model.DeliveryRequest;
-import model.Map;
-import model.Round;
 import view.ErrorDisplayer;
 import view.MainWindowController;
 
@@ -167,6 +164,10 @@ public class Controller {
 	// GETTERS and SETTERS
 	public Round getCurrentRound() {
 		return currentRound;
+	}
+	
+	public List<Section> getCurrentRoute() {
+		return currentRound.getRoute(currentTimeOrder);
 	}
 
 	public Map getCurrentMap() {

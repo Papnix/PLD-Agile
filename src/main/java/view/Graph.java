@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import controller.Controller;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.input.MouseEvent;
@@ -19,8 +20,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import model.DeliveryTime;
-import model.Map;
-import model.Round;
 import model.Section;
 import model.Waypoint;
 import view.GraphNode.State;
@@ -36,9 +35,7 @@ public class Graph extends Pane {
 	 */
 	private static DeliveriesListView listView;
 
-	private Map map;
-	private Round round;
-
+	private Controller controller;
 	private HashMap<Integer, GraphNode> nodes;
 	private HashMap<String, Line> sections;
 	private LinkedList<String> roundRoads;
@@ -49,8 +46,10 @@ public class Graph extends Pane {
 
 	private final static double offsetNode = GraphNode.SIZE + 2;
 
-	public Graph() {
+	public Graph(Controller controller) {
 		super();
+		
+		this.controller = controller;
 		this.setBackground(new Background(new BackgroundFill(new Color(0, 0, 0, 0), CornerRadii.EMPTY, Insets.EMPTY)));
 		nodes = new HashMap<>();
 		sections = new HashMap<>();
@@ -77,10 +76,9 @@ public class Graph extends Pane {
 	 * @param map
 	 *            The source map to use.
 	 */
-	public void setMap(Map map) {
+	public void updateMap() {
 
-		this.map = map;
-		if (map != null) {
+		if (controller.getCurrentMap() != null) {
 			clearAllContainers();
 			extractSectionFromMap();
 			extractPointFromMap();
@@ -89,17 +87,13 @@ public class Graph extends Pane {
 
 	/**
 	 * Color path and waypoint of a round on the graph.
-	 * 
-	 * @param round
-	 *            The path to display
 	 */
-	public void setRound(Round round) {
-		this.round = round;
+	public void updateRound() {
 		lightDownPath();
 		clearDisplay();
 
-		displayRoundWaypoint(round);
-		displayRoundRoads(round);
+		displayRoundWaypoint();
+		displayRoundRoads();
 	}
 
 	/**
@@ -136,7 +130,7 @@ public class Graph extends Pane {
 	 * Create representations and keep the track of waypoints of the map.
 	 */
 	private void extractPointFromMap() {
-		for (Entry<Integer, Waypoint> entry : map.getWaypoints().entrySet()) {
+		for (Entry<Integer, Waypoint> entry : controller.getCurrentMap().getWaypoints().entrySet()) {
 			Waypoint waypoint = entry.getValue();
 			addWaypointDisplay(waypoint);
 		}
@@ -175,7 +169,7 @@ public class Graph extends Pane {
 	 * Create representations keep track of sections of the map.
 	 */
 	private void extractSectionFromMap() {
-		for (Entry<Integer, TreeMap<Integer, Section>> source : map.getSections().entrySet()) {
+		for (Entry<Integer, TreeMap<Integer, Section>> source : controller.getCurrentMap().getSections().entrySet()) {
 
 			// On récupère le point source
 			TreeMap<Integer, Section> waypoint = source.getValue();
@@ -249,11 +243,11 @@ public class Graph extends Pane {
 	 * 
 	 * @param round
 	 */
-	private void displayRoundWaypoint(Round round) {
+	private void displayRoundWaypoint() {
 
 		// On récupère tous les points de la tournée
 		ArrayList<Integer> allPoints = new ArrayList<>();
-		List<Section> points = round.getRoute(0);
+		List<Section> points = controller.getCurrentRoute();
 		for (Section section : points) {
 			allPoints.add(section.getOrigin().getId());
 		}
@@ -261,7 +255,7 @@ public class Graph extends Pane {
 
 		// On récupère les points de livraisons
 		ArrayList<Integer> deliveryPoints = new ArrayList<>();
-		List<DeliveryTime> deliveries = round.getRoundTimeOrder(0);
+		List<DeliveryTime> deliveries = controller.getCurrentRoundTimeOrder();
 		for (DeliveryTime delivery : deliveries) {
 			deliveryPoints.add(delivery.getCheckpoint().getId());
 		}
@@ -295,9 +289,9 @@ public class Graph extends Pane {
 	 * @param round
 	 *            the round to display
 	 */
-	private void displayRoundRoads(Round round) {
+	private void displayRoundRoads() {
 
-		List<Section> roads = round.getRoute(0);
+		List<Section> roads = controller.getCurrentRoute();
 
 		for (Section line : roads) {
 			String key = getSectionKey(line.getOrigin(), line.getDestination());
@@ -410,7 +404,7 @@ public class Graph extends Pane {
 		// On récupère l'ordres des points à livrer.
 		LinkedList<Integer> pointsToDeliver = new LinkedList<>();
 
-		List<DeliveryTime> listDeliveries = round.getRoundTimeOrder(0);
+		List<DeliveryTime> listDeliveries = controller.getCurrentRoundTimeOrder();
 		for (int i = 0; i < listDeliveries.size(); i++) {
 
 			int id = listDeliveries.get(i).getCheckpoint().getId();
