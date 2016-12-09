@@ -206,8 +206,15 @@ public class Round {
         TSP1 tspAlgorithm = new TSP1();
 
         // The TSP algorithm is used to compute the best round
+        
+        long t1 = System.currentTimeMillis();
+        
         int numSolution = tspAlgorithm.findSolution(Integer.MAX_VALUE, numberOfDelivery, costTab, durations,
                 request.getDeliveryPointList());
+        
+        long t2 = System.currentTimeMillis();
+        
+        System.out.println("Elapsed time: " + (t2 - t1) + "ms.");
 
         for (int i = 0; i < numSolution && tspAlgorithm.getBestRound(i) != null; i++) {
             roundTimeOrder.add(Arrays.asList(tspAlgorithm.getBestRound(i)));
