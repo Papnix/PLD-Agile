@@ -25,6 +25,16 @@ public class DeliveryRequest {
     public Checkpoint getDeliveryPoint(int index) {
         return deliveryPointList.get(index);
     }
+    
+    public Checkpoint getDeliveryPointId(int checkpointId) {
+    	int i = 0;
+    	Checkpoint checkpoint = deliveryPointList.get(i);
+    	while(checkpoint.getId()!=checkpointId && i<deliveryPointList.size()){
+    		checkpoint=deliveryPointList.get(i);
+    		i++;
+    	}
+    	return checkpoint;
+    }
 
     /**
      * Adds a Checkpoint to the delivery request

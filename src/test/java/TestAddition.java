@@ -35,7 +35,7 @@ public class TestAddition {
         Date start = dateFormat.parse("10:0:0");
         Date end = dateFormat.parse("12:0:0");
 
-        Checkpoint checkpoint = new Checkpoint(map.getWaypoint(94),300000, start, end);
+        Checkpoint checkpoint = new Checkpoint(map.getWaypoint(94),300, start, end);
 
         Addition addition = new Addition(round, map, checkpoint);
 

@@ -14,9 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author fmacerouss
- *         <p>
- *         This is a test class to validate the TimeChange Command.
+ * @author Nicolas Sorin
  */
 public class TestTimeChange {
     /**
@@ -97,5 +95,6 @@ public class TestTimeChange {
         Assert.assertEquals(newRound.getRoundTimeOrder(0).get(8).getCheckpoint().getId(), redoRound.getRoundTimeOrder(0).get(8).getCheckpoint().getId());
         Assert.assertEquals(newRound.getRoundTimeOrder(0).get(9).getCheckpoint().getId(), redoRound.getRoundTimeOrder(0).get(9).getCheckpoint().getId());
         Assert.assertEquals(newRound.getRoundTimeOrder(0).get(10).getCheckpoint().getId(), redoRound.getRoundTimeOrder(0).get(10).getCheckpoint().getId());
+
     }
 }

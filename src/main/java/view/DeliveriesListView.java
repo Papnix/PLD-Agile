@@ -31,11 +31,14 @@ import model.DeliveryTime;
 
 public class DeliveriesListView extends VBox {
 
+	private Label warningLabel;
 	private ComboBox<String> roundCombo;
 	private ListView<String> deliveryList;
 	private List<Integer> idDeliveryPoints;
 	private Controller controller;
-
+	private ChangeListener<String> changeListener;
+	private ChangeListener<String> exceptionChangeListener;
+	
 	/**
 	 * Only one constructor of the widget
 	 * @param controller A reference to the controller of the application.
@@ -43,11 +46,14 @@ public class DeliveriesListView extends VBox {
 	public DeliveriesListView(Controller controller) {
 		super();
 
+		warningLabel = new Label("Les horaires d'ouverture des lieux de livraison suivant sont trop serré. \nLes augmenter permettrait peut-être d'avoir une tournée calculable.");
 		roundCombo = new ComboBox<String>();
 		deliveryList = new ListView<String>();
 		idDeliveryPoints = new ArrayList<>();
 		this.controller = controller;
-
+		
+		warningLabel.setVisible(false);
+		
 		AnchorPane.setTopAnchor(this, 0d);
 		AnchorPane.setBottomAnchor(this, 0d);
 		AnchorPane.setRightAnchor(this, 0d);
@@ -60,11 +66,14 @@ public class DeliveriesListView extends VBox {
 
 				int index = roundCombo.getSelectionModel().getSelectedIndex();
 				if (index >= 0 && index < controller.getCurrentRound().getRoundTimeOrders().size()) {
-					setupSelectedDeliveryOrder(controller.getCurrentRound().getRoundTimeOrder(index));
+					controller.setCurrentTimeOrder(index);
+					setupSelectedDeliveryOrder(controller.getCurrentRoundTimeOrder());
 				}
 			}
 		});
 		deliveryList.setMaxHeight(Double.MAX_VALUE);
+		
+		buildListeners();
 		addItemAction();
 
 		this.setPadding(new Insets(10, 5, 10, 5));
@@ -73,9 +82,18 @@ public class DeliveriesListView extends VBox {
 
 		this.getChildren().add(new Label("Liste des différents itinéraire possibles :"));
 		this.getChildren().add(roundCombo);
+		this.getChildren().add(warningLabel);
 		this.getChildren().add(new Label("Liste des points de livraison : "));
 		this.getChildren().add(deliveryList);
-
+		
+	}
+	
+	public void setDeliveryPointId(List<Integer> listCheckpointId){
+		this.idDeliveryPoints = listCheckpointId;
+	}
+	
+	public void showWarningLabel(){
+		warningLabel.setVisible(true);
 	}
 	
 	public void setObservableListInDeliveryList(ObservableList<String> deliveriesTexts){
@@ -94,6 +112,8 @@ public class DeliveriesListView extends VBox {
 	 */
 	public void loadDeliveriesList() {
 
+		warningLabel.setVisible(false);
+		
 		deliveryList.getItems().clear();
 		idDeliveryPoints.clear();
 		roundCombo.getItems().clear();
@@ -102,6 +122,7 @@ public class DeliveriesListView extends VBox {
 			roundCombo.getItems().add("Possibilité de livraison n : " + (index + 1));
 		}
 		roundCombo.getSelectionModel().selectFirst();
+		addItemAction();
 	}
 
 	/*
@@ -118,31 +139,20 @@ public class DeliveriesListView extends VBox {
 	 * delivery
 	 */
 	private void addItemAction() {
+		
+		deliveryList.getSelectionModel().selectedItemProperty().removeListener(exceptionChangeListener);
+		deliveryList.getSelectionModel().selectedItemProperty().addListener(changeListener);
+	}
+	
+	/**
+	 * Add the interaction between the map representation and the list of
+	 * delivery
+	 */
+	public void replaceItemAction() {
 
-		deliveryList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (newValue != null) {
-					int idCheckpoint = idDeliveryPoints.get(deliveryList.getItems().indexOf(newValue));
-
-					if (idCheckpoint != -1) {
-						if (deliveryList.getItems().indexOf(newValue) == deliveryList.getItems().size() - 1) {
-							// Allume toute la map, gère le retour à l'entrepot.
-							controller.getWindow().getMapDisplayer().lightUpPath(-1);
-						} else {
-							controller.getWindow().getMapDisplayer().lightUpPath(idCheckpoint);
-						}
-
-					} else {
-						controller.getWindow().getMapDisplayer().lightDownPath();
-					}
-				}
-				else {
-					controller.getWindow().getMapDisplayer().lightDownPath();
-				}
-			}
-		});
+		deliveryList.getSelectionModel().selectedItemProperty().removeListener(changeListener);
+		deliveryList.getSelectionModel().selectedItemProperty().addListener(exceptionChangeListener);
+		
 	}
 	
 	/**
@@ -235,5 +245,46 @@ public class DeliveriesListView extends VBox {
 						- TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
 				TimeUnit.MILLISECONDS.toSeconds(millis)
 						- TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+	}
+	
+	private void buildListeners(){
+		changeListener = new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (newValue != null) {
+					int idCheckpoint = idDeliveryPoints.get(deliveryList.getItems().indexOf(newValue));
+
+					if (idCheckpoint != -1) {
+						if (deliveryList.getItems().indexOf(newValue) == deliveryList.getItems().size() - 1) {
+							// Allume toute la map, gère le retour à l'entrepot.
+							controller.getWindow().getMapDisplayer().lightUpPath(-1);
+						} else {
+							controller.getWindow().getMapDisplayer().lightUpPath(idCheckpoint);
+						}
+
+					} else {
+						controller.getWindow().getMapDisplayer().lightDownPath();
+					}
+				}
+				else {
+					controller.getWindow().getMapDisplayer().lightDownPath();
+				}
+			}
+		};
+		
+		exceptionChangeListener = new ChangeListener<String>() {
+
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				if (newValue != null) {
+					int idCheckpoint = idDeliveryPoints.get(deliveryList.getItems().indexOf(newValue));
+					
+					ModifyDateDeliveryDialog mddd = new ModifyDateDeliveryDialog(controller);
+					mddd.selectCheckpoint(controller.getCheckpoint(idCheckpoint));
+					mddd.show();
+				}
+			}
+		};
 	}
 }

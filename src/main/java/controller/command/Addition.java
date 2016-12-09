@@ -7,106 +7,115 @@ import java.util.List;
 
 import controller.pathfinder.Dijkstra;
 
+/**
+ * @author Hugo Humbert
+ */
 public class Addition extends Command {
+
+    /**
+     * Map used to recalculate paths
+     */
     private Map map;
+
+    /**
+     * Checkpoint to add
+     */
     private Checkpoint checkpoint;
 
+    /**
+     * Build an Addition
+     *
+     * @param round      Round to modify
+     * @param map        Map used to recalculate paths
+     * @param checkpoint Checkpoint to add
+     */
     public Addition(Round round, Map map, Checkpoint checkpoint) {
         super(round);
         this.map = map;
         this.checkpoint = checkpoint;
     }
 
+    /**
+     * Add the Checkpoint in the round if possible.
+     *
+     * @return The round after the addition
+     */
     public Round doCommand() {
-        // Si la plage horaire a été retirée, aucun changement n'est nécessaire
+        int k = 0;
+        int size = this.modifiedRound.getRoundTimeOrders().size();
 
-        boolean noTimeRange = this.checkpoint.getTimeRangeStart() == null && this.checkpoint.getTimeRangeEnd() == null;
+        
+        while (k < size) {
 
-        for (List<DeliveryTime> deliveryTimes : this.modifiedRound.getRoundTimeOrders()) {
+            List<DeliveryTime> deliveryTimes = this.modifiedRound.getRoundTimeOrders().get(k);
 
-            int startIndex = -1, endIndex = -1;
+            // Indices des DeliveryTiems les plus proches du début et de la fin de la nouvelle plage (mais non compris)
+            // Permet de définir un intervalle sur lequel placer la livraison si la nouvelle plage demande un changement
+            int startIndex = 0, endIndex = deliveryTimes.size() - 1;
 
-            DeliveryTime deliveryTime = null;
-            if (noTimeRange) {
-                startIndex = 0;
-                endIndex = deliveryTimes.size() - 1;
-            } else {
-                for (int i = 0; i < deliveryTimes.size(); i++) {
+            for (int i = 0; i < deliveryTimes.size(); i++) {
+                DeliveryTime currentDeliveryTime = deliveryTimes.get(i);
 
-                    deliveryTime = deliveryTimes.get(i);
-
-                    if (deliveryTime.getDepartureTime() != null && deliveryTime.getDepartureTime().before(this.checkpoint.getTimeRangeStart())) {
-
-                        startIndex = i;
-
-                    } else if (deliveryTime.getArrivalTime() != null && deliveryTime.getArrivalTime().after(this.checkpoint.getTimeRangeEnd())) {
-
-                        endIndex = endIndex == -1 ? i : endIndex;
-
-                    }
-
+                if (currentDeliveryTime.getDepartureTime() != null && currentDeliveryTime.getDepartureTime().before(this.checkpoint.getTimeRangeStart())) {
+                    startIndex = i;
+                } else if (currentDeliveryTime.getArrivalTime() != null && currentDeliveryTime.getArrivalTime().after(this.checkpoint.getTimeRangeEnd())) {
+                    endIndex = endIndex > i ? i : endIndex;
                 }
             }
 
-            // On cherche s'il est possible d'insérer la livraison quelque part
+            boolean success = false;
 
             for (int j = startIndex; j < endIndex; j++) {
 
-
                 DeliveryTime previousDelivery = deliveryTimes.get(j);
-
                 DeliveryTime nextDelivery = deliveryTimes.get(j + 1);
 
-
                 Dijkstra dj = new Dijkstra(this.map);
-
                 dj.execute(previousDelivery.getCheckpoint().getId());
-
                 long timeTo = dj.getTargetPathCost(this.checkpoint.getId());
-
                 dj.execute(this.checkpoint.getId());
-
                 long timeFrom = dj.getTargetPathCost(nextDelivery.getCheckpoint().getId());
 
-
                 Date arrivalTime = new Date(previousDelivery.getDepartureTime().getTime() + timeTo);
-
+                // If not possible, try another position
                 if (arrivalTime.after(this.checkpoint.getTimeRangeEnd())) {
-
                     continue;
                 }
 
                 long waitingTime = arrivalTime.before(this.checkpoint.getTimeRangeStart()) ? (this.checkpoint.getTimeRangeStart().getTime() - arrivalTime.getTime()) : 0;
-
-                Date departureTime = new Date(arrivalTime.getTime() + waitingTime + this.checkpoint.getDuration());
-
-                // Calcul timeFrom
-
+                Date departureTime = new Date(arrivalTime.getTime() + waitingTime + this.checkpoint.getDuration() * 1000);
                 Date nextPointArrivalTime = new Date(departureTime.getTime() + timeFrom);
-
+                // If not possible, try another position
                 if (nextPointArrivalTime.after(new Date(nextDelivery.getArrivalTime().getTime() + nextDelivery.getWaitingTime()))) {
-
                     continue;
                 }
 
-                // Attribution des nouvelles valeurs
-
-                // Temps d'attente = ancien temps - différence entre la nouvelle heure d'arrivée et l'ancienne
-
-                DeliveryTime newDeliveryTime = new DeliveryTime(this.checkpoint, arrivalTime, departureTime, waitingTime);
+                success = true;
+                // At this point, we have found a suitable position for the delivery
 
                 nextDelivery.setWaitingTime(nextDelivery.getWaitingTime() - (nextPointArrivalTime.getTime() - nextDelivery.getArrivalTime().getTime()));
-
                 nextDelivery.setArrivalTime(nextPointArrivalTime);
 
-                deliveryTimes.add(j + 1, newDeliveryTime);
+                DeliveryTime deliveryTime = new DeliveryTime(this.checkpoint, arrivalTime, departureTime, waitingTime);
+
+                this.modifiedRound.getRequest().addCheckpoint(this.checkpoint);
+                deliveryTimes.add(j + 1, deliveryTime);
 
                 break;
-
             }
 
+            if (success) {
+                k++;
+            } else {
+                this.modifiedRound.getRoundTimeOrders().remove(k);
+                size--;
+            }
         }
 
+        this.modifiedRound.buildIndex();
+        this.modifiedRound.computePaths(map);
+        this.modifiedRound.rebuildRoute(map);
         return this.modifiedRound;
+
     }
 }
