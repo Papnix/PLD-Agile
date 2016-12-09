@@ -1,6 +1,7 @@
 package controller.command;
 
 import model.*;
+import view.ErrorDisplayer;
 
 import java.util.Date;
 import java.util.List;
@@ -72,8 +73,16 @@ public class Addition extends Command {
 
                 Dijkstra dj = new Dijkstra(this.map);
                 dj.execute(previousDelivery.getCheckpoint().getId());
-                long timeTo = dj.getTargetPathCost(this.checkpoint.getId());
-                dj.execute(this.checkpoint.getId());
+                long timeTo;
+                try { 
+                	timeTo = dj.getTargetPathCost(this.checkpoint.getId());
+                }
+                catch (Exception e )
+                {
+                	ErrorDisplayer.displayWarningMessageBox("Checkpoint non valide");
+                	return null;
+                }
+                 dj.execute(this.checkpoint.getId());
                 long timeFrom = dj.getTargetPathCost(nextDelivery.getCheckpoint().getId());
 
                 Date arrivalTime = new Date(previousDelivery.getDepartureTime().getTime() + timeTo);

@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import controller.Controller;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -26,8 +24,10 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 
 	public AdditionDeliveryDialog(Controller controller) {
 		super(controller);
+
 		setHeaderText("Vous etes sur le point d'ajouter une livraison dans la tournee courante\n"
 				+ "Indiquez les information de la nouvelle livraison.");
+
 
 		idWaypointField = new TextField();
 		startDateField = new TextField();
@@ -36,11 +36,13 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 
 		grid.add(new Label("Id du lieu : "), 2, 1);
 		grid.add(idWaypointField, 2, 2);
+
 		grid.add(new Label("Heure d'ouverture (HH:mm) : "), 2, 3);
 		grid.add(startDateField, 2, 4);
 		grid.add(new Label("Heure de fermeture (HH:mm) : "), 2, 5);
 		grid.add(endDateField, 2, 6);
 		grid.add(new Label("Duree de la livraison (en secondes) : "), 2, 7);
+
 		grid.add(durationField, 2, 8);
 
 		deliveryCombo.setVisible(false);
@@ -66,6 +68,7 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 		        	Date end;
 					try {
 						int id = Integer.parseInt(idWaypointField.getText());
+
 						int duration = Integer.parseInt(idWaypointField.getText());
 
 						start = startDateField.getText().equals("") ? null : timingFormat.parse(startDateField.getText());
@@ -75,6 +78,9 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 
 					} catch (ParseException e) {
 						ErrorDisplayer.displayWarningMessageBox("Mauvais format de date");
+					}
+					catch (Exception e) {
+						ErrorDisplayer.displayWarningMessageBox("Mauvais format des infos");
 					}
 		        }
 		        return null;
