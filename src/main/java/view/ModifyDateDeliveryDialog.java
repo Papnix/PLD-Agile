@@ -26,14 +26,14 @@ public class ModifyDateDeliveryDialog extends ModificationDialog {
 
 	public ModifyDateDeliveryDialog(Controller controller) {
 		super(controller);
-		setHeaderText("Vous êtes sur le point de modifier une plage horraire d'une livraison de la tournée courante\n" 
-				+ "Sélectionez la livraison à modifier puis indiquez la plage horaire.");
+		setHeaderText("Vous Ãªtes sur le point de modifier une plage horraire d'une livraison de la tournÃ©e courante\n"
+				+ "SÃ©lectionez la livraison Ã  modifier puis indiquez la plage horaire.");
 		
 		startDate = new TextField();
 		endDate = new TextField();
-		grid.add(new Label("Heure d'arrivée : "), 2, 1);
+		grid.add(new Label("Heure d'ouverture (HH:mm:ss) : "), 2, 1);
 		grid.add(startDate, 2, 2);
-		grid.add(new Label("Heure de départ : "), 2, 3);
+		grid.add(new Label("Heure de fermeture (HH:mm:ss) : "), 2, 3);
 		grid.add(endDate, 2, 4);
 		
 		buttonRemoveConstraint = new ButtonType("Supprimer la contrainte temporelle", ButtonData.APPLY);
@@ -61,7 +61,7 @@ public class ModifyDateDeliveryDialog extends ModificationDialog {
 
 			        if(newValue.getTimeRangeStart() != null 
 						&& newValue.getTimeRangeEnd() != null) {
-			        	Date start = new Date (newValue.getTimeRangeEnd().getTime());
+			        	Date start = new Date (newValue.getTimeRangeStart().getTime());
 			        	Date end = new Date (newValue.getTimeRangeEnd().getTime());
 			        	startDate.setText(ModifyDateDeliveryDialog.this.timingFormat.format(start));
 						endDate.setText(ModifyDateDeliveryDialog.this.timingFormat.format(end));
