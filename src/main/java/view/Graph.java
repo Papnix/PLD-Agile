@@ -28,6 +28,12 @@ public class Graph extends Pane {
 
 	public final static Color BORDERNORMALCOLOR = new Color(0.1, 0.1, 0.1, 1);
 	public final static Color BORDERLIGHTEDCOLOR = Color.BLANCHEDALMOND;
+	
+	/**
+	 * DeliveriesListView that is displayed. It is needed so that when the user clicks on a graph node,
+	 * the corresponding item from the ListView is selected.
+	 */
+	private static DeliveriesListView listView;
 
 	private Controller controller;
 	private HashMap<Integer, GraphNode> nodes;
@@ -53,6 +59,16 @@ public class Graph extends Pane {
 		lightedWaypoints = new LinkedList<>();
 
 	}
+	
+	/**
+	 * Sets the DeliveriesListView that is displayed for all the graph nodes.
+	 * It is needed so that when the user clicks on a graph node, the corresponding item from the ListView is selected.
+	 * @param listView
+	 * 		DeliveriesListView that is displayed
+	 */
+	public static void setDeliveriesListView(DeliveriesListView listView) {
+		Graph.listView = listView;
+	}
 
 	/**
 	 * Set map and build the graph with new waypoints and sections references.
@@ -71,15 +87,10 @@ public class Graph extends Pane {
 
 	/**
 	 * Color path and waypoint of a round on the graph.
-	 * 
-	 * @param round
-	 *            The path to display
 	 */
 	public void updateRound() {
-		clearDisplay();
 		lightDownPath();
-		clearDisplayWaypoint();
-		clearDisplayRoads();
+		clearDisplay();
 
 		displayRoundWaypoint();
 		displayRoundRoads();
@@ -140,10 +151,12 @@ public class Graph extends Pane {
 			public void handle(MouseEvent t) {
 				if (node.getState() == GraphNode.State.DELIVERYPOINT 
 						|| node.getState() == GraphNode.State.WAREHOUSE) {
-
-					lightUpPath(waypoint.getId());
+					int waypointId = waypoint.getId();
+					lightUpPath(waypointId);
+					listView.selectItem(waypointId);
 				} else {
 					lightDownPath();
+					listView.clearSelectedItems();
 				}
 
 			}
@@ -294,6 +307,7 @@ public class Graph extends Pane {
 		lightDownWaypoint();
 		for (Integer id : roundWaypoints) {
 			nodes.get(id).setState(State.NORMAL);
+			nodes.get(id).clearInfoBox();
 		}
 		roundWaypoints.clear();
 	}

@@ -63,7 +63,7 @@ public class MainWindowController implements Initializable {
 		waitingDialog = new Alert(AlertType.INFORMATION);
 		waitingDialog.setTitle("Calcul en cours");
 		waitingDialog.setHeaderText("Patientez...");
-		waitingDialog.setContentText("La tournï¿½e est en cours de calcul.");
+		waitingDialog.setContentText("La tournée est en cours de calcul.");
 		
 		// On cache tous les boutons pour empï¿½cher l'utilisateur de fermer la fenï¿½tre
 		for (ButtonType bt : waitingDialog.getDialogPane().getButtonTypes()) {
@@ -135,7 +135,6 @@ public class MainWindowController implements Initializable {
 
 	public void updateAfterLoadNewRound() {
 
-		
 		// Crï¿½e la ListView ï¿½ droite si c'est le premier chargement de demande de livraisons
 		if (firstDeliveryLoad) {
 			deliveriesListView.setVisible(true);
@@ -177,11 +176,6 @@ public class MainWindowController implements Initializable {
 		// Demande ï¿½ l'utilisateur de sï¿½lectionner un fichier ï¿½ charger
 		File deliveryRequestFile = getFileFromExplorer();
 		if(deliveryRequestFile != null) {
-			
-			if (lastFolderExplored != null) {
-				lastFolderExplored = deliveryRequestFile.getParent();
-			}
-
 			controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
 		}
 	}
@@ -218,7 +212,10 @@ public class MainWindowController implements Initializable {
 		}
 
 		File file = explorer.showOpenDialog(null);
-
+		
+		if (file != null) {
+			lastFolderExplored = file.getParent();
+		}
 		return file;
 	}
 

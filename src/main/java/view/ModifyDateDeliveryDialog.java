@@ -26,14 +26,14 @@ public class ModifyDateDeliveryDialog extends ModificationDialog {
 
 	public ModifyDateDeliveryDialog(Controller controller) {
 		super(controller);
-		setHeaderText("Vous êtes sur le point de modifier une plage horraire d'une livraison de la tournée courante\n"
-				+ "Sélectionez la livraison à modifier puis indiquez la plage horaire.");
+		setHeaderText("Vous etes sur le point de modifier une plage horraire d'une livraison de la tournee courante\n"
+				+ "Selectionnez la livraison a modifier puis indiquez la plage horaire.");
 		
 		startDate = new TextField();
 		endDate = new TextField();
-		grid.add(new Label("Heure d'ouverture (HH:mm:ss) : "), 2, 1);
+		grid.add(new Label("Heure d'ouverture (HH:mm) : "), 2, 1);
 		grid.add(startDate, 2, 2);
-		grid.add(new Label("Heure de fermeture (HH:mm:ss) : "), 2, 3);
+		grid.add(new Label("Heure de fermeture (HH:mm) : "), 2, 3);
 		grid.add(endDate, 2, 4);
 		
 		buttonRemoveConstraint = new ButtonType("Supprimer la contrainte temporelle", ButtonData.APPLY);
@@ -83,11 +83,9 @@ public class ModifyDateDeliveryDialog extends ModificationDialog {
 		        	Date start;
 		        	Date end;
 					try {
-						start = timingFormat.parse(startDate.getText());
-						end = timingFormat.parse(endDate.getText());
-						
-						System.out.println(start);
-						System.out.println(end);
+						start = startDate.getText().equals("") ? null : timingFormat.parse(startDate.getText());
+						end = endDate.getText().equals("") ? null : timingFormat.parse(endDate.getText());
+
 			        	controller.changeCheckpointTime(deliveryCombo.getValue(), start, end);
 						
 					} catch (ParseException e) {

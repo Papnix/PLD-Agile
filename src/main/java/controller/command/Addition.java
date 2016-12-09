@@ -56,9 +56,9 @@ public class Addition extends Command {
             for (int i = 0; i < deliveryTimes.size(); i++) {
                 DeliveryTime currentDeliveryTime = deliveryTimes.get(i);
 
-                if (currentDeliveryTime.getDepartureTime() != null && currentDeliveryTime.getDepartureTime().before(this.checkpoint.getTimeRangeStart())) {
+                if (currentDeliveryTime.getDepartureTime() != null && this.checkpoint.getTimeRangeStart() != null && currentDeliveryTime.getDepartureTime().before(this.checkpoint.getTimeRangeStart())) {
                     startIndex = i;
-                } else if (currentDeliveryTime.getArrivalTime() != null && currentDeliveryTime.getArrivalTime().after(this.checkpoint.getTimeRangeEnd())) {
+                } else if (currentDeliveryTime.getArrivalTime() != null  && this.checkpoint.getTimeRangeEnd() != null && currentDeliveryTime.getArrivalTime().after(this.checkpoint.getTimeRangeEnd())) {
                     endIndex = endIndex > i ? i : endIndex;
                 }
             }
@@ -78,11 +78,12 @@ public class Addition extends Command {
 
                 Date arrivalTime = new Date(previousDelivery.getDepartureTime().getTime() + timeTo);
                 // If not possible, try another position
-                if (arrivalTime.after(this.checkpoint.getTimeRangeEnd())) {
+                if (this.checkpoint.getTimeRangeEnd() != null && arrivalTime.after(this.checkpoint.getTimeRangeEnd())) {
                     continue;
                 }
 
-                long waitingTime = arrivalTime.before(this.checkpoint.getTimeRangeStart()) ? (this.checkpoint.getTimeRangeStart().getTime() - arrivalTime.getTime()) : 0;
+                long waitingTime = this.checkpoint.getTimeRangeStart() != null && arrivalTime.before(this.checkpoint.getTimeRangeStart()) ?
+                        (this.checkpoint.getTimeRangeStart().getTime() - arrivalTime.getTime()) : 0;
                 Date departureTime = new Date(arrivalTime.getTime() + waitingTime + this.checkpoint.getDuration() * 1000);
                 Date nextPointArrivalTime = new Date(departureTime.getTime() + timeFrom);
                 // If not possible, try another position
