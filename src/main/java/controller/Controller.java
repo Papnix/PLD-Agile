@@ -97,6 +97,7 @@ public class Controller {
 					currentRound.computePaths(currentMap);
 					currentRound.computeRound(currentMap);
 				} catch (NullPointerException e) {
+					window.closeWaitingDialog();
 					ErrorDisplayer.displayWarningMessageBox(
 							"La demande de livraison ne peut pas �tre trait�e, elle ne semble pas correspondre � la carte actuelle.");
 					return;
