@@ -24,11 +24,12 @@ public class Roadmap {
 	 * @param map
 	 * 		City's map
 	 */
-	public static void writeRoadmap(Round round, Map map) {
+	public static void writeRoadmap(Controller controller) {
 		try {
 			PrintWriter writer = new PrintWriter("roadmap.txt", "UTF-8");
-			List<DeliveryTime> deliveriesList = round.getRoundTimeOrder(0); // Liste des livraisons dans l'ordre chronologique
-			
+			List<DeliveryTime> deliveriesList = controller.getCurrentRoundTimeOrder(); // Liste des livraisons dans l'ordre chronologique
+			Round round = controller.getCurrentRound();
+			Map map = controller.getCurrentMap();
 			Roadmap.writeRouteToDelivery(deliveriesList.get(0), deliveriesList.get(1), null, round, map, writer);
 			for (int i = 1; i < deliveriesList.size() - 1; i++) {
 				Roadmap.writeRouteToDelivery(deliveriesList.get(i), deliveriesList.get(i+1),

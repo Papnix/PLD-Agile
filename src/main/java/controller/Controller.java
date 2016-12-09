@@ -116,6 +116,7 @@ public class Controller {
 	
 	public void setCurrentTimeOrder(int value) {
 		currentTimeOrder = value;
+		handleSucessfulLoadDelivery();
 	}
 
 	public void deleteCheckpoint(Checkpoint checkpoint) {
@@ -186,7 +187,7 @@ public class Controller {
     
 	private void handleSucessfulLoadDelivery() {
 		// Ecriture de la feuille de route
-		Roadmap.writeRoadmap(currentRound, currentMap);
+		Roadmap.writeRoadmap(this);
 	}
 
 	public List<DeliveryTime> getCurrentRoundTimeOrder() {
