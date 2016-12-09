@@ -126,8 +126,8 @@ public class Controller {
 			window.updateAfterLoadNewRound();
 		}
 		else {
-			System.out.println("Echec");
-		}
+    		ErrorDisplayer.displayWarningMessageBox("Modification impossible, erreur survenue");
+    	}
     }
 
     public void addCheckpoint(Checkpoint checkpoint) {
@@ -135,7 +135,11 @@ public class Controller {
     	if( round != null) {
 			currentRound = round;
 			window.updateAfterLoadNewRound();
+			handleSucessfulLoadDelivery();
 		}
+    	else {
+    		ErrorDisplayer.displayWarningMessageBox("Modification impossible, conflit avec les livraisons en cours");
+    	}
     }
 
     public void changeCheckpointTime(Checkpoint checkpoint, Date start, Date end) {
@@ -143,7 +147,11 @@ public class Controller {
     	if( round != null) {
 			currentRound = round;
 			window.updateAfterLoadNewRound();
+			handleSucessfulLoadDelivery();
 		}
+    	else {
+    		ErrorDisplayer.displayWarningMessageBox("Modification impossible, conflit avec les livraisons en cours");
+    	}
     }
 
     public void undoLastCommand() {
@@ -151,7 +159,11 @@ public class Controller {
     	if( round != null) {
 			currentRound = round;
 			window.updateAfterLoadNewRound();
+			handleSucessfulLoadDelivery();
 		}
+    	else {
+    		ErrorDisplayer.displayWarningMessageBox("Rien à annuler");
+    	}
     }
 
     public void redoLastCommand() {
@@ -159,7 +171,11 @@ public class Controller {
     	if( round != null) {
 			currentRound = round;
 			window.updateAfterLoadNewRound();
+			handleSucessfulLoadDelivery();
 		}
+    	else {
+    		ErrorDisplayer.displayWarningMessageBox("Rien à restaurer");
+    	}
     }
 
 	// GETTERS and SETTERS

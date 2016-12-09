@@ -79,6 +79,9 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 					} catch (ParseException e) {
 						ErrorDisplayer.displayWarningMessageBox("Mauvais format de date");
 					}
+					catch (Exception e) {
+						ErrorDisplayer.displayWarningMessageBox("Mauvais format des infos");
+					}
 		        }
 		        return null;
 		    }
