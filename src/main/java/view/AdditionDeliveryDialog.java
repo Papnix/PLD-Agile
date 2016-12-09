@@ -22,12 +22,12 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 	private TextField startDateField;
 	private TextField endDateField;
 	private TextField durationField;
-	private SimpleDateFormat timingFormat = new SimpleDateFormat("h a", Locale.FRANCE);
+	private SimpleDateFormat timingFormat = new SimpleDateFormat("HH:mm:ss", Locale.FRANCE);
 
 	public AdditionDeliveryDialog(Controller controller) {
 		super(controller);
-		setHeaderText("Vous êtes sur le point de modifier une plage horraire d'une livraison à la tournée courante\n" 
-				+ "Sélectionez la livraison à modifier puis indiquez la plage horaire.");
+		setHeaderText("Vous ï¿½tes sur le point de modifier une plage horraire d'une livraison ï¿½ la tournï¿½e courante\n" 
+				+ "Sï¿½lectionez la livraison ï¿½ modifier puis indiquez la plage horaire.");
 		
 		idWaypointField = new TextField();
 		startDateField = new TextField();
@@ -36,11 +36,11 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 		
 		grid.add(new Label("Id du lieu : "), 2, 1);
 		grid.add(idWaypointField, 2, 2);
-		grid.add(new Label("Date d'arrivé : "), 2, 3);
+		grid.add(new Label("Date d'arrivï¿½ : "), 2, 3);
 		grid.add(startDateField, 2, 4);
-		grid.add(new Label("Date de départ : "), 2, 5);
+		grid.add(new Label("Date de dï¿½part : "), 2, 5);
 		grid.add(endDateField, 2, 6);
-		grid.add(new Label("Durée de la livraison : "), 2, 7);
+		grid.add(new Label("Durï¿½e de la livraison : "), 2, 7);
 		grid.add(durationField, 2, 8);
 		
 		deliveryCombo.setVisible(false);
