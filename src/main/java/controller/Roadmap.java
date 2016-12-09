@@ -2,11 +2,8 @@ package controller;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-<<<<<<< HEAD
 import java.io.UnsupportedEncodingException;
-=======
 import java.text.SimpleDateFormat;
->>>>>>> dev
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,31 +27,11 @@ public class Roadmap {
 	 * @throws UnsupportedEncodingException 
 	 * @throws FileNotFoundException 
 	 */
-<<<<<<< HEAD
-	public static void writeRoadmap(Round round, Map map){
-			PrintWriter writer;
-			try {
-				writer = new PrintWriter("roadmap.txt", "UTF-8");
-				List<DeliveryTime> deliveriesList = round.getRoundTimeOrder(0); // Liste des livraisons dans l'ordre chronologique
-				
-				Roadmap.writeRouteToDelivery(deliveriesList.get(0).getCheckpoint(), deliveriesList.get(1).getCheckpoint(),
-											 null, round, map, writer);
-				for (int i = 1; i < deliveriesList.size() - 1; i++) {
-					Roadmap.writeRouteToDelivery(deliveriesList.get(i).getCheckpoint(), deliveriesList.get(i+1).getCheckpoint(),
-							deliveriesList.get(i-1).getCheckpoint(), round, map, writer);
-				}
-				
-				writer.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-=======
+
 	public static void writeRoadmap(Controller controller) {
+		PrintWriter writer;
 		try {
-			PrintWriter writer = new PrintWriter("roadmap.txt", "UTF-8");
+			writer = new PrintWriter("roadmap.txt", "UTF-8");
 			List<DeliveryTime> deliveriesList = controller.getCurrentRoundTimeOrder(); // Liste des livraisons dans l'ordre chronologique
 			Round round = controller.getCurrentRound();
 			Map map = controller.getCurrentMap();
@@ -62,9 +39,14 @@ public class Roadmap {
 			for (int i = 1; i < deliveriesList.size() - 1; i++) {
 				Roadmap.writeRouteToDelivery(deliveriesList.get(i), deliveriesList.get(i+1),
 						deliveriesList.get(i-1), round, map, writer);
->>>>>>> dev
 			}
-			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

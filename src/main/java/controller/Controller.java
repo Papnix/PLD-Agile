@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -16,6 +17,10 @@ import org.xml.sax.SAXException;
 
 import controller.xml.XMLDeserializer;
 import controller.xml.XMLException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import model.DeliveryRequest;
 import model.Map;
 import model.Round;
@@ -165,7 +170,28 @@ public class Controller {
 			handleSucessfulLoadDelivery();
 		}
     	else {
-    		ErrorDisplayer.displayWarningMessageBox("Modification impossible, conflit avec les livraisons en cours");
+    		Alert alert = new Alert(AlertType.CONFIRMATION);
+    				
+			alert.setTitle("Calcul d'une nouvelle tournée");
+    		alert.setHeaderText("Modification impossible, conflit avec les livraisons en cours");
+    		alert.setContentText("Voulez-vous recalculer une tournée ?");
+
+    		ButtonType buttonTypeOk = new ButtonType("Ok");
+    		ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+
+    		alert.getButtonTypes().setAll(buttonTypeOk, buttonTypeCancel);
+
+    		Optional<ButtonType> result = alert.showAndWait();
+    		if (result.get() == buttonTypeOk){
+    		    try {
+					currentRound.computePaths(currentMap);
+					currentRound.computeRound(currentMap);
+					handleSucessfulLoadDelivery();
+				} catch (Exception e) {
+					
+				}
+    		};
+    		
     	}
     }
 
