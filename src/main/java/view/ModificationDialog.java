@@ -46,8 +46,8 @@ public abstract class ModificationDialog extends Dialog<Object>{
 		getDialogPane().getButtonTypes().add(buttonCancel);
 		getDialogPane().getButtonTypes().add(buttonOk);
 		
-		Node loginButton = getDialogPane().lookupButton(buttonOk);
-		loginButton.setDisable(true);
+		Node buttonMod = getDialogPane().lookupButton(buttonOk);
+		buttonMod.setDisable(true);
 	}
 
 	private void loadCombo(Controller controller) {

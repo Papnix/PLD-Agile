@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.util.Callback;
 import model.Checkpoint;
 
@@ -19,19 +20,27 @@ public class ModifyDateDeliveryDialog extends ModificationDialog {
 	
 	private TextField startDate;
 	private TextField endDate;
-	private SimpleDateFormat timingFormat = new SimpleDateFormat("HH:mm:ss", Locale.FRANCE);
+	private SimpleDateFormat timingFormat = new SimpleDateFormat("HH:mm", Locale.FRANCE);
+	
+	protected ButtonType buttonRemoveConstraint;
 
 	public ModifyDateDeliveryDialog(Controller controller) {
 		super(controller);
-		setHeaderText("Vous ï¿½tes sur le point de modifier une plage horraire d'une livraison ï¿½ la tournï¿½e courante\n" 
-				+ "Sï¿½lectionez la livraison ï¿½ modifier puis indiquez la plage horaire.");
+		setHeaderText("Vous êtes sur le point de modifier une plage horraire d'une livraison de la tournée courante\n" 
+				+ "Sélectionez la livraison à modifier puis indiquez la plage horaire.");
 		
 		startDate = new TextField();
 		endDate = new TextField();
-		grid.add(new Label("Date d'arrivï¿½ : "), 2, 1);
+		grid.add(new Label("Heure d'arrivée : "), 2, 1);
 		grid.add(startDate, 2, 2);
-		grid.add(new Label("Date de dï¿½part : "), 2, 3);
+		grid.add(new Label("Heure de départ : "), 2, 3);
 		grid.add(endDate, 2, 4);
+		
+		buttonRemoveConstraint = new ButtonType("Supprimer la contrainte temporelle", ButtonData.APPLY);
+		getDialogPane().getButtonTypes().add(buttonRemoveConstraint);
+		
+		Node buttonRem = getDialogPane().lookupButton(buttonRemoveConstraint);
+		buttonRem.setDisable(true);
 		
 		onComboValueChanged();
 		defineOnCloseAction(controller);
@@ -43,15 +52,22 @@ public class ModifyDateDeliveryDialog extends ModificationDialog {
 		deliveryCombo.valueProperty().addListener(new ChangeListener<Checkpoint>() {
 			@Override
 			public void changed(ObservableValue<? extends Checkpoint> obs, Checkpoint oldValue, Checkpoint newValue) {
-				Node loginButton = getDialogPane().lookupButton(buttonOk);
-				loginButton.setDisable(newValue == null);
+				Node buttonMod = getDialogPane().lookupButton(buttonOk);
+				buttonMod.setDisable(newValue == null);
+				Node buttonRem = getDialogPane().lookupButton(buttonRemoveConstraint);
+				buttonRem.setDisable(newValue == null);
 				
-				if(newValue != null) {
-			        
-					Date start = new Date (newValue.getTimeRangeStart().getTime());
-					startDate.setText(ModifyDateDeliveryDialog.this.timingFormat.format(start));
-					Date end = new Date (newValue.getTimeRangeEnd().getTime());
-					endDate.setText(ModifyDateDeliveryDialog.this.timingFormat.format(end));
+				if(newValue != null ) {
+
+			        if(newValue.getTimeRangeStart() != null 
+						&& newValue.getTimeRangeEnd() != null) {
+			        	Date start = new Date (newValue.getTimeRangeEnd().getTime());
+			        	Date end = new Date (newValue.getTimeRangeEnd().getTime());
+			        	startDate.setText(ModifyDateDeliveryDialog.this.timingFormat.format(start));
+						endDate.setText(ModifyDateDeliveryDialog.this.timingFormat.format(end));
+			        }
+										
+					
 				}
 			}
 		});
@@ -69,11 +85,17 @@ public class ModifyDateDeliveryDialog extends ModificationDialog {
 					try {
 						start = timingFormat.parse(startDate.getText());
 						end = timingFormat.parse(endDate.getText());
+						
+						System.out.println(start);
+						System.out.println(end);
 			        	controller.changeCheckpointTime(deliveryCombo.getValue(), start, end);
 						
 					} catch (ParseException e) {
 						ErrorDisplayer.displayWarningMessageBox("Mauvais format de date");
 					}
+		        }
+		        else if (b == buttonRemoveConstraint) {
+		        	controller.changeCheckpointTime(deliveryCombo.getValue(), null, null);
 		        }
 		        return null;
 		    }
