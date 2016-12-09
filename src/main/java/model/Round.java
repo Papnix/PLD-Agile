@@ -61,7 +61,6 @@ public class Round {
         this.duration = round.duration;
         // Copy arrival times : new deliveryTimes must be created
         this.roundTimeOrder = new ArrayList<>();
-        this.roundTimeOrder.add(0, new ArrayList<>());
         for (int k = 0; k < round.roundTimeOrder.size(); k++) {
             this.roundTimeOrder.add(k, new ArrayList<>());
             for (int i = 0; i < round.roundTimeOrder.get(k).size(); i++) {
@@ -84,6 +83,7 @@ public class Round {
         }
 
         buildIndex();
+        this.paths = round.paths;
         for (int k = 0; k < this.costTab.length; k++) {
             for (int l = 0; l < this.costTab.length; l++) {
                 this.costTab[k][l] = round.costTab[k][l];
@@ -215,6 +215,14 @@ public class Round {
         }
     }
 
+    public void rebuildRoute(Map map) {
+        int numSolution = roundTimeOrder.size();
+        route.clear();
+        for (int i = 0; i < numSolution; i++) {
+            route.add(buildRoute(map, roundTimeOrder.get(i)));
+        }
+    }
+
     /**
      * @param idOrigin      the id of the origin
      * @param idDestination the id of the destination
@@ -242,10 +250,11 @@ public class Round {
 
     private List<Section> buildRoute(Map map, List<DeliveryTime> dtList) {
         List<Section> sectionList = new ArrayList<Section>();
+
         for (int i = 0; i < dtList.size() - 1; i++) {
             saveSection(map,
-                    paths.get(dtList.get(i).getCheckpoint().getId()).get(dtList.get(i + 1).getCheckpoint().getId()),
-                    sectionList);
+                        paths.get(dtList.get(i).getCheckpoint().getId()).get(dtList.get(i + 1).getCheckpoint().getId()),
+                        sectionList);
         }
         return sectionList;
     }

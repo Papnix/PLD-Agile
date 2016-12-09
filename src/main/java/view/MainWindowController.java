@@ -18,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
+
 /**
  * MainWindowController : the main window of the application
  */
@@ -43,6 +44,10 @@ public class MainWindowController implements Initializable {
 	@FXML
 	private MenuItem menuModifyDelivery;
 	@FXML
+	private MenuItem menuUndo;
+	@FXML
+	private MenuItem menuRedo;
+	@FXML
 	private Button loadDeliveryButton;
 	@FXML
 	private Button loadMapButton;
@@ -60,7 +65,7 @@ public class MainWindowController implements Initializable {
 		waitingDialog.setHeaderText("Patientez...");
 		waitingDialog.setContentText("La tournée est en cours de calcul.");
 		
-		// On cache tous les boutons pour empêcher l'utilisateur de fermer la fenêtre
+		// On cache tous les boutons pour empï¿½cher l'utilisateur de fermer la fenï¿½tre
 		for (ButtonType bt : waitingDialog.getDialogPane().getButtonTypes()) {
 			Button b = (Button)(waitingDialog.getDialogPane().lookupButton(bt));
 			b.setVisible(false);
@@ -87,6 +92,14 @@ public class MainWindowController implements Initializable {
 		assert deliveryPane != null : "fx:id=\"deliveryPane\" was not injected: check your FXML file 'view.fxml'.";
 		assert mapPane != null : "fx:id=\"mapPane\" was not injected: check your FXML file 'view.fxml'.";
 
+
+		firstDeliveryLoad = true;
+		
+		deliveriesListView = new DeliveriesListView(controller);
+		deliveryPane.getChildren().add(deliveriesListView);
+		deliveriesListView.setVisible(false);
+		
+
 		setupGraphDisplayer();
 	}
 
@@ -107,6 +120,11 @@ public class MainWindowController implements Initializable {
 	public void updateAfterLoadMap() {
 		loadMapButton.setVisible(false);
 		menuLoadDelivery.setDisable(false);
+		menuAddDelivery.setDisable(true);
+		menuRemoveDelivery.setDisable(true);
+		menuModifyDelivery.setDisable(true);
+//		menuUndo.setDisable(true);
+//		menuRedo.setDisable(true);
 		loadDeliveryButton.setDisable(false);
 		loadDeliveryButton.setText("Charger demande de livraisons");
 		clearPreviousRound();
@@ -115,21 +133,27 @@ public class MainWindowController implements Initializable {
 		mapDisplayer.setVisible(true);
 	}
 
-	public void updateAfterLoadDelivery() {
-		
-		// Crée la ListView à droite si c'est le premier chargement de demande de livraisons
+	public void updateAfterLoadNewRound() {
+
+		// Crï¿½e la ListView ï¿½ droite si c'est le premier chargement de demande de livraisons
 		if (firstDeliveryLoad) {
-			deliveriesListView = new DeliveriesListView(deliveryPane, mapDisplayer);
+			deliveriesListView.setVisible(true);
 			firstDeliveryLoad = false;
 		}
 
-		// Met à jour l'interface graphique
-		deliveriesListView.createDeliveriesList(controller.getCurrentRound(), controller.getCurrentMap());
+		// Met ï¿½ jour l'interface graphique
+		deliveriesListView.loadDeliveriesList();
 		loadDeliveryButton.setVisible(false);
-		menuAddDelivery.setVisible(true);
-		menuModifyDelivery.setVisible(true);
-		menuModifyDelivery.setVisible(true);
+		menuAddDelivery.setDisable(false);
+		menuRemoveDelivery.setDisable(false);
+		menuModifyDelivery.setDisable(false);
+//		menuUndo.setDisable(true);
+//		menuRedo.setDisable(true);
 		mapDisplayer.setRound(controller.getCurrentRound());
+	}
+	
+	public Graph getMapDisplayer() {
+		return mapDisplayer;
 	}
 	
 	/**
@@ -137,7 +161,7 @@ public class MainWindowController implements Initializable {
 	 */
 	private void handleLoadMap() {
 		
-		// Demande à l'utilisateur de sélectionner un fichier à charger
+		// Demande ï¿½ l'utilisateur de sï¿½lectionner un fichier ï¿½ charger
 		File mapFile = getFileFromExplorer();
 		if (mapFile != null) {
 			controller.loadMap(mapFile.getAbsolutePath().toString());
@@ -149,7 +173,7 @@ public class MainWindowController implements Initializable {
 	 */
 	private void handleLoadDelivery() {
 		
-		// Demande à l'utilisateur de sélectionner un fichier à charger
+		// Demande ï¿½ l'utilisateur de sï¿½lectionner un fichier ï¿½ charger
 		File deliveryRequestFile = getFileFromExplorer();
 		if(deliveryRequestFile != null) {
 			controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
@@ -161,11 +185,12 @@ public class MainWindowController implements Initializable {
 	 */
 	private void clearPreviousRound() {
 		
-		// On enlève la tournée affichée
+		// On enlï¿½ve la tournï¿½e affichï¿½e
 		controller.clearRound();
 
 		if (firstDeliveryLoad == false) {
 			deliveriesListView.clear();
+			deliveriesListView.setVisible(false);
 			loadDeliveryButton.setVisible(true);
 			firstDeliveryLoad = true;
 		}
@@ -187,11 +212,10 @@ public class MainWindowController implements Initializable {
 		}
 
 		File file = explorer.showOpenDialog(null);
-
+		
 		if (file != null) {
 			lastFolderExplored = file.getParent();
 		}
-
 		return file;
 	}
 
@@ -226,22 +250,39 @@ public class MainWindowController implements Initializable {
 		assert menuAddDelivery != null : "fx:id=\"menuAddDelivery\" was not injected: check your FXML file"
 				+ " 'view.fxml'.";
 		menuAddDelivery.setOnAction((event) -> {
-			System.out.println("not implemented");
+			AdditionDeliveryDialog dialog = new AdditionDeliveryDialog(controller);
+			dialog.show();
 		});
 		menuAddDelivery.setDisable(true);
 		
 		assert menuRemoveDelivery != null : "fx:id=\"menuRemoveDelivery\" was not injected: check your FXML file"
 				+ " 'view.fxml'.";
 		menuRemoveDelivery.setOnAction((event) -> {
-			System.out.println("not implemented");
+			SuppressionDeliveryDialog dialog = new SuppressionDeliveryDialog(controller);
+			dialog.show();
 		});
 		menuRemoveDelivery.setDisable(true);
 		
 		assert menuModifyDelivery != null : "fx:id=\"menuModifyDelivery\" was not injected: check your FXML file"
 				+ " 'view.fxml'.";
 		menuModifyDelivery.setOnAction((event) -> {
-			System.out.println("not implemented");
+			ModifyDateDeliveryDialog dialog = new ModifyDateDeliveryDialog(controller);
+			dialog.show();
 		});
 		menuModifyDelivery.setDisable(true);
+
+		assert menuUndo != null : "fx:id=\"menuUndo\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
+		menuUndo.setOnAction((event) -> {
+			controller.undoLastCommand();
+		});
+		//menuUndo.setDisable(true);
+
+		assert menuRedo != null : "fx:id=\"menuModifyDelivery\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
+		menuRedo.setOnAction((event) -> {
+			controller.redoLastCommand();
+		});
+		//menuRedo.setDisable(true);
 	}
 }

@@ -17,7 +17,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-
+/**
+ * @author Nicolas Sorin
+ */
 public class XMLDeserializer {
 
     // Map constants
@@ -47,7 +49,7 @@ public class XMLDeserializer {
     private static final String DELIVERY_LOCATION_NODE_NAME = "livraison";
 
     /**
-     * Ouvre un fichier xml et cree plan a partir du contenu du fichier
+     * Load a XML file and create the Map from its content.
      *
      * @throws ParserConfigurationException
      * @throws SAXException
@@ -56,7 +58,7 @@ public class XMLDeserializer {
      */
     public static Map loadMap(String path) throws ParserConfigurationException, SAXException, IOException, XMLException {
 
-    	Map map = new Map();
+        Map map = new Map();
         File xml = new File(path);
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = docBuilder.parse(xml);
@@ -67,12 +69,12 @@ public class XMLDeserializer {
         } else {
             throw new XMLException("Document non conforme");
         }
-        
+
         return map;
     }
 
     /**
-     * Ouvre un fichier xml et cree plan a partir du contenu du fichier
+     * Load a XML file and create the DeliveryRequest from its content.
      *
      * @throws ParserConfigurationException
      * @throws SAXException
@@ -80,9 +82,9 @@ public class XMLDeserializer {
      * @throws XMLException
      */
     public static DeliveryRequest loadDeliveryRequest(String path, Map map) throws ParserConfigurationException,
-    		SAXException, IOException, XMLException, ParseException {
-    	
-    	DeliveryRequest request = new DeliveryRequest();
+            SAXException, IOException, XMLException, ParseException {
+
+        DeliveryRequest request = new DeliveryRequest();
         File xml = new File(path);
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document document = docBuilder.parse(xml);
@@ -93,10 +95,18 @@ public class XMLDeserializer {
         } else {
             throw new XMLException("Document non conforme");
         }
-        
+
         return request;
     }
 
+    /**
+     * Parse the DOM and fill a Map with its content.
+     *
+     * @param rootNode Root element containing all the information
+     * @param map      Map to fill
+     * @throws XMLException
+     * @throws NumberFormatException
+     */
     private static void buildMapFromDOMXML(Element rootNode, Map map) throws XMLException, NumberFormatException {
         NodeList waypointNodes = rootNode.getElementsByTagName(MAP_WAYPOINT_NODE_NAME);
         for (int i = 0; i < waypointNodes.getLength(); i++) {
@@ -115,7 +125,7 @@ public class XMLDeserializer {
             Section section = new Section(
                     node.getAttribute(STREET_NAME),
                     Integer.parseInt(node.getAttribute(SPEED_NAME)),
-                    Integer.parseInt(node.getAttribute(LENGTH_NAME)),false,
+                    Integer.parseInt(node.getAttribute(LENGTH_NAME)), false,
                     map.getWaypoint(Integer.parseInt(node.getAttribute(ORIGIN_NAME))),
                     map.getWaypoint(Integer.parseInt(node.getAttribute(DESTINATION_NAME)))
             );
@@ -123,6 +133,16 @@ public class XMLDeserializer {
         }
     }
 
+    /**
+     * Parse the DOM and fill a DeliveryRequest with its content
+     *
+     * @param rootNode Root element containing all the information
+     * @param map      Map containing the Waypoints referenced by the DeliveryRequest
+     * @param request  DeliveryRequest to fill
+     * @throws XMLException
+     * @throws NumberFormatException
+     * @throws ParseException
+     */
     private static void buildDeliveryRequestFromDOMXML(Element rootNode, Map map, DeliveryRequest request) throws XMLException, NumberFormatException, ParseException {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
@@ -134,7 +154,7 @@ public class XMLDeserializer {
         Date startDate = startTime != null ? dateFormat.parse(startTime) : null;
 
         Checkpoint warehouse = new Checkpoint(
-        		map.getWaypoint(Integer.parseInt(warehouseElement.getAttribute(ADDRESS_NAME))),
+                map.getWaypoint(Integer.parseInt(warehouseElement.getAttribute(ADDRESS_NAME))),
                 0,
                 startDate,
                 null
@@ -153,13 +173,13 @@ public class XMLDeserializer {
             Date timeRangeEndDate = !timeRangeEnd.equals("") ? dateFormat.parse(timeRangeEnd) : null;
 
             Checkpoint delivery = new Checkpoint(
-            		map.getWaypoint(Integer.parseInt(node.getAttribute(ADDRESS_NAME))),
+                    map.getWaypoint(Integer.parseInt(node.getAttribute(ADDRESS_NAME))),
                     Integer.parseInt(node.getAttribute(DURATION_NAME)),
                     timeRangeStartDate,
                     timeRangeEndDate
             );
             request.addCheckpoint(delivery);
         }
-    } 
+    }
 
 }
