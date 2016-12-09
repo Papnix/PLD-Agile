@@ -19,18 +19,18 @@ public class ModifyDateDeliveryDialog extends ModificationDialog {
 	
 	private TextField startDate;
 	private TextField endDate;
-	private SimpleDateFormat timingFormat = new SimpleDateFormat("h a", Locale.FRANCE);
+	private SimpleDateFormat timingFormat = new SimpleDateFormat("HH:mm:ss", Locale.FRANCE);
 
 	public ModifyDateDeliveryDialog(Controller controller) {
 		super(controller);
-		setHeaderText("Vous êtes sur le point de modifier une plage horraire d'une livraison à la tournée courante\n" 
-				+ "Sélectionez la livraison à modifier puis indiquez la plage horaire.");
+		setHeaderText("Vous ï¿½tes sur le point de modifier une plage horraire d'une livraison ï¿½ la tournï¿½e courante\n" 
+				+ "Sï¿½lectionez la livraison ï¿½ modifier puis indiquez la plage horaire.");
 		
 		startDate = new TextField();
 		endDate = new TextField();
-		grid.add(new Label("Date d'arrivé : "), 2, 1);
+		grid.add(new Label("Date d'arrivï¿½ : "), 2, 1);
 		grid.add(startDate, 2, 2);
-		grid.add(new Label("Date de départ : "), 2, 3);
+		grid.add(new Label("Date de dï¿½part : "), 2, 3);
 		grid.add(endDate, 2, 4);
 		
 		onComboValueChanged();
@@ -49,9 +49,9 @@ public class ModifyDateDeliveryDialog extends ModificationDialog {
 				if(newValue != null) {
 			        
 					Date start = new Date (newValue.getTimeRangeStart().getTime());
-					startDate.setText(start.toString());
+					startDate.setText(ModifyDateDeliveryDialog.this.timingFormat.format(start));
 					Date end = new Date (newValue.getTimeRangeEnd().getTime());
-					endDate.setText(end.toString());
+					endDate.setText(ModifyDateDeliveryDialog.this.timingFormat.format(end));
 				}
 			}
 		});

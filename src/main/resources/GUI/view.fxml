@@ -32,6 +32,8 @@
                     <MenuItem fx:id="menuAddDelivery" mnemonicParsing="false" text="Ajouter Livraison" />
                         <MenuItem fx:id="menuRemoveDelivery" mnemonicParsing="false" text="Supprimer Livraison" />
                         <MenuItem fx:id="menuModifyDelivery" mnemonicParsing="false" text="Modifier Livraison" />
+                        <MenuItem fx:id="menuUndo" mnemonicParsing="false" text="Annuler dernière modification" />
+                        <MenuItem fx:id="menuRedo" mnemonicParsing="false" text="Restaurer dernière modification annulée" />
                   </items>
                 </Menu>
               </menus>

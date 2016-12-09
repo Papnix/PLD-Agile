@@ -44,6 +44,10 @@ public class MainWindowController implements Initializable {
 	@FXML
 	private MenuItem menuModifyDelivery;
 	@FXML
+	private MenuItem menuUndo;
+	@FXML
+	private MenuItem menuRedo;
+	@FXML
 	private Button loadDeliveryButton;
 	@FXML
 	private Button loadMapButton;
@@ -115,6 +119,8 @@ public class MainWindowController implements Initializable {
 		menuAddDelivery.setDisable(true);
 		menuRemoveDelivery.setDisable(true);
 		menuModifyDelivery.setDisable(true);
+//		menuUndo.setDisable(true);
+//		menuRedo.setDisable(true);
 		loadDeliveryButton.setDisable(false);
 		loadDeliveryButton.setText("Charger demande de livraisons");
 		clearPreviousRound();
@@ -138,6 +144,8 @@ public class MainWindowController implements Initializable {
 		menuAddDelivery.setDisable(false);
 		menuRemoveDelivery.setDisable(false);
 		menuModifyDelivery.setDisable(false);
+//		menuUndo.setDisable(true);
+//		menuRedo.setDisable(true);
 		mapDisplayer.setRound(controller.getCurrentRound());
 	}
 	
@@ -261,5 +269,19 @@ public class MainWindowController implements Initializable {
 			dialog.show();
 		});
 		menuModifyDelivery.setDisable(true);
+
+		assert menuUndo != null : "fx:id=\"menuUndo\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
+		menuUndo.setOnAction((event) -> {
+			controller.undoLastCommand();
+		});
+		//menuUndo.setDisable(true);
+
+		assert menuRedo != null : "fx:id=\"menuModifyDelivery\" was not injected: check your FXML file"
+				+ " 'view.fxml'.";
+		menuRedo.setOnAction((event) -> {
+			controller.redoLastCommand();
+		});
+		//menuRedo.setDisable(true);
 	}
 }

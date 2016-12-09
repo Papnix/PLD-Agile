@@ -216,7 +216,7 @@ public class Round {
     }
 
     public void rebuildRoute(Map map) {
-        int numSolution = route.size();
+        int numSolution = roundTimeOrder.size();
         route.clear();
         for (int i = 0; i < numSolution; i++) {
             route.add(buildRoute(map, roundTimeOrder.get(i)));

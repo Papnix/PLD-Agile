@@ -63,7 +63,7 @@ public class TimeChange extends Command {
 
             // Indices des DeliveryTiems les plus proches du début et de la fin de la nouvelle plage (mais non compris)
             // Permet de définir un intervalle sur lequel placer la livraison si la nouvelle plage demande un changement
-            int startIndex = -1, endIndex = -1, index = -1;
+            int startIndex = 0, endIndex = deliveryTimes.size()-1, index = -1;
 
             for (int i = 0; i < deliveryTimes.size(); i++) {
                 DeliveryTime currentDeliveryTime = deliveryTimes.get(i);
@@ -78,7 +78,7 @@ public class TimeChange extends Command {
                 } else if (currentDeliveryTime.getDepartureTime() != null && currentDeliveryTime.getDepartureTime().before(this.start)) {
                     startIndex = i;
                 } else if (currentDeliveryTime.getArrivalTime() != null && currentDeliveryTime.getArrivalTime().after(this.end)) {
-                    endIndex = endIndex == -1 ? i : endIndex;
+                    endIndex = endIndex > i ? i : endIndex;
                 }
             }
 
@@ -104,8 +104,7 @@ public class TimeChange extends Command {
                 }
 
                 long waitingTime = arrivalTime.before(this.start) ? (this.start.getTime() - arrivalTime.getTime()) : 0;
-                Date departureTime = new Date(arrivalTime.getTime() + waitingTime + this.checkpoint.getDuration());
-
+                Date departureTime = new Date(arrivalTime.getTime() + waitingTime + this.checkpoint.getDuration()*1000);
                 Date nextPointArrivalTime = new Date(departureTime.getTime() + timeFrom);
                 // If not possible, try another position
                 if (nextPointArrivalTime.after(new Date(nextDelivery.getArrivalTime().getTime() + nextDelivery.getWaitingTime()))) {
