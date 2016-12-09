@@ -73,8 +73,6 @@ public class Graph extends Pane {
 	/**
 	 * Set map and build the graph with new waypoints and sections references.
 	 * 
-	 * @param map
-	 *            The source map to use.
 	 */
 	public void updateMap() {
 

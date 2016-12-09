@@ -19,10 +19,7 @@ public class Roadmap {
 	
 	/**
 	 * Writes the roadmap of the given round on a text file
-	 * @param round
-	 * 		Round to be described on the roadmap
-	 * @param map
-	 * 		City's map
+	 * @param controller the current controller
 	 */
 	public static void writeRoadmap(Controller controller) {
 		try {

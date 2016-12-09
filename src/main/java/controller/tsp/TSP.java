@@ -24,11 +24,9 @@ public interface TSP {
 	 * @param numOfVertices
 	 *            : nombre de sommets du graphe
 	 * @param cout
-	 *            : cout[i][j] = duree pour aller de i a j, avec 0 <= i <
-	 *            nbSommets et 0 <= j < nbSommets
+	 *            : cout[i][j] = duree pour aller de i a j, avec i entre 0 et numOfVertices et j entre 0 et numOfVertices
 	 * @param duration
-	 *            : duree[i] = duree pour visiter le sommet i, avec 0 <= i <
-	 *            nbSommets
+	 *            : duree[i] = duree pour visiter le sommet i, avec i entre 0 et numOfVertices
 	 */
 	public int findSolution(int limitTime, int numOfVertices, int[][] cout, int[] duration,
 			List<Checkpoint> checkpointList);

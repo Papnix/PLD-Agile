@@ -93,10 +93,6 @@ public class DeliveriesListView extends VBox {
 	 * order. This method can directly be called when the round changes, there
 	 * is no need to create a new DeliveriesListView instance.
 	 * 
-	 * @param round
-	 *            Computed round
-	 * @param map
-	 *            City's map
 	 */
 	public void loadDeliveriesList() {
 

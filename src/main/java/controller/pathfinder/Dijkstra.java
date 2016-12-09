@@ -43,6 +43,7 @@ public class Dijkstra {
 
 	/**
 	 * Dijkstra Class constructor
+	 * @param map the current map
 	 */
 	public Dijkstra(Map map) {
 		this.map = map;

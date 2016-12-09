@@ -27,11 +27,13 @@ public abstract class TemplateTSP implements TSP {
 		return newDt;
 	}
 
+	/**
+	 * This method checks if it is possible to arrive at a delivery point within its time range
+	 * @param sommetcrt the delivery point for which the time range will be studied
+	 * @param arrivalDate the desired arrival date
+	 * @return the waiting time (returns -1 if the destination cannot be reached within the right time range)
+	 */
 	private long validTimeRange(Checkpoint sommetcrt, Date arrivalDate) {
-		/*
-		 * check if there is a time range to arrive at the checkpoint if yes,
-		 * check that the arrival Date is in the range else return true
-		 */
 		if (sommetcrt.getTimeRangeStart() != null && sommetcrt.getTimeRangeEnd() != null) {
 			if (arrivalDate.getTime() > sommetcrt.getTimeRangeEnd().getTime()) {
 				return -1;

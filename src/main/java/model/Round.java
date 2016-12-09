@@ -149,6 +149,7 @@ public class Round {
     /**
      * This method compute the paths from any waypoint (in the delivery request)
      * to any other.
+     * @param map the current map
      */
     public void computePaths(Map map) {
         dj = new Dijkstra(map);
@@ -192,9 +193,7 @@ public class Round {
     /**
      * This method computes the best possible round. Method computePaths must be
      * called before.
-     *
-     * @return The ids of the waypoints in the best round, in the right order
-     * (the warehouse is both at the beginning and the end of the round.
+     * @param map the current map
      */
     public void computeRound(Map map) {
 

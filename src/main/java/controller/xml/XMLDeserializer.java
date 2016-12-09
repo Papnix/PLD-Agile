@@ -51,6 +51,8 @@ public class XMLDeserializer {
     /**
      * Load a XML file and create the Map from its content.
      *
+     * @param path the path of the desired file
+     * @return the new Map
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IOException
@@ -76,6 +78,9 @@ public class XMLDeserializer {
     /**
      * Load a XML file and create the DeliveryRequest from its content.
      *
+     * @param path the path of the desired file
+     * @param map the current map
+     * @return the new DeliveryRequest
      * @throws ParserConfigurationException
      * @throws SAXException
      * @throws IOException
