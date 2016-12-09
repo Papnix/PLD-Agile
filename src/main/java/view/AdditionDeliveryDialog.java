@@ -71,7 +71,7 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 						start = timingFormat.parse(startDateField.getText());
 						end = timingFormat.parse(endDateField.getText());
 						
-			        	controller.addCheckpoint(new Checkpoint( controller.getCurrentMap().getWaypoint(id), duration, end, start));
+			        	controller.addCheckpoint(new Checkpoint( controller.getCurrentMap().getWaypoint(id), duration, start, end));
 						
 					} catch (ParseException e) {
 						ErrorDisplayer.displayWarningMessageBox("Mauvais format de date");
