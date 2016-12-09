@@ -63,7 +63,7 @@ public class MainWindowController implements Initializable {
 		waitingDialog = new Alert(AlertType.INFORMATION);
 		waitingDialog.setTitle("Calcul en cours");
 		waitingDialog.setHeaderText("Patientez...");
-		waitingDialog.setContentText("La tournï¿½e est en cours de calcul.");
+		waitingDialog.setContentText("La tournée est en cours de calcul.");
 		
 		// On cache tous les boutons pour empï¿½cher l'utilisateur de fermer la fenï¿½tre
 		for (ButtonType bt : waitingDialog.getDialogPane().getButtonTypes()) {
@@ -107,10 +107,16 @@ public class MainWindowController implements Initializable {
 		return deliveriesListView;
 	}
 
+	/**
+	 * Displays a waiting dialog for when the application is computing a round
+	 */
 	public void showWaitingDialog() {
 		waitingDialog.show();
 	}
 	
+	/**
+	 * Closes the waiting dialog for when the application is computing a round
+	 */
 	public void closeWaitingDialog() {
 		waitingDialog.close();
 	}
@@ -127,8 +133,8 @@ public class MainWindowController implements Initializable {
 		loadDeliveryButton.setText("Charger demande de livraisons");
 		clearPreviousRound();
 
+		mapDisplayer.updateMap();
 
-		mapDisplayer.setMap(controller.getCurrentMap());
 		mapDisplayer.setVisible(true);
 	}
 
@@ -155,7 +161,7 @@ public class MainWindowController implements Initializable {
 		menuModifyDelivery.setDisable(false);
 //		menuUndo.setDisable(true);
 //		menuRedo.setDisable(true);
-		mapDisplayer.setRound(controller.getCurrentRound());
+		mapDisplayer.updateRound();
 	}
 	
 	public Graph getMapDisplayer() {
@@ -181,11 +187,6 @@ public class MainWindowController implements Initializable {
 		// Demande ï¿½ l'utilisateur de sï¿½lectionner un fichier ï¿½ charger
 		File deliveryRequestFile = getFileFromExplorer();
 		if(deliveryRequestFile != null) {
-			
-			if (lastFolderExplored != null) {
-				lastFolderExplored = deliveryRequestFile.getParent();
-			}
-
 			controller.loadDeliveryRequest(deliveryRequestFile.getAbsolutePath().toString());
 		}
 	}
@@ -222,7 +223,10 @@ public class MainWindowController implements Initializable {
 		}
 
 		File file = explorer.showOpenDialog(null);
-
+		
+		if (file != null) {
+			lastFolderExplored = file.getParent();
+		}
 		return file;
 	}
 
@@ -230,7 +234,7 @@ public class MainWindowController implements Initializable {
 	 * Initializes the map displayer system
 	 */
 	private void setupGraphDisplayer() {
-		mapDisplayer = new Graph();
+		mapDisplayer = new Graph(controller);
 		mapPane.setContent(mapDisplayer);
 		AnchorPane.setTopAnchor(mapDisplayer, 0d);
 		AnchorPane.setBottomAnchor(mapDisplayer, 0d);

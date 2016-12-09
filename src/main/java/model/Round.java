@@ -220,7 +220,8 @@ public class Round {
         numOfRound = tspAlgorithm.findSolution(/*Integer.MAX_VALUE*/ 30000, numberOfDelivery, costTab, durations,
                 request.getDeliveryPointList());
 
-        for (int i = 0; i < numOfRound && tspAlgorithm.getBestRound(i) != null; i++) {
+        roundTimeOrder.clear();
+        for (int i = 0; i < numSolution && tspAlgorithm.getBestRound(i) != null; i++) {
             roundTimeOrder.add(Arrays.asList(tspAlgorithm.getBestRound(i)));
             route.add(buildRoute(map, Arrays.asList(tspAlgorithm.getBestRound(i))));
         }

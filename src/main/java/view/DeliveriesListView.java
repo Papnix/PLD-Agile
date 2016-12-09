@@ -33,8 +33,17 @@ public class DeliveriesListView extends VBox {
 
 	private Label warningLabel;
 	private ComboBox<String> roundCombo;
+
+	/**
+	 * ListView that is displayed
+	 */
 	private ListView<String> deliveryList;
+	
+	/**
+	 * List of the delivery points ID, in the chronological order
+	 */
 	private List<Integer> idDeliveryPoints;
+	
 	private Controller controller;
 	private ChangeListener<String> changeListener;
 	private ChangeListener<String> exceptionChangeListener;
@@ -98,6 +107,8 @@ public class DeliveriesListView extends VBox {
 	
 	public void setObservableListInDeliveryList(ObservableList<String> deliveriesTexts){
 		deliveryList.setItems(deliveriesTexts);
+		//Graph.setDeliveriesListView(this);
+
 	}
 
 	/**
@@ -124,8 +135,31 @@ public class DeliveriesListView extends VBox {
 		roundCombo.getSelectionModel().selectFirst();
 		addItemAction();
 	}
+	
+	/**
+	 * Selects the item corresponding to the given checkpoint's id
+	 * @param idCheckpoint
+	 * 		Checkpoint's ID to select
+	 */
+	public void selectItem(int idCheckpoint) {
+		ObservableList<String> items = deliveryList.getItems();
+		for (int i = 0; i < idDeliveryPoints.size(); i++) {
+			if (items.get(i).contains("Adresse : " + idCheckpoint)) {
+				deliveryList.getSelectionModel().select(i);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Clears the current item's selection
+	 */
+	public void clearSelectedItems() {
+		deliveryList.getSelectionModel().clearSelection();
 
-	/*
+	}
+
+	/**
 	 * Reset all containers to erase tracks of the previous delivery request.
 	 */
 	public void clear() {
@@ -177,7 +211,7 @@ public class DeliveriesListView extends VBox {
 
 		text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(delivery.getArrivalTime().getTime())
 				+ "		";
-		text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(delivery.getDepartureTime().getTime());
+		text += "Heure de départ : " + new SimpleDateFormat("HH:mm").format(delivery.getDepartureTime().getTime());
 
 		deliveriesTexts.add(text);
 	}
