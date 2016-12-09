@@ -195,7 +195,7 @@ public class DeliveriesListView extends VBox {
 
 		text += "Heure d'arrivée : " + new SimpleDateFormat("HH:mm").format(delivery.getArrivalTime().getTime())
 				+ "		";
-		text += "Heure de depart : " + new SimpleDateFormat("HH:mm").format(delivery.getDepartureTime().getTime());
+		text += "Heure de départ : " + new SimpleDateFormat("HH:mm").format(delivery.getDepartureTime().getTime());
 
 		deliveriesTexts.add(text);
 	}
