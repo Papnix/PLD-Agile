@@ -129,7 +129,7 @@ public class MainWindowController implements Initializable {
 		loadDeliveryButton.setText("Charger demande de livraisons");
 		clearPreviousRound();
 
-		mapDisplayer.setMap(controller.getCurrentMap());
+		mapDisplayer.updateMap();
 		mapDisplayer.setVisible(true);
 	}
 
@@ -150,7 +150,7 @@ public class MainWindowController implements Initializable {
 		menuModifyDelivery.setDisable(false);
 //		menuUndo.setDisable(true);
 //		menuRedo.setDisable(true);
-		mapDisplayer.setRound(controller.getCurrentRound());
+		mapDisplayer.updateRound();
 	}
 	
 	public Graph getMapDisplayer() {
@@ -227,7 +227,7 @@ public class MainWindowController implements Initializable {
 	 * Initializes the map displayer system
 	 */
 	private void setupGraphDisplayer() {
-		mapDisplayer = new Graph();
+		mapDisplayer = new Graph(controller);
 		mapPane.setContent(mapDisplayer);
 		AnchorPane.setTopAnchor(mapDisplayer, 0d);
 		AnchorPane.setBottomAnchor(mapDisplayer, 0d);
