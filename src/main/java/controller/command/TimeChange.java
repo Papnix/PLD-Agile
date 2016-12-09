@@ -63,7 +63,7 @@ public class TimeChange extends Command {
 
             // Indices des DeliveryTiems les plus proches du début et de la fin de la nouvelle plage (mais non compris)
             // Permet de définir un intervalle sur lequel placer la livraison si la nouvelle plage demande un changement
-            int startIndex = 0, endIndex = deliveryTimes.size()-1, index = -1;
+            int startIndex = 0, endIndex = deliveryTimes.size() - 1, index = -1;
 
             for (int i = 0; i < deliveryTimes.size(); i++) {
                 DeliveryTime currentDeliveryTime = deliveryTimes.get(i);
@@ -75,9 +75,9 @@ public class TimeChange extends Command {
                         k++;
                         continue roundTimeorders;
                     }
-                } else if (currentDeliveryTime.getDepartureTime() != null && currentDeliveryTime.getDepartureTime().before(this.start)) {
+                } else if (currentDeliveryTime.getDepartureTime() != null && this.start != null && currentDeliveryTime.getDepartureTime().before(this.start)) {
                     startIndex = i;
-                } else if (currentDeliveryTime.getArrivalTime() != null && currentDeliveryTime.getArrivalTime().after(this.end)) {
+                } else if (currentDeliveryTime.getArrivalTime() != null && this.end != null && currentDeliveryTime.getArrivalTime().after(this.end)) {
                     endIndex = endIndex > i ? i : endIndex;
                 }
             }
@@ -104,7 +104,7 @@ public class TimeChange extends Command {
                 }
 
                 long waitingTime = arrivalTime.before(this.start) ? (this.start.getTime() - arrivalTime.getTime()) : 0;
-                Date departureTime = new Date(arrivalTime.getTime() + waitingTime + this.checkpoint.getDuration()*1000);
+                Date departureTime = new Date(arrivalTime.getTime() + waitingTime + this.checkpoint.getDuration() * 1000);
                 Date nextPointArrivalTime = new Date(departureTime.getTime() + timeFrom);
                 // If not possible, try another position
                 if (nextPointArrivalTime.after(new Date(nextDelivery.getArrivalTime().getTime() + nextDelivery.getWaitingTime()))) {
@@ -125,8 +125,8 @@ public class TimeChange extends Command {
                 deliveryTime.setDepartureTime(departureTime);
 
                 // Recalculate route for the DeliveryTimes that used to be before and after
-                DeliveryTime previousDeliveryTime = deliveryTimes.get(index-1);
-                DeliveryTime nextDeliveryTime = deliveryTimes.get(index+1);
+                DeliveryTime previousDeliveryTime = deliveryTimes.get(index - 1);
+                DeliveryTime nextDeliveryTime = deliveryTimes.get(index + 1);
 
                 dj.execute(previousDeliveryTime.getCheckpoint().getId());
                 long timeToNext = dj.getTargetPathCost(nextDeliveryTime.getCheckpoint().getId());
