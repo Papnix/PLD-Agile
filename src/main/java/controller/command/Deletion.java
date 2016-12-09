@@ -64,6 +64,8 @@ public class Deletion extends Command {
                 }
             }
         }
+
+        this.modifiedRound.rebuildRoute(map);
         return this.modifiedRound;
     }
 }

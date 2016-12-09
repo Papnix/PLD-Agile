@@ -143,6 +143,7 @@ public class Addition extends Command {
 
         }
 
+        this.modifiedRound.rebuildRoute(map);
         return this.modifiedRound;
     }
 }

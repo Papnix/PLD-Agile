@@ -138,6 +138,8 @@ public class TimeChange extends Command {
                 size--;
             }
         }
+
+        this.modifiedRound.rebuildRoute(map);
         return this.modifiedRound;
     }
 

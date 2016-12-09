@@ -59,9 +59,9 @@ public class MainWindowController implements Initializable {
 		waitingDialog = new Alert(AlertType.INFORMATION);
 		waitingDialog.setTitle("Calcul en cours");
 		waitingDialog.setHeaderText("Patientez...");
-		waitingDialog.setContentText("La tournée est en cours de calcul.");
+		waitingDialog.setContentText("La tournï¿½e est en cours de calcul.");
 		
-		// On cache tous les boutons pour empêcher l'utilisateur de fermer la fenêtre
+		// On cache tous les boutons pour empï¿½cher l'utilisateur de fermer la fenï¿½tre
 		for (ButtonType bt : waitingDialog.getDialogPane().getButtonTypes()) {
 			Button b = (Button)(waitingDialog.getDialogPane().lookupButton(bt));
 			b.setVisible(false);
@@ -124,16 +124,15 @@ public class MainWindowController implements Initializable {
 	}
 
 	public void updateAfterLoadNewRound() {
+
 		
-		System.out.println("Update hud !");
-		
-		// Crée la ListView à droite si c'est le premier chargement de demande de livraisons
+		// Crï¿½e la ListView ï¿½ droite si c'est le premier chargement de demande de livraisons
 		if (firstDeliveryLoad) {
 			deliveriesListView.setVisible(true);
 			firstDeliveryLoad = false;
 		}
 
-		// Met à jour l'interface graphique
+		// Met ï¿½ jour l'interface graphique
 		deliveriesListView.loadDeliveriesList();
 		loadDeliveryButton.setVisible(false);
 		menuAddDelivery.setDisable(false);
@@ -151,7 +150,7 @@ public class MainWindowController implements Initializable {
 	 */
 	private void handleLoadMap() {
 		
-		// Demande à l'utilisateur de sélectionner un fichier à charger
+		// Demande ï¿½ l'utilisateur de sï¿½lectionner un fichier ï¿½ charger
 		File mapFile = getFileFromExplorer();
 		if (mapFile != null) {
 			controller.loadMap(mapFile.getAbsolutePath().toString());
@@ -163,7 +162,7 @@ public class MainWindowController implements Initializable {
 	 */
 	private void handleLoadDelivery() {
 		
-		// Demande à l'utilisateur de sélectionner un fichier à charger
+		// Demande ï¿½ l'utilisateur de sï¿½lectionner un fichier ï¿½ charger
 		File deliveryRequestFile = getFileFromExplorer();
 		if(deliveryRequestFile != null) {
 			
@@ -180,7 +179,7 @@ public class MainWindowController implements Initializable {
 	 */
 	private void clearPreviousRound() {
 		
-		// On enlève la tournée affichée
+		// On enlï¿½ve la tournï¿½e affichï¿½e
 		controller.clearRound();
 
 		if (firstDeliveryLoad == false) {
