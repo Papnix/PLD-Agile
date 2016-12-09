@@ -98,7 +98,6 @@ public class DeliveriesListView extends VBox {
 			roundCombo.getItems().add("Possibilité de livraison n : " + (index + 1));
 		}
 		roundCombo.getSelectionModel().selectFirst();
-
 	}
 
 	/*

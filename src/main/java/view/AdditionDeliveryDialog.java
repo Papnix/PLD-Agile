@@ -26,8 +26,8 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 
 	public AdditionDeliveryDialog(Controller controller) {
 		super(controller);
-		setHeaderText("Vous �tes sur le point de modifier une plage horraire d'une livraison � la tourn�e courante\n" 
-				+ "S�lectionez la livraison � modifier puis indiquez la plage horaire.");
+		setHeaderText("Vous etes sur le point de modifier une plage horaire d'une livraison de la tournee courante\n" 
+				+ "Selectionez la livraison a modifier puis indiquez la plage horaire.");
 		
 		idWaypointField = new TextField();
 		startDateField = new TextField();
@@ -36,11 +36,11 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 		
 		grid.add(new Label("Id du lieu : "), 2, 1);
 		grid.add(idWaypointField, 2, 2);
-		grid.add(new Label("Date d'arriv� : "), 2, 3);
+		grid.add(new Label("Date d'arrivee : "), 2, 3);
 		grid.add(startDateField, 2, 4);
-		grid.add(new Label("Date de d�part : "), 2, 5);
+		grid.add(new Label("Date de depart : "), 2, 5);
 		grid.add(endDateField, 2, 6);
-		grid.add(new Label("Dur�e de la livraison : "), 2, 7);
+		grid.add(new Label("Duree de la livraison : "), 2, 7);
 		grid.add(durationField, 2, 8);
 		
 		deliveryCombo.setVisible(false);
@@ -66,7 +66,7 @@ public class AdditionDeliveryDialog extends ModificationDialog {
 		        	Date end;
 					try {
 						int id = Integer.parseInt(idWaypointField.getText());
-						int duration = Integer.parseInt(idWaypointField.getText());
+						int duration = Integer.parseInt(durationField.getText());
 						
 						start = timingFormat.parse(startDateField.getText());
 						end = timingFormat.parse(endDateField.getText());
