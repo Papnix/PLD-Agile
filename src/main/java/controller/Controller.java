@@ -105,28 +105,31 @@ public class Controller {
 				window.showWaitingDialog();
 				
 				currentDeliveryRequest = newDeliveryRequest;
-				try {
-					// Calcul de la tournï¿½e
-					currentRound = new Round(currentDeliveryRequest);
-					currentRound.computePaths(currentMap);
-					currentRound.computeRound(currentMap);
-					handleSucessfulLoadDelivery();
-				} catch (NullPointerException e) {
-					if(currentRound.getNumOfRound() == 0){
-						ErrorHandler.impossibleRound(currentRound, window);
-					}else{
-						ErrorDisplayer.displayWarningMessageBox(
-							"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
-					}
-					return;
-				}
-				
-				window.closeWaitingDialog();
-				handleSucessfulLoadDelivery();
-
-				window.updateAfterLoadNewRound(); // update graphique
+				currentRound = new Round(currentDeliveryRequest);
+				computeRound();
 			}
 		}
+	}
+	
+	public void computeRound(){
+		try {
+			// Calcul de la tournï¿½e
+			currentRound.computePaths(currentMap);
+			currentRound.computeRound(currentMap);
+			handleSucessfulLoadDelivery();
+		} catch (NullPointerException e) {
+			if(currentRound.getNumOfRound() == 0){
+				ErrorHandler.impossibleRound(currentRound, window);
+			}else{
+				ErrorDisplayer.displayWarningMessageBox(
+					"La demande de livraison ne peut pas être traitée, elle ne semble pas correspondre à la carte actuelle.");
+			}
+			return;
+		}
+		window.closeWaitingDialog();
+		handleSucessfulLoadDelivery();
+
+		window.updateAfterLoadNewRound(); // update graphique
 	}
 	
 	public void clearRound() {
@@ -169,7 +172,7 @@ public class Controller {
 			window.updateAfterLoadNewRound();
 			handleSucessfulLoadDelivery();
 		}
-    	else {
+    	else{
     		Alert alert = new Alert(AlertType.CONFIRMATION);
     				
 			alert.setTitle("Calcul d'une nouvelle tournée");
@@ -182,13 +185,13 @@ public class Controller {
     		alert.getButtonTypes().setAll(buttonTypeOk, buttonTypeCancel);
 
     		Optional<ButtonType> result = alert.showAndWait();
-    		if (result.get() == buttonTypeOk){
-    		    try {
-					currentRound.computePaths(currentMap);
-					currentRound.computeRound(currentMap);
-					handleSucessfulLoadDelivery();
+    		if (result.get() == buttonTypeOk ){
+		    	try {
+					currentRound.changeACheckpoint(checkpoint.getId(), start, end);
+					computeRound();
 				} catch (Exception e) {
-					
+					ErrorDisplayer.displayWarningMessageBox("Modification impossible, conflit avec les livraisons en cours");
+					e.printStackTrace();
 				}
     		};
     		

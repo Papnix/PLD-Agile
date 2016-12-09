@@ -168,6 +168,10 @@ public class MainWindowController implements Initializable {
 		return mapDisplayer;
 	}
 	
+	public void clearListViewSelection(){
+		deliveriesListView.clearListViewSelection();
+	}
+	
 	/**
 	 * Loads a map from an xml source chosen by the user in an explorer.
 	 */

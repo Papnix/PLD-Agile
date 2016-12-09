@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -125,6 +126,12 @@ public class Round {
         return roundTimeOrder;
     }
 
+    public void changeACheckpoint(int checkpointId, Date start, Date end){
+    	Checkpoint checkpoint = request.getDeliveryPointId(checkpointId);
+    	checkpoint.setTimeRangeStart(start);
+    	checkpoint.setTimeRangeEnd(end);
+    }
+    
     // ------------------------------------------- Setters
     // ------------------------------------------------------
 

@@ -14,7 +14,6 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.GridPane;
 import model.Checkpoint;
 import model.DeliveryTime;
-import model.Round;
 
 public abstract class ModificationDialog extends Dialog<Object>{
 	

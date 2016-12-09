@@ -167,6 +167,10 @@ public class DeliveriesListView extends VBox {
 		deliveryList.getItems().clear();
 		idDeliveryPoints.clear();
 	}
+	
+	public void clearListViewSelection(){
+		deliveryList.getSelectionModel().select(-1);
+	}
 
 	/**
 	 * Add the interaction between the map representation and the list of
